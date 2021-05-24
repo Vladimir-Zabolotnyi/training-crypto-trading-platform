@@ -1,0 +1,15 @@
+version: '2'
+services:
+  api-server:
+    container_name: api-server
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 8000:8000
+    networks:
+      - internal-network
+networks:
+  internal-network:
+    driver: bridge

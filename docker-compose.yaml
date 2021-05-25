@@ -10,6 +10,18 @@ services:
       - 8000:8000
     networks:
       - internal-network
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: db_test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 1234
+    ports:
+      - 3306:3306
+    networks:
+      - internal-network
 networks:
   internal-network:
     driver: bridge

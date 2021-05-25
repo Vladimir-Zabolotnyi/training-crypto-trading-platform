@@ -1,11 +1,14 @@
 spring:
+  config:
+    activate:
+      on-profile: integration
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/db_test
+    url: jdbc:mysql://db:3306/db_test
     username: user
     password: 1234
 flyway:
-  url: jdbc:mysql://localhost:3306
+  url: jdbc:mysql://db:3306/db_test
   schemas: db_test
   user: "user"
   password: "1234"

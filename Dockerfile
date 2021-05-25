@@ -16,4 +16,4 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
-ENTRYPOINT ["java","-Xdebug","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000","-cp","app:app/lib/*","sigma.training.ctp.CtpApplication"]
+ENTRYPOINT ["java","-Dspring.profiles.active=integration","-Xdebug","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000","-cp","app:app/lib/*","sigma.training.ctp.CtpApplication"]

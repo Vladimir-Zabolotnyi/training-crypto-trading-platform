@@ -9,6 +9,7 @@ import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.repository.UserRepository;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -19,10 +20,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         if (Objects.isNull(login) || login.isEmpty()) throw new IllegalArgumentException("login is null");
-        final UserEntity user = userRepository.findUserByLogin(login);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return user;
+        final Optional<UserEntity> user = userRepository.findUserByLogin(login);
+        if (user.isPresent()) {
+            return user.get();
+        } else throw new UsernameNotFoundException("User not found");
     }
 }

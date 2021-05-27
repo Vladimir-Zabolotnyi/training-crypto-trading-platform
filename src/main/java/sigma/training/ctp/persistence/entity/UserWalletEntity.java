@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Table(name = "user_wallet")
 @Data
 public class UserWalletEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

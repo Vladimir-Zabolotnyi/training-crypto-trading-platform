@@ -7,4 +7,8 @@ import sigma.training.ctp.persistence.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
     UserEntity findUserByLogin(String login);
+
+    default void doggg() {
+
+    }
 }

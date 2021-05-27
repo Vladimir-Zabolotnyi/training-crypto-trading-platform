@@ -15,7 +15,7 @@ public class TestSecurityController {
 UserService userService;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public @ResponseBody String getAuthor() {
+    public @ResponseBody String securityTest() {
         return "Test passed";
     }
 }

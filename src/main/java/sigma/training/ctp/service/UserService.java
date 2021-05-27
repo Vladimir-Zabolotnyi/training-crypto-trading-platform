@@ -21,8 +21,6 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         if (Objects.isNull(login) || login.isEmpty()) throw new IllegalArgumentException("login is null");
         final Optional<UserEntity> user = userRepository.findUserByLogin(login);
-        if (user.isPresent()) {
-            return user.get();
-        } else throw new UsernameNotFoundException("User not found");
+        return user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

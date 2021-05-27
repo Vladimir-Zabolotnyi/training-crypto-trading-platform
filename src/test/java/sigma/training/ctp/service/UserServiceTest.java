@@ -43,13 +43,12 @@ class UserServiceTest {
         user2.setName("Vova");
         user2.setLogin("Vovalog");
         user2.setPassword("Vovapass");
-        Mockito.when(userRepository.findUserByLogin(user1.getLogin())).thenReturn(java.util.Optional.of(user1));
-        Mockito.when(userRepository.findUserByLogin(user2.getLogin())).thenReturn(java.util.Optional.of(user2));
-        Mockito.when(userRepository.findUserByLogin(user1.getName())).thenReturn(Optional.empty());
     }
 
     @Test
     void loadUserByUsername() {
+        Mockito.when(userRepository.findUserByLogin(user1.getLogin())).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findUserByLogin(user2.getLogin())).thenReturn(Optional.of(user2));
         UserDetails userDet1 = userService.loadUserByUsername(user1.getLogin());
         UserDetails userDet2 = userService.loadUserByUsername(user2.getLogin());
         assertEquals(user1, userDet1);

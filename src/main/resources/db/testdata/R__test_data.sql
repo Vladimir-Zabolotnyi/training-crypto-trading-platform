@@ -1,4 +1,4 @@
-truncate user;
+#truncate user;
 
 INSERT INTO user(id, name, login, password)
 VALUES (1, 'Jack', 'Jacklog', '$2a$10$cc9PZ/P.BJre5fGkZ1K/ROhc7HNskwrNB2yymrXTmombBlui5Q012');

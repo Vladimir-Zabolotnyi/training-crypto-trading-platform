@@ -1,5 +1,6 @@
 package sigma.training.ctp.persistence.entity;
 
+
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,18 +24,15 @@ public class UserEntity implements UserDetails {
     private String name;
 
     @Column(name = "login")
-    private String login;
+    private String  login;
 
     @Column(name = "password")
-    private String password;
+    private String  password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
-
-    @Override
-    public String getPassword() { return password; }
 
     @Override
     public String getUsername() {

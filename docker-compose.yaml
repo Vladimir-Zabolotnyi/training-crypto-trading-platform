@@ -2,6 +2,8 @@ version: '2'
 services:
   api-server:
     container_name: api-server
+    depends_on:
+      - db
     build:
       context: ./
       dockerfile: Dockerfile

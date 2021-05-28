@@ -13,10 +13,10 @@ public class UserWalletService {
     @Autowired
     private UserWalletRepository repository;
 
-    public List<UserWalletEntity> getAllWalletsByUserId(Long id) {
+    public UserWalletEntity getWalletByUserId(Long id) {
         if (id != null) {
             if (id > 0) {
-                return repository.findUserWalletEntitiesByUserId(id);
+                return repository.findUserWalletEntityByUserId(id);
             }
             else {
                 String message = "The user id is incorrect or hasn't been proposed";

@@ -8,8 +8,4 @@ VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.
 
 INSERT INTO user_wallet VALUES
 (DEFAULT, 1, 228.33, 19),
-(DEFAULT, 2, 728.33, 91.19),
-(DEFAULT, 1, 66287.46, 44.44),
-(DEFAULT, 2, 35.00, 75.55),
-(DEFAULT, 2, 0, 0.91),
-(DEFAULT, 1, 111111.44, 6.03);
+(DEFAULT, 2, 728.33, 91.19);

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sigma.training.ctp.model.UserWalletBalanceViewModel;
 import sigma.training.ctp.persistence.entity.UserEntity;
-import sigma.training.ctp.persistence.entity.UserWalletEntity;
 import sigma.training.ctp.service.UserWalletService;
 
 @RestController
@@ -15,7 +15,7 @@ public class UserWalletController {
     private UserWalletService service;
 
     @GetMapping(path = "/my-wallet")
-    public UserWalletEntity getUserWallet() {
+    public UserWalletBalanceViewModel getUserWallet() {
         UserEntity user = (UserEntity) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();

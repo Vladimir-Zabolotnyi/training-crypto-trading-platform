@@ -16,7 +16,7 @@ spring:
     max-idle: 10
     max-wait: 8000
   flyway:
-    url: jdbc:mysql://db:3306/db_test
+    url: jdbc:mysql://db:3306/db_test?autoreconnect=true
     schemas: db_test
     user: "user"
     password: "1234"

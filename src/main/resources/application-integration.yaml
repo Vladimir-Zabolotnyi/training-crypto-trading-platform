@@ -29,5 +29,8 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         current_session_context_class=org: springframework.orm.hibernate5.SpringSessionContext
     show-sql: true
-
+application:
+  title: "ctp"
+  description: "cryptocurrency market"
+  version: "1.0.0"
 

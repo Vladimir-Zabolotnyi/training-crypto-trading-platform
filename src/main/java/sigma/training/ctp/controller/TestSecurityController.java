@@ -1,21 +1,33 @@
 package sigma.training.ctp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import sigma.training.ctp.persistence.dto.UserDto;
+import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.UserService;
 
 
 @RestController
+@RequestMapping("/security")
+@Tag(name = "Security Controller Test", description = "Allows to check Basic Auth")
 public class TestSecurityController {
 
-@Autowired
-UserService userService;
+    @Autowired
+    UserService userService;
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public @ResponseBody String securityTest() {
-        return "Test passed";
+    @Autowired
+    ModelMapper modelMapper;
+
+    @GetMapping("/test")
+    @Operation(summary = "Security test", description = "Check login and password")
+    public @ResponseBody UserDto securityTest() {
+        UserEntity user = (UserEntity) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+    return modelMapper.map(user,UserDto.class);
     }
 }

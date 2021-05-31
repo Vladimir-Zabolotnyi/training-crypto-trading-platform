@@ -6,7 +6,7 @@ import lombok.NonNull;
 import java.math.BigDecimal;
 
 @Data
-public class WalletBalanceRestDto {
+public class WalletRestDto {
     @NonNull
     private BigDecimal moneyBalance;
     @NonNull

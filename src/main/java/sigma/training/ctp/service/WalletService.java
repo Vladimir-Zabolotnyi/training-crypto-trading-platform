@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
-import sigma.training.ctp.dto.WalletBalanceRestDto;
+import sigma.training.ctp.dto.WalletRestDto;
 
 @Service
 public class WalletService {
@@ -12,10 +12,10 @@ public class WalletService {
     @Autowired
     private WalletRepository repository;
 
-    public WalletBalanceRestDto getWalletByUserId(Long id) {
-        WalletEntity wallet = repository.findUserWalletEntityByUserId(id);
+    public WalletRestDto getWalletByUserId(Long id) {
+        WalletEntity wallet = repository.findWalletEntityByUserId(id);
 
-        return new WalletBalanceRestDto(
+        return new WalletRestDto(
                 wallet.getMoneyBalance(),
                 wallet.getCryptocurrencyBalance()
         );

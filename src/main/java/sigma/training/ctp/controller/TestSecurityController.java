@@ -30,7 +30,9 @@ public class TestSecurityController {
     @Operation(summary = "Security test", description = "Check login and password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successfully authenticated",
-                    content = @Content(schema = @Schema(implementation = UserDto.class))),
+                    content = @Content(mediaType = "application/json",schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = @Content)
     })
     public @ResponseBody
     UserDto securityTest() {

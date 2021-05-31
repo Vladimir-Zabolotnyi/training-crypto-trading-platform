@@ -1,4 +1,4 @@
-package sigma.training.ctp.rest_dto;
+package sigma.training.ctp.dto;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -6,7 +6,7 @@ import lombok.NonNull;
 import java.math.BigDecimal;
 
 @Data
-public class WalletBalanceRestDTO {
+public class WalletBalanceRestDto {
     @NonNull
     private BigDecimal moneyBalance;
     @NonNull

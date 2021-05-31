@@ -7,5 +7,5 @@ INSERT INTO user(id, name, login, password)
 VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.UglMuEJf8ue');
 
 INSERT INTO wallet VALUES
-(DEFAULT, (SELECT id FROM user WHERE login = 'Jacklog'), 228.13, 37),
-(DEFAULT, (SELECT id FROM user WHERE login = 'Vovalog'), 0.33, 0.0);
+(1, 1, 228.13, 37),
+(2, 2, 0.33, 0.0);

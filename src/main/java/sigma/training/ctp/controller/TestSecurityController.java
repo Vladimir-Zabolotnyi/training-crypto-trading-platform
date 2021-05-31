@@ -1,6 +1,10 @@
 package sigma.training.ctp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +28,15 @@ public class TestSecurityController {
 
     @GetMapping("/test")
     @Operation(summary = "Security test", description = "Check login and password")
-    public @ResponseBody UserDto securityTest() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully authenticated",
+                    content = @Content(schema = @Schema(implementation = UserDto.class))),
+    })
+    public @ResponseBody
+    UserDto securityTest() {
         UserEntity user = (UserEntity) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
-    return modelMapper.map(user,UserDto.class);
+        return modelMapper.map(user, UserDto.class);
     }
 }

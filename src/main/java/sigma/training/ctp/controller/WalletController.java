@@ -11,15 +11,15 @@ import sigma.training.ctp.service.WalletService;
 @RestController
 public class WalletController {
 
-    @Autowired
-    private WalletService service;
+  @Autowired
+  private WalletService service;
 
-    @GetMapping(path = "/my-wallet")
-    public WalletRestDto getUserWallet() {
-        UserEntity user = (UserEntity) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+  @GetMapping(path = "/my-wallet")
+  public WalletRestDto getUserWallet() {
+    UserEntity user = (UserEntity) SecurityContextHolder.getContext()
+                                                        .getAuthentication()
+                                                        .getPrincipal();
 
-        return service.getWalletByUserId(user.getId());
-    }
+    return service.getWalletByUserId(user.getId());
+  }
 }

@@ -7,6 +7,6 @@ import sigma.training.ctp.persistence.entity.UserEntity;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity,Long> {
-    Optional<UserEntity> findUserByLogin(String login);
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+  Optional<UserEntity> findUserByLogin(String login);
 }

@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 @Data
 public class WalletRestDto {
-    @NonNull
-    private BigDecimal moneyBalance;
-    @NonNull
-    private BigDecimal cryptocurrencyBalance;
+  @NonNull
+  private BigDecimal moneyBalance;
+  @NonNull
+  private BigDecimal cryptocurrencyBalance;
 }

@@ -12,11 +12,11 @@ import javax.validation.constraints.Size;
 @Schema(description = "Security data of the user")
 public class UserRestDto {
 
-    @Schema(description = "id of the user",example = "1")
-    private Long id;
+  @Schema(description = "id of the user", example = "1")
+  private Long id;
 
-    @NotBlank
-    @Size(min = 0,max = 20)
-    @Schema(description = "login of the user",example = "Vova")
-    private String login;
+  @NotBlank
+  @Size(min = 0, max = 20)
+  @Schema(description = "login of the user", example = "Vova")
+  private String login;
 }

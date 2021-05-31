@@ -5,7 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
@@ -14,20 +21,20 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class WalletEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @NonNull
-    private UserEntity user;
+  @OneToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @NonNull
+  private UserEntity user;
 
-    @Column(name = "money_balance")
-    @NonNull
-    private BigDecimal moneyBalance;
+  @Column(name = "money_balance")
+  @NonNull
+  private BigDecimal moneyBalance;
 
-    @Column(name = "cryptocurrency_balance")
-    @NonNull
-    private BigDecimal cryptocurrencyBalance;
+  @Column(name = "cryptocurrency_balance")
+  @NonNull
+  private BigDecimal cryptocurrencyBalance;
 }

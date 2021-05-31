@@ -6,5 +6,5 @@ import sigma.training.ctp.persistence.entity.WalletEntity;
 
 @Repository
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
-    WalletEntity findWalletEntityByUserId(Long id);
+  WalletEntity findWalletEntityByUserId(Long id);
 }

@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "user_wallet")
+@Table(name = "wallet")
 @Data
-public class UserWalletEntity {
+public class WalletEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

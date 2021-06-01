@@ -50,10 +50,7 @@ class OrderDetailsServiceTest {
     Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS)).thenReturn(ORDER_DETAILS);
     OrderDetailsRestDto orderActual = orderDetailsService.saveOrder(ORDER_FROM_BODY, ORDER_TYPE, USER);
-    OrderDetailsRestDto orderExpected = new OrderDetailsRestDto(
-      ORDER_DETAILS.getId(), ORDER_DETAILS.getCreationDate(), ORDER_DETAILS.getUser(),
-      ORDER_DETAILS.getStatus(), ORDER_DETAILS.getOrderType(),
-      ORDER_DETAILS.getCryptocurrencyPrice(), ORDER_DETAILS.getCryptocurrencyAmount());
+    OrderDetailsRestDto orderExpected = new OrderDetailsRestDto(ORDER_DETAILS);
     assertEquals(orderExpected, orderActual);
 
   }

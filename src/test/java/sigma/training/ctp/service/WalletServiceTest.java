@@ -21,7 +21,10 @@ public class WalletServiceTest {
   private static final Long ID = 1L;
   private static final BigDecimal MONEY_BALANCE = new BigDecimal("228.13");
   private static final BigDecimal CRYPTOCURRENCY_BALANCE = new BigDecimal("37");
+  private static final BigDecimal CRYPTOCURRENCY_AMOUNT = new BigDecimal("20");
+  private static final BigDecimal CRYPTOCURRENCY_BALANCE_REDUCED = new BigDecimal("17");
   private static final WalletEntity WALLET = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
+  private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);
   @Mock
   private WalletRepository repository;
   @InjectMocks
@@ -37,5 +40,18 @@ public class WalletServiceTest {
     WalletRestDto actual = service.getWalletByUserId(ID);
     assertEquals(expected.getMoneyBalance(), actual.getMoneyBalance());
     assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
+  }
+
+  @Test
+  void reduceWalletCryptocurrencyBalanceByUserId() {
+    when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
+    when(repository.updateWalletEntityCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_BALANCE_REDUCED)).thenReturn(WALLET_AFTER_UPDATE);
+    WalletRestDto expected = new WalletRestDto(
+      WALLET.getMoneyBalance(),
+      CRYPTOCURRENCY_BALANCE_REDUCED
+    );
+    WalletRestDto actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
+    assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
+
   }
 }

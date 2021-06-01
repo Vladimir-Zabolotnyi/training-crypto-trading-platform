@@ -3,7 +3,6 @@ package sigma.training.ctp.persistence.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import sigma.training.ctp.persistence.entity.enums.OrderType;
 import sigma.training.ctp.persistence.entity.enums.Status;
 
@@ -20,7 +19,7 @@ import java.time.Instant;
 @Table(name = "order_details")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+
 public class OrderDetailsEntity {
   @Id
   @Column(name = "id")
@@ -39,17 +38,25 @@ public class OrderDetailsEntity {
   @Column(name = "order_type")
   private OrderType orderType;
 
-  @Column(name = "money_balance")
+  @Column(name = "cryptocurrency_price")
   @NonNull
   private BigDecimal cryptocurrencyPrice;
 
-  @Column(name = "cryptocurrency_balance")
+  @Column(name = "cryptocurrency_amount")
   @NonNull
   private BigDecimal cryptocurrencyAmount;
 
+  public OrderDetailsEntity(UserEntity user, Status status, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
+    this.creationDate = Instant.now();
+    this.user = user;
+    this.status = status;
+    this.orderType = orderType;
+    this.cryptocurrencyPrice = cryptocurrencyPrice;
+    this.cryptocurrencyAmount = cryptocurrencyAmount;
+  }
 
   public OrderDetailsEntity(OrderDetailsEntity orderFromBody, OrderType orderType, UserEntity user) {
-    this.creationDate = Instant.now();
+    this.creationDate = orderFromBody.getCreationDate();
     this.user = user;
     this.status = orderFromBody.status;
     this.orderType = orderType;

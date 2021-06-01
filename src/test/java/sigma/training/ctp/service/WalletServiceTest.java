@@ -34,12 +34,11 @@ public class WalletServiceTest {
         when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
 
         WalletRestDto expected = new WalletRestDto(
-            WALLET.getMoneyBalance(),
-            WALLET.getCryptocurrencyBalance()
+                WALLET.getMoneyBalance().toString(),
+                WALLET.getCryptocurrencyBalance().toString()
         );
         WalletRestDto actual = service.getWalletByUserId(ID);
 
-        assertEquals(expected.getMoneyBalance(), actual.getMoneyBalance());
-        assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
+        assertEquals(expected, actual);
     }
 }

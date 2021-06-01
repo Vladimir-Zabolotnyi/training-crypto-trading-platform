@@ -16,8 +16,8 @@ public class WalletService {
         WalletEntity wallet = repository.findWalletEntityByUserId(id);
 
         return new WalletRestDto(
-                wallet.getMoneyBalance(),
-                wallet.getCryptocurrencyBalance()
+                wallet.getMoneyBalance().toString(),
+                wallet.getCryptocurrencyBalance().toString()
         );
     }
 }

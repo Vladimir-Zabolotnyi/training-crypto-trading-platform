@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -22,7 +20,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class WalletEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
   private Long id;
 
   @OneToOne
@@ -37,4 +35,6 @@ public class WalletEntity {
   @Column(name = "cryptocurrency_balance")
   @NonNull
   private BigDecimal cryptocurrencyBalance;
+
+
 }

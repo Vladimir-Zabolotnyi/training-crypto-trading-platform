@@ -8,6 +8,10 @@ import sigma.training.ctp.persistence.entity.enums.Status;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,10 +26,10 @@ import java.time.Instant;
 
 public class OrderDetailsEntity {
   @Id
-  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name")
+  @Column(name = "creation_date")
   private Instant creationDate;
 
   @ManyToOne
@@ -33,9 +37,11 @@ public class OrderDetailsEntity {
   private UserEntity user;
 
   @Column(name = "status")
+  @Enumerated(EnumType.STRING)
   private Status status;
 
   @Column(name = "order_type")
+  @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
   @Column(name = "cryptocurrency_price")
@@ -46,8 +52,15 @@ public class OrderDetailsEntity {
   @NonNull
   private BigDecimal cryptocurrencyAmount;
 
-  public OrderDetailsEntity(UserEntity user, Status status, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
+  public OrderDetailsEntity(Status status, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
     this.creationDate = Instant.now();
+    this.status = status;
+    this.cryptocurrencyPrice = cryptocurrencyPrice;
+    this.cryptocurrencyAmount = cryptocurrencyAmount;
+  }
+
+  public OrderDetailsEntity(Instant creationDate, UserEntity user, Status status, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
+    this.creationDate = creationDate;
     this.user = user;
     this.status = status;
     this.orderType = orderType;
@@ -55,8 +68,8 @@ public class OrderDetailsEntity {
     this.cryptocurrencyAmount = cryptocurrencyAmount;
   }
 
-  public OrderDetailsEntity(OrderDetailsEntity orderFromBody, OrderType orderType, UserEntity user) {
-    this.creationDate = orderFromBody.getCreationDate();
+  public OrderDetailsEntity(Instant creationDate, OrderDetailsEntity orderFromBody, OrderType orderType, UserEntity user) {
+    this.creationDate = creationDate;
     this.user = user;
     this.status = orderFromBody.status;
     this.orderType = orderType;

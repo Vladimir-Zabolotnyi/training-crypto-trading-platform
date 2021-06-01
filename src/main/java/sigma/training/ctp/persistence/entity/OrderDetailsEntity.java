@@ -51,9 +51,9 @@ public class OrderDetailsEntity {
   public OrderDetailsEntity(OrderDetailsEntity orderFromBody, OrderType orderType, UserEntity user) {
     this.creationDate = Instant.now();
     this.user = user;
-    this.status = status;
+    this.status = orderFromBody.status;
     this.orderType = orderType;
     this.cryptocurrencyPrice = orderFromBody.getCryptocurrencyPrice();
-    this.cryptocurrencyAmount = orderFromBody.getCryptocurrencyPrice();
+    this.cryptocurrencyAmount = orderFromBody.getCryptocurrencyAmount();
   }
 }

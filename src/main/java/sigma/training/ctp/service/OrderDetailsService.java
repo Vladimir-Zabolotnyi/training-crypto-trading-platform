@@ -8,6 +8,8 @@ import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.enums.OrderType;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
+import javax.transaction.Transactional;
+
 @Service
 public class OrderDetailsService {
   @Autowired
@@ -16,9 +18,9 @@ public class OrderDetailsService {
   @Autowired
   WalletService walletService;
 
-
+  @Transactional
   public OrderDetailsRestDto saveOrder(OrderDetailsEntity orderFromBody, OrderType orderType, UserEntity user) {
-    OrderDetailsEntity orderToBeSaved = new OrderDetailsEntity(orderFromBody, orderType, user);
+    OrderDetailsEntity orderToBeSaved = new OrderDetailsEntity(orderFromBody.getCreationDate(), orderFromBody, orderType, user);
     walletService.reduceWalletCryptocurrencyBalanceByUserId(orderToBeSaved.getUser().getId(), orderToBeSaved.getCryptocurrencyAmount());
     OrderDetailsEntity savedOrder = orderDetailsRepository.save(orderToBeSaved);
     return new OrderDetailsRestDto(savedOrder);

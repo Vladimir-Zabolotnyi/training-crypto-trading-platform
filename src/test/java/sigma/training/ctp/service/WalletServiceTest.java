@@ -47,7 +47,6 @@ public class WalletServiceTest {
   @Test
   void reduceWalletCryptocurrencyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
-    when(repository.updateWalletEntityCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_BALANCE_REDUCED)).thenReturn(WALLET_AFTER_UPDATE);
     WalletRestDto expected = new WalletRestDto(
       WALLET.getMoneyBalance(),
       CRYPTOCURRENCY_BALANCE_REDUCED

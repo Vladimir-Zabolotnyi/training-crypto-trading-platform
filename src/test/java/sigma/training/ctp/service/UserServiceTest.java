@@ -20,42 +20,40 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith({ MockitoExtension.class })
 class UserServiceTest {
 
-    @Mock
-    UserRepository userRepository;
+  @Mock
+  UserRepository userRepository;
+  UserEntity user1;
+  UserEntity user2;
+  @InjectMocks
+  private UserService userService;
 
-    @InjectMocks
-    private UserService userService;
+  @BeforeEach
+  void setUp() {
+    user1 = new UserEntity();
+    user1.setId(1L);
+    user1.setName("Jack");
+    user1.setLogin("Jacklog");
+    user1.setPassword("Jackpass");
 
-    UserEntity user1;
-    UserEntity user2;
+    user2 = new UserEntity();
+    user2.setId(2L);
+    user2.setName("Vova");
+    user2.setLogin("Vovalog");
+    user2.setPassword("Vovapass");
+  }
 
-    @BeforeEach
-    void setUp() {
-        user1 = new UserEntity();
-        user1.setId(1L);
-        user1.setName("Jack");
-        user1.setLogin("Jacklog");
-        user1.setPassword("Jackpass");
+  @Test
+  void loadUserByUsername() {
+    Mockito.when(userRepository.findUserByLogin(user1.getLogin())).thenReturn(Optional.of(user1));
+    Mockito.when(userRepository.findUserByLogin(user2.getLogin())).thenReturn(Optional.of(user2));
+    UserDetails userDet1 = userService.loadUserByUsername(user1.getLogin());
+    UserDetails userDet2 = userService.loadUserByUsername(user2.getLogin());
+    assertEquals(user1, userDet1);
+    assertEquals(user2, userDet2);
+  }
 
-        user2 = new UserEntity();
-        user2.setId(2L);
-        user2.setName("Vova");
-        user2.setLogin("Vovalog");
-        user2.setPassword("Vovapass");
-    }
-
-    @Test
-    void loadUserByUsername() {
-        Mockito.when(userRepository.findUserByLogin(user1.getLogin())).thenReturn(Optional.of(user1));
-        Mockito.when(userRepository.findUserByLogin(user2.getLogin())).thenReturn(Optional.of(user2));
-        UserDetails userDet1 = userService.loadUserByUsername(user1.getLogin());
-        UserDetails userDet2 = userService.loadUserByUsername(user2.getLogin());
-        assertEquals(user1, userDet1);
-        assertEquals(user2, userDet2);
-    }
-
-    @Test()
-    void loadUserByNotExistedUsername() {
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(user1.getName()));
-    }
+  @Test()
+  void loadUserByNotExistedUsername() {
+    assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(user1.getName()));
+  }
 }

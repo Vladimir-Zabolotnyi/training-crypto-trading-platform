@@ -29,10 +29,19 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         current_session_context_class=org: springframework.orm.hibernate5.SpringSessionContext
     show-sql: true
+springdoc:
+  api-docs:
+    path: /ctp-docs
+  swagger-ui:
+    path: /ctp-ui.html
+
+application:
+  title: "ctp"
+  description: "cryptocurrency market"
+  version: "1.0.0"
 
 bankcurrency:
   name: "USDT"
 cryptocurrency:
   name: "MarsCoin"
   sign: "♂"
-

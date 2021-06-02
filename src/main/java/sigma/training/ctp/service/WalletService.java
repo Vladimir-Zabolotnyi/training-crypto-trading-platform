@@ -10,30 +10,30 @@ import sigma.training.ctp.dto.WalletRestDto;
 @Service
 public class WalletService {
 
-    public static final String DELIMITER = ": ";
+  public static final String DELIMITER = ": ";
 
-    @Autowired
-    private WalletRepository repository;
+  @Autowired
+  private WalletRepository repository;
 
-    @Value("${bankcurrency.name}")
-    private String bankCurrencyName;
-    @Value("${cryptocurrency.name}")
-    private String cryptocurrencyName;
-    @Value("${cryptocurrency.sign}")
-    private String cryptocurrencySign;
+  @Value("${bankcurrency.name}")
+  private String bankCurrencyName;
+  @Value("${cryptocurrency.name}")
+  private String cryptocurrencyName;
+  @Value("${cryptocurrency.sign}")
+  private String cryptocurrencySign;
 
-    public WalletRestDto getWalletByUserId(Long id) {
-        WalletEntity wallet = repository.findWalletEntityByUserId(id);
+  public WalletRestDto getWalletByUserId(Long id) {
+    WalletEntity wallet = repository.findWalletEntityByUserId(id);
 
-        String moneyBalance = bankCurrencyName
-                .concat(DELIMITER)
-                .concat(wallet.getMoneyBalance().toString());
+    String moneyBalance = bankCurrencyName
+      .concat(DELIMITER)
+      .concat(wallet.getMoneyBalance().toString());
 
-        String cryptocurrencyBalance = cryptocurrencyName
-                .concat(DELIMITER)
-                .concat(wallet.getCryptocurrencyBalance().toString())
-                .concat(cryptocurrencySign);
+    String cryptocurrencyBalance = cryptocurrencyName
+      .concat(DELIMITER)
+      .concat(wallet.getCryptocurrencyBalance().toString())
+      .concat(cryptocurrencySign);
 
-        return new WalletRestDto(moneyBalance, cryptocurrencyBalance);
-    }
+    return new WalletRestDto(moneyBalance, cryptocurrencyBalance);
+  }
 }

@@ -14,13 +14,15 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired
+  UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        if (Objects.isNull(login) || login.isEmpty()) throw new IllegalArgumentException("login is null");
-        final Optional<UserEntity> user = userRepository.findUserByLogin(login);
-        return user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  @Override
+  public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+    if (Objects.isNull(login) || login.isEmpty()) {
+      throw new IllegalArgumentException("login is null");
     }
+    final Optional<UserEntity> user = userRepository.findUserByLogin(login);
+    return user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
 }

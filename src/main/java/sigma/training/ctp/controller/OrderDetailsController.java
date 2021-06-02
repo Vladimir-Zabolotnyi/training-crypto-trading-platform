@@ -37,7 +37,9 @@ public class OrderDetailsController {
   @Operation(summary = "Create Order", description = "Allows to create order")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "order created",
-      content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class)))
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
+    @ApiResponse(responseCode = "400", description = "not enough cryptocurrency",
+      content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping(path = "/{orderType}")
@@ -49,7 +51,7 @@ public class OrderDetailsController {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
-    OrderDetailsEntity order = new OrderDetailsEntity(orderFromBody.getStatus(),orderFromBody.getCryptocurrencyPrice(), orderFromBody.getCryptocurrencyAmount());
+    OrderDetailsEntity order = new OrderDetailsEntity(orderFromBody.getStatus(), orderFromBody.getCryptocurrencyPrice(), orderFromBody.getCryptocurrencyAmount());
     return orderDetailsService.saveOrder(order, orderType, user);
   }
 }

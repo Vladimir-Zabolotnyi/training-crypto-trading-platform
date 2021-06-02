@@ -39,6 +39,6 @@ public class WalletService {
         walletBeforeUpdate.getMoneyBalance(),
         cryptocurrencyBalanceAfterUpdate
       );
-    } else throw new IllegalArgumentException("not enough crypto");
+    } else throw new IllegalArgumentException("There is not enough cryptocurrency in the wallet");
   }
 }

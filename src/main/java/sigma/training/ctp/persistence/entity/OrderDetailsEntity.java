@@ -1,5 +1,7 @@
 package sigma.training.ctp.persistence.entity;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,31 +25,39 @@ import java.time.Instant;
 @Table(name = "order_details")
 @Data
 @NoArgsConstructor
-
+@Schema
 public class OrderDetailsEntity {
+
+  @Hidden
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Hidden
   @Column(name = "creation_date")
   private Instant creationDate;
 
+  @Hidden
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private UserEntity user;
 
+  @Schema(description = "status of the order", enumAsRef = true,example = "created")
   @Column(name = "status")
   @Enumerated(EnumType.STRING)
   private Status status;
 
+  @Hidden
   @Column(name = "order_type")
   @Enumerated(EnumType.STRING)
   private OrderType orderType;
 
+  @Schema(description = "price of the cryptocurrency", example = "400.00")
   @Column(name = "cryptocurrency_price")
   @NonNull
   private BigDecimal cryptocurrencyPrice;
 
+  @Schema(description = "amount of the cryptocurrency", example = "20.00")
   @Column(name = "cryptocurrency_amount")
   @NonNull
   private BigDecimal cryptocurrencyAmount;

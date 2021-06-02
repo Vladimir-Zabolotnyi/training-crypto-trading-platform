@@ -1,5 +1,5 @@
 package sigma.training.ctp.persistence.entity.enums;
 
 public enum Status {
-  created, canceled, fulfilled;
+  created, cancelled, fulfilled;
 }

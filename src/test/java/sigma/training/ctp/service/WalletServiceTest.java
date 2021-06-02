@@ -64,10 +64,10 @@ public class WalletServiceTest {
   void reduceWalletCryptocurrencyBalanceByUserId() throws InsufficientAmountCryptoException {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
     when(repository.save(WALLET_AFTER_UPDATE)).thenReturn(WALLET_AFTER_UPDATE);
-    WalletRestDto expected = new WalletRestDto(
+    WalletEntity expected = new WalletEntity(
+      WALLET.getUser(),
       WALLET.getMoneyBalance(),
-      CRYPTOCURRENCY_BALANCE_REDUCED
-    );
+      CRYPTOCURRENCY_BALANCE_REDUCED);
     WalletEntity actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
     assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
 

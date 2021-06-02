@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sigma.training.ctp.dto.WalletRestDto;
+import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
@@ -29,6 +30,7 @@ public class WalletServiceTest {
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);
   @Mock
   private WalletRepository repository;
+
   @InjectMocks
   private WalletService service;
 
@@ -45,13 +47,14 @@ public class WalletServiceTest {
   }
 
   @Test
-  void reduceWalletCryptocurrencyBalanceByUserId() {
+  void reduceWalletCryptocurrencyBalanceByUserId() throws InsufficientAmountCryptoException {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
+    when(repository.save(WALLET_AFTER_UPDATE)).thenReturn(WALLET_AFTER_UPDATE);
     WalletRestDto expected = new WalletRestDto(
       WALLET.getMoneyBalance(),
       CRYPTOCURRENCY_BALANCE_REDUCED
     );
-    WalletRestDto actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
+    WalletEntity actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
     assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
 
   }
@@ -59,6 +62,6 @@ public class WalletServiceTest {
   @Test
   void exceptionReduceWalletCryptocurrencyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
-    assertThrows(IllegalArgumentException.class, () -> service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
+    assertThrows(InsufficientAmountCryptoException.class, () -> service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
   }
 }

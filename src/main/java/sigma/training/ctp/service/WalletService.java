@@ -1,9 +1,9 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
+import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
@@ -26,19 +26,15 @@ public class WalletService {
     );
   }
 
-  @Modifying
-  @Transactional
-  public WalletRestDto reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) {
+  public WalletEntity reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
     WalletEntity walletBeforeUpdate = repository.findWalletEntityByUserId(id);
     BigDecimal cryptocurrencyBalanceBeforeUpdate = walletBeforeUpdate.getCryptocurrencyBalance();
 
     if (cryptocurrencyBalanceBeforeUpdate.compareTo(cryptocurrencyAmount) != -1) {
       BigDecimal cryptocurrencyBalanceAfterUpdate = cryptocurrencyBalanceBeforeUpdate.subtract(cryptocurrencyAmount);
-      repository.updateWalletEntityCryptocurrencyBalanceByUserId(id, cryptocurrencyBalanceAfterUpdate);
-      return new WalletRestDto(
-        walletBeforeUpdate.getMoneyBalance(),
-        cryptocurrencyBalanceAfterUpdate
-      );
-    } else throw new IllegalArgumentException("There is not enough cryptocurrency in the wallet");
+      walletBeforeUpdate.setCryptocurrencyBalance(cryptocurrencyBalanceAfterUpdate);
+      WalletEntity walletAfterUpdate = repository.save(walletBeforeUpdate);
+      return walletAfterUpdate;
+    } else throw new InsufficientAmountCryptoException();
   }
 }

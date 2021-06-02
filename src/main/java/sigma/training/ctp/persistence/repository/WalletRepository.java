@@ -13,10 +13,4 @@ import java.math.BigDecimal;
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
   WalletEntity findWalletEntityByUserId(Long id);
 
-  @Modifying
-  @Query(
-    value = "update wallet set cryptocurrency_balance= :cryptocurrencyBalance where user_id= :user_id",
-    nativeQuery = true)
-  void updateWalletEntityCryptocurrencyBalanceByUserId(@Param("user_id") Long id,
-                                                       @Param("cryptocurrencyBalance") BigDecimal cryptocurrencyBalance);
 }

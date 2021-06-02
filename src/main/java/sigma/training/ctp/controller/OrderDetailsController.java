@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
-import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
+import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.UserEntity;
-import sigma.training.ctp.persistence.entity.enums.OrderType;
+import sigma.training.ctp.enums.OrderType;
 import sigma.training.ctp.service.OrderDetailsService;
+import sigma.training.ctp.view.OrderDetailsViewModel;
 
 @RestController
 @RequestMapping("/orders")
@@ -46,12 +46,11 @@ public class OrderDetailsController {
   public @ResponseBody
   OrderDetailsRestDto postOrder(@RequestBody
                                 @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "cryptocurrency amount and price",
-                                  content = @Content(schema = @Schema(implementation = OrderDetailsEntity.class))) OrderDetailsEntity orderFromBody,
-                                @PathVariable("orderType") @Parameter(description = "type of the order") OrderType orderType) {
+                                  content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto orderDtoFromBody,
+                                @PathVariable("orderType") @Parameter(description = "type of the order") OrderType orderType) throws InsufficientAmountCryptoException {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
-    OrderDetailsEntity order = new OrderDetailsEntity(orderFromBody.getStatus(), orderFromBody.getCryptocurrencyPrice(), orderFromBody.getCryptocurrencyAmount());
-    return orderDetailsService.saveOrder(order, orderType, user);
+    return orderDetailsService.saveOrder(orderDtoFromBody.getStatus(), orderDtoFromBody.getCryptocurrencyPrice(), orderDtoFromBody.getCryptocurrencyAmount(), orderType, user);
   }
 }

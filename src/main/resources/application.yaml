@@ -37,3 +37,8 @@ application:
   description: "cryptocurrency market"
   version: "1.0.0"
 
+bankcurrency:
+  name: "USDT"
+cryptocurrency:
+  name: "MarsCoin"
+  sign: "♂"

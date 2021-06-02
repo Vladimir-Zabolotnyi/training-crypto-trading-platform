@@ -17,26 +17,11 @@ public class WalletController {
     private WalletService service;
 
     @GetMapping(path = "/my-wallet")
-    @ResponseBody
-    public WalletRestDto getUserWallet(
-            @Value("${bankcurrency.name}") String bankCurrencyName,
-            @Value("${cryptocurrency.name}") String cryptocurrencyName,
-            @Value("${cryptocurrency.sign}") String cryptocurrencySign
-    ) {
+    public WalletRestDto getUserWallet() {
         UserEntity user = (UserEntity) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-        WalletRestDto walletRestDto = service.getWalletByUserId(user.getId());
-
-        String moneyBalance = bankCurrencyName
-                .concat(": ")
-                .concat(walletRestDto.getMoneyBalance());
-        String cryptocurrencyBalance = cryptocurrencyName
-                .concat(": ")
-                .concat(walletRestDto.getCryptocurrencyBalance())
-                .concat(cryptocurrencySign);
-
-        return new WalletRestDto(moneyBalance, cryptocurrencyBalance);
+        return service.getWalletByUserId(user.getId());
     }
 }

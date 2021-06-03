@@ -41,7 +41,7 @@ public class OrderDetailsController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "order created",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
-    @ApiResponse(responseCode = "400", description = "not enough cryptocurrency",
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of cryptocurrency in the wallet",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.CREATED)

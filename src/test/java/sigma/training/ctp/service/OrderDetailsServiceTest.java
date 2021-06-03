@@ -32,7 +32,6 @@ class OrderDetailsServiceTest {
   private static final Status STATUS = Status.CREATED;
   private static final UserEntity USER = new UserEntity();
   private static final OrderType ORDER_TYPE = OrderType.SELL;
-  private static final WalletRestDto WALLET = new WalletRestDto(new BigDecimal("17").toString(), new BigDecimal("228.13").toString()f);
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
 
   private static final OrderDetailsEntity ORDER_FROM_BODY = new OrderDetailsEntity(null, null, STATUS, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);

@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 public class WalletEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
   private Long id;
 
   @OneToOne
@@ -37,4 +38,6 @@ public class WalletEntity {
   @Column(name = "cryptocurrency_balance")
   @NonNull
   private BigDecimal cryptocurrencyBalance;
+
+
 }

@@ -3,9 +3,14 @@ package sigma.training.ctp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sigma.training.ctp.dto.WalletRestDto;
+import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 import sigma.training.ctp.dto.WalletRestDto;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
 
 @Service
 public class WalletService {
@@ -14,6 +19,7 @@ public class WalletService {
 
   @Autowired
   private WalletRepository repository;
+
 
   @Value("${bankcurrency.name}")
   private String bankCurrencyName;
@@ -35,5 +41,15 @@ public class WalletService {
       .concat(cryptocurrencySign);
 
     return new WalletRestDto(moneyBalance, cryptocurrencyBalance);
+  }
+
+  public WalletEntity reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
+    WalletEntity wallet = repository.findWalletEntityByUserId(id);
+    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
+    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {
+      throw new InsufficientAmountCryptoException();
+    }
+    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));
+    return repository.save(wallet);
   }
 }

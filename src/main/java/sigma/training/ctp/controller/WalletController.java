@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.persistence.entity.UserEntity;
+import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.service.WalletService;
 
 @RestController
@@ -18,10 +19,7 @@ public class WalletController {
 
   @GetMapping(path = "/my-wallet")
   public WalletRestDto getUserWallet() {
-    UserEntity user = (UserEntity) SecurityContextHolder.getContext()
-                                                        .getAuthentication()
-                                                        .getPrincipal();
-
+    UserEntity user = UserService.getCurrentUser();
     return service.getWalletByUserId(user.getId());
   }
 }

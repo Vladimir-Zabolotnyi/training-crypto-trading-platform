@@ -24,6 +24,7 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.service.OrderDetailsService;
+import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
 
 import java.util.Locale;
@@ -53,9 +54,7 @@ public class OrderDetailsController {
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
                                   schema = @Schema(allowableValues = {"buy","sell","SELL","BUY"}))  String orderType) throws InsufficientAmountCryptoException {
-    UserEntity user = (UserEntity) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal();
+    UserEntity user = UserService.getCurrentUser();
     return orderDetailsService.saveOrder(
       order.getOrderStatus(),
       order.getCryptocurrencyPrice(),

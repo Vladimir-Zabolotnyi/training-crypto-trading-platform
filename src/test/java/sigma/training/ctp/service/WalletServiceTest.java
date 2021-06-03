@@ -1,5 +1,6 @@
 package sigma.training.ctp.service;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +17,6 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static sigma.training.ctp.service.WalletService.DELIMITER;
 
@@ -31,11 +31,13 @@ public class WalletServiceTest {
   private static final BigDecimal CRYPTOCURRENCY_BALANCE_REDUCED = new BigDecimal("17");
   private static final WalletEntity WALLET = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
 
+
   private static final String BANK_CURRENCY_NAME = "USDT";
   private static final String CRYPTOCURRENCY_NAME = "MarsOne";
   private static final String CRYPTOCURRENCY_SIGN = "♂";
 
-  private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);
+  private static final WalletEntity WALLET_BEFORE_UPDATE = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
+  private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET_BEFORE_UPDATE.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);
   @Mock
   private WalletRepository repository;
 
@@ -62,15 +64,14 @@ public class WalletServiceTest {
 
   @Test
   void reduceWalletCryptocurrencyBalanceByUserId() throws InsufficientAmountCryptoException {
-    when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
+    when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_BEFORE_UPDATE);
     when(repository.save(WALLET_AFTER_UPDATE)).thenReturn(WALLET_AFTER_UPDATE);
     WalletEntity expected = new WalletEntity(
-      WALLET.getUser(),
-      WALLET.getMoneyBalance(),
+      WALLET_AFTER_UPDATE.getUser(),
+      WALLET_BEFORE_UPDATE.getMoneyBalance(),
       CRYPTOCURRENCY_BALANCE_REDUCED);
     WalletEntity actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
     assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
-
   }
 
   @Test

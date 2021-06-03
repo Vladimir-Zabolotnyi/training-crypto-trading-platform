@@ -1,5 +1,6 @@
-package sigma.training.ctp.enums;
+package sigma.training.ctp.dictionary;
 
 public enum OrderType {
   BUY, SELL;
+
 }

@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import lombok.NoArgsConstructor;
-import sigma.training.ctp.enums.OrderType;
-import sigma.training.ctp.enums.Status;
+import sigma.training.ctp.dictionary.OrderType;
+import sigma.training.ctp.dictionary.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,9 +28,9 @@ public class OrderDetailsRestDto {
   private Long userId;
 
   @Schema(description = "status of the order", enumAsRef = true, example = "CREATED")
-  private Status status;
+  private OrderStatus orderStatus;
 
-  @Schema(description = "type of the order", enumAsRef = true, example = "SELL")
+  @Schema(description = "type of the order", enumAsRef = true,example = "sell")
   private OrderType orderType;
 
   @Schema(description = "price of the cryptocurrency", example = "400.00")

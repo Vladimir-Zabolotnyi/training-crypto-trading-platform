@@ -1,12 +1,14 @@
 package sigma.training.ctp.persistence.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.hibernate.annotations.CreationTimestamp;
-import sigma.training.ctp.enums.OrderType;
-import sigma.training.ctp.enums.Status;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import sigma.training.ctp.dictionary.OrderType;
+import sigma.training.ctp.dictionary.OrderStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +28,7 @@ import java.time.Instant;
 @Table(name = "order_details")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderDetailsEntity {
 
   @Id
@@ -33,15 +36,16 @@ public class OrderDetailsEntity {
   private Long id;
 
   @Column(name = "creation_date")
+  @Generated(GenerationTime.INSERT)
   private Instant creationDate;
 
   @ManyToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id")
   private UserEntity user;
 
-  @Column(name = "status")
+  @Column(name = "order_status")
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private OrderStatus orderStatus;
 
   @Column(name = "order_type")
   @Enumerated(EnumType.STRING)
@@ -56,10 +60,9 @@ public class OrderDetailsEntity {
   private BigDecimal cryptocurrencyAmount;
 
 
-  public OrderDetailsEntity(Instant creationDate, UserEntity user, Status status, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
-    this.creationDate = creationDate;
+  public OrderDetailsEntity(UserEntity user, OrderStatus orderStatus, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
     this.user = user;
-    this.status = status;
+    this.orderStatus = orderStatus;
     this.orderType = orderType;
     this.cryptocurrencyPrice = cryptocurrencyPrice;
     this.cryptocurrencyAmount = cryptocurrencyAmount;

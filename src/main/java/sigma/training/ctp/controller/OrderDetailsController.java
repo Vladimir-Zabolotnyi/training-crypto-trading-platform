@@ -49,14 +49,19 @@ public class OrderDetailsController {
   public @ResponseBody
   OrderDetailsRestDto postOrder(@RequestBody
                                 @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "cryptocurrency amount and price",
-                                  content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto orderDtoFromBody,
+                                  content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
                                   schema = @Schema(allowableValues = {"buy","sell","SELL","BUY"}))  String orderType) throws InsufficientAmountCryptoException {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
-    return orderDetailsService.saveOrder(orderDtoFromBody.getOrderStatus(), orderDtoFromBody.getCryptocurrencyPrice(), orderDtoFromBody.getCryptocurrencyAmount(), OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)), user);
+    return orderDetailsService.saveOrder(
+      order.getOrderStatus(),
+      order.getCryptocurrencyPrice(),
+      order.getCryptocurrencyAmount(),
+      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
+      user);
 
   }
 }

@@ -22,8 +22,8 @@ public class OrderDetailsService {
   WalletService walletService;
 
   public OrderDetailsRestDto saveOrder(OrderStatus orderStatus, BigDecimal cryptocurrencyPrice, BigDecimal cryptocurrencyAmount, OrderType orderType, UserEntity user) throws InsufficientAmountCryptoException {
-    OrderDetailsEntity orderToBeSaved = new OrderDetailsEntity(user, orderStatus, orderType, cryptocurrencyPrice, cryptocurrencyAmount);
-    OrderDetailsEntity savedOrder = saveOrder(orderToBeSaved);
+    OrderDetailsEntity order = new OrderDetailsEntity(user, orderStatus, orderType, cryptocurrencyPrice, cryptocurrencyAmount);
+    OrderDetailsEntity savedOrder = saveOrder(order);
     return new OrderDetailsRestDto(
       savedOrder.getId(), savedOrder.getCreationDate(),
       savedOrder.getUser().getId(), savedOrder.getOrderStatus(),

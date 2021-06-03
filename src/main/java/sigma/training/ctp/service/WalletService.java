@@ -44,14 +44,12 @@ public class WalletService {
   }
 
   public WalletEntity reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
-    WalletEntity walletBeforeUpdate = repository.findWalletEntityByUserId(id);
-    BigDecimal cryptocurrencyBalanceBeforeUpdate = walletBeforeUpdate.getCryptocurrencyBalance();
-
-    if (cryptocurrencyBalanceBeforeUpdate.compareTo(cryptocurrencyAmount) != -1) {
-      BigDecimal cryptocurrencyBalanceAfterUpdate = cryptocurrencyBalanceBeforeUpdate.subtract(cryptocurrencyAmount);
-      walletBeforeUpdate.setCryptocurrencyBalance(cryptocurrencyBalanceAfterUpdate);
-      WalletEntity walletAfterUpdate = repository.save(walletBeforeUpdate);
-      return walletAfterUpdate;
-    } else throw new InsufficientAmountCryptoException();
+    WalletEntity wallet = repository.findWalletEntityByUserId(id);
+    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
+    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) == -1) {
+      throw new InsufficientAmountCryptoException();
+    }
+    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));
+    return repository.save(wallet);
   }
 }

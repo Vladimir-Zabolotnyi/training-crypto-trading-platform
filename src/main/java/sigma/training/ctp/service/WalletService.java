@@ -46,7 +46,7 @@ public class WalletService {
   public WalletEntity reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
     WalletEntity wallet = repository.findWalletEntityByUserId(id);
     BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
-    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) == -1) {
+    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {
       throw new InsufficientAmountCryptoException();
     }
     wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));

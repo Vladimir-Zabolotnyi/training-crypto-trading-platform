@@ -25,7 +25,6 @@ public class OrderDetailsService {
     @Transactional
   public OrderDetailsRestDto saveOrder(Status status, BigDecimal cryptocurrencyPrice, BigDecimal cryptocurrencyAmount, OrderType orderType, UserEntity user) throws InsufficientAmountCryptoException {
     OrderDetailsEntity orderToBeSaved = new OrderDetailsEntity(Instant.now(),user, status, orderType, cryptocurrencyPrice, cryptocurrencyAmount);
-    String s = "There is not enough cryptocurrency in the wallet";
     walletService.reduceWalletCryptocurrencyBalanceByUserId(orderToBeSaved.getUser().getId(), orderToBeSaved.getCryptocurrencyAmount());
     OrderDetailsEntity savedOrder = orderDetailsRepository.save(orderToBeSaved);
     return new OrderDetailsRestDto(

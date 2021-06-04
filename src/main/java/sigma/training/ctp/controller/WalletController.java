@@ -21,7 +21,6 @@ public class WalletController {
 
   @GetMapping(path = "/my-wallet")
   public WalletRestDto getUserWallet() {
-    UserEntity user = userService.getCurrentUser();
-    return walletService.getWalletByUserId(user.getId());
+    return walletService.getWalletByUserId(userService.getCurrentUser().getId());
   }
 }

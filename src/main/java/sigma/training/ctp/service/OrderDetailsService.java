@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
@@ -38,13 +39,16 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public OrderDetailsRestDto fulfillOrder(Long order_id,UserEntity current_user) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
+  public OrderDetailsRestDto fulfillOrder(Long order_id,UserEntity current_user) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException, CannotFulfillOwnOrderException {
     OrderDetailsEntity order = orderDetailsRepository.findById(order_id).orElseThrow(() -> new OrderNotFoundException(order_id));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       throw new OrderAlreadyCancelledException(order_id);
     }
     if (order.getOrderStatus() == OrderStatus.FULFILLED) {
       throw new OrderAlreadyFulfilledException(order_id);
+    }
+    if (order.getUser().getId() == current_user.getId()){
+      throw new CannotFulfillOwnOrderException();
     }
     walletService.purchaseCryptocurrency(current_user.getId(),order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
     order.setOrderStatus(OrderStatus.FULFILLED);

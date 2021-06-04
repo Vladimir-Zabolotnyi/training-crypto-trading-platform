@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
@@ -104,7 +105,7 @@ class OrderDetailsServiceTest {
   }
 
   @Test
-  void fulfillOrder() throws InsufficientAmountBankCurrencyException, OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException {
+  void fulfillOrder() throws InsufficientAmountBankCurrencyException, OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
@@ -131,5 +132,10 @@ class OrderDetailsServiceTest {
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION2));
     ORDER_BY_ID_FOR_EXCEPTION2.setOrderStatus(OrderStatus.FULFILLED);
     assertThrows(OrderAlreadyFulfilledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
+  }
+  @Test
+  void exceptionNotFulfilledOwnOrder() {
+    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
+    assertThrows(CannotFulfillOwnOrderException.class,()->orderDetailsService.fulfillOrder(ID, USER));
   }
 }

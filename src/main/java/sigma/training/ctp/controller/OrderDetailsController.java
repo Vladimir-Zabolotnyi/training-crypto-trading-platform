@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
@@ -73,6 +74,8 @@ public class OrderDetailsController {
     @ApiResponse(responseCode = "403", description = "Order already fulfilled or cancelled",
       content = @Content(mediaType = "text/plain")),
     @ApiResponse(responseCode = "404", description = "Order not found",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "406", description = "You are not able to fulfill own order",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)
@@ -82,7 +85,7 @@ public class OrderDetailsController {
     @PathVariable("id") @Parameter(
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
-    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException, CannotFulfillOwnOrderException {
     return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
 
   }

@@ -45,6 +45,7 @@ public class OrderDetailsEntity {
 
   @Column(name = "order_status")
   @Enumerated(EnumType.STRING)
+  @Generated(GenerationTime.INSERT)
   private OrderStatus orderStatus;
 
   @Column(name = "order_type")
@@ -60,9 +61,8 @@ public class OrderDetailsEntity {
   private BigDecimal cryptocurrencyAmount;
 
 
-  public OrderDetailsEntity(UserEntity user, OrderStatus orderStatus, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
+  public OrderDetailsEntity(UserEntity user, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
     this.user = user;
-    this.orderStatus = orderStatus;
     this.orderType = orderType;
     this.cryptocurrencyPrice = cryptocurrencyPrice;
     this.cryptocurrencyAmount = cryptocurrencyAmount;

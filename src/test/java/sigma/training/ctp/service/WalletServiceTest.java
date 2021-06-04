@@ -1,6 +1,5 @@
 package sigma.training.ctp.service;
 
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
@@ -36,30 +36,30 @@ public class WalletServiceTest {
   private static final String CRYPTOCURRENCY_NAME = "MarsOne";
   private static final String CRYPTOCURRENCY_SIGN = "♂";
 
+  private static final String MONEY_BALANCE_DTO = BANK_CURRENCY_NAME + DELIMITER + MONEY_BALANCE.toString();
+  private static final String CRYPTOCURRENCY_BALANCE_DTO = CRYPTOCURRENCY_NAME + DELIMITER +
+    CRYPTOCURRENCY_BALANCE.toString() + CRYPTOCURRENCY_SIGN;
+  private static final WalletRestDto WALLET_DTO = new WalletRestDto(MONEY_BALANCE_DTO,CRYPTOCURRENCY_BALANCE_DTO);
+
   private static final WalletEntity WALLET_BEFORE_UPDATE = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET_BEFORE_UPDATE.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);
   @Mock
   private WalletRepository repository;
+
+  @Mock
+  private WalletMapper walletMapper;
 
   @InjectMocks
   private WalletService service;
 
   @Test
   public void testGetWalletByUserIdCheckBalances() {
-    ReflectionTestUtils.setField(service, "bankCurrencyName", BANK_CURRENCY_NAME);
-    ReflectionTestUtils.setField(service, "cryptocurrencyName", CRYPTOCURRENCY_NAME);
-    ReflectionTestUtils.setField(service, "cryptocurrencySign", CRYPTOCURRENCY_SIGN);
-
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
+    when(walletMapper.toRestDto(WALLET)).thenReturn(WALLET_DTO);
 
     WalletRestDto actualWallet = service.getWalletByUserId(ID);
-
-    String moneyBalance = BANK_CURRENCY_NAME + DELIMITER + MONEY_BALANCE.toString();
-    String cryptocurrencyBalance = CRYPTOCURRENCY_NAME + DELIMITER + CRYPTOCURRENCY_BALANCE.toString()
-      + CRYPTOCURRENCY_SIGN;
-
-    assertEquals(moneyBalance, actualWallet.getMoneyBalance());
-    assertEquals(cryptocurrencyBalance, actualWallet.getCryptocurrencyBalance());
+    assertEquals(MONEY_BALANCE_DTO, actualWallet.getMoneyBalance());
+    assertEquals(CRYPTOCURRENCY_BALANCE_DTO, actualWallet.getCryptocurrencyBalance());
   }
 
   @Test

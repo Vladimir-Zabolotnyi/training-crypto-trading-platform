@@ -49,11 +49,7 @@ public class OrderDetailsController {
                                   description = "type of the order",
                                   schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException {
     UserEntity user = userService.getCurrentUser();
-    return orderDetailsService.saveOrder(
-      order.getOrderStatus(),
-      order.getCryptocurrencyPrice(),
-      order.getCryptocurrencyAmount(),
-      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-      user);
+    order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
+    return orderDetailsService.postOrder(order, user);
   }
 }

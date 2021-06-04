@@ -20,7 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
+import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.OrderAlreadyCancelledException;
+import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
+import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.service.OrderDetailsService;
@@ -58,6 +62,30 @@ public class OrderDetailsController {
       .getPrincipal();
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     return orderDetailsService.postOrder(order, user);
+
+  }
+
+  @Operation(summary = "Fulfill Order", description = "Allows to fulfill order")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Order fulfilled",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency in the wallet",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "400", description = "Order already fulfilled by another user",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "400", description = "Order already cancelled",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "401", description = "Order not found",
+      content = @Content(mediaType = "text/plain"))
+  })
+  @ResponseStatus(HttpStatus.OK)
+  @PostMapping(path = "/{id}/fulfill")
+  public @ResponseBody
+  OrderDetailsRestDto fulfillOrder(@PathVariable("orderType") @Parameter(description = "id of the order") Long id) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
+    UserEntity user = (UserEntity) SecurityContextHolder.getContext()
+      .getAuthentication()
+      .getPrincipal();
+    return orderDetailsService.fulfillOrder(id,user);
 
   }
 }

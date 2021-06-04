@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static sigma.training.ctp.service.WalletService.DELIMITER;
 
 @ExtendWith(MockitoExtension.class)
 public class WalletServiceTest {
@@ -30,16 +29,17 @@ public class WalletServiceTest {
   private static final BigDecimal CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION = new BigDecimal("40");
   private static final BigDecimal CRYPTOCURRENCY_BALANCE_REDUCED = new BigDecimal("17");
   private static final WalletEntity WALLET = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
+  private static final String SPACE = " ";
 
 
   private static final String BANK_CURRENCY_NAME = "USDT";
   private static final String CRYPTOCURRENCY_NAME = "MarsOne";
   private static final String CRYPTOCURRENCY_SIGN = "♂";
 
-  private static final String MONEY_BALANCE_DTO = BANK_CURRENCY_NAME + DELIMITER + MONEY_BALANCE.toString();
-  private static final String CRYPTOCURRENCY_BALANCE_DTO = CRYPTOCURRENCY_NAME + DELIMITER +
-    CRYPTOCURRENCY_BALANCE.toString() + CRYPTOCURRENCY_SIGN;
-  private static final WalletRestDto WALLET_DTO = new WalletRestDto(MONEY_BALANCE_DTO,CRYPTOCURRENCY_BALANCE_DTO);
+  private static final String MONEY_BALANCE_DTO = BANK_CURRENCY_NAME + SPACE + MONEY_BALANCE.toString();
+  private static final String CRYPTOCURRENCY_BALANCE_DTO = CRYPTOCURRENCY_NAME + SPACE +
+    CRYPTOCURRENCY_BALANCE.toString() + SPACE + CRYPTOCURRENCY_SIGN;
+  private static final WalletRestDto WALLET_DTO = new WalletRestDto(MONEY_BALANCE_DTO, CRYPTOCURRENCY_BALANCE_DTO);
 
   private static final WalletEntity WALLET_BEFORE_UPDATE = new WalletEntity(new UserEntity(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE);
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(WALLET_BEFORE_UPDATE.getUser(), MONEY_BALANCE, CRYPTOCURRENCY_BALANCE_REDUCED);

@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -54,10 +55,12 @@ public class OrderDetailsEntity {
 
   @Column(name = "cryptocurrency_price")
   @NonNull
+  @DecimalMin(value = "0.00")
   private BigDecimal cryptocurrencyPrice;
 
   @Column(name = "cryptocurrency_amount")
   @NonNull
+  @DecimalMin(value = "0.00")
   private BigDecimal cryptocurrencyAmount;
 
 

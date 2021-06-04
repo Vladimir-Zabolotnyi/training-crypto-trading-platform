@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dictionary.OrderStatus;
 
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -34,8 +35,10 @@ public class OrderDetailsRestDto {
   private OrderType orderType;
 
   @Schema(description = "price of the cryptocurrency", example = "400.00")
+  @DecimalMin(value = "0.00")
   private BigDecimal cryptocurrencyPrice;
 
   @Schema(description = "amount of the cryptocurrency", example = "20.00")
+  @DecimalMin(value = "0.00")
   private BigDecimal cryptocurrencyAmount;
 }

@@ -56,7 +56,7 @@ public class OrderDetailsController {
                                   content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy","sell","SELL","BUY"}))  String orderType) throws InsufficientAmountCryptoException {
+                                  schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
@@ -81,11 +81,15 @@ public class OrderDetailsController {
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(path = "/{id}/fulfill")
   public @ResponseBody
-  OrderDetailsRestDto fulfillOrder(@PathVariable("orderType") @Parameter(description = "id of the order") Long id) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
+  OrderDetailsRestDto fulfillOrder(
+    @PathVariable("id") @Parameter(
+      description = "id of the order",
+      content = @Content(schema = @Schema(implementation = Long.class))) Long id)
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
-    return orderDetailsService.fulfillOrder(id,user);
+    return orderDetailsService.fulfillOrder(id, user);
 
   }
 }

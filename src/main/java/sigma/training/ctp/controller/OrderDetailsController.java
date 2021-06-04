@@ -70,11 +70,9 @@ public class OrderDetailsController {
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
     @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency in the wallet",
       content = @Content(mediaType = "text/plain")),
-    @ApiResponse(responseCode = "400", description = "Order already fulfilled by another user",
+    @ApiResponse(responseCode = "403", description = "Order already fulfilled or cancelled",
       content = @Content(mediaType = "text/plain")),
-    @ApiResponse(responseCode = "400", description = "Order already cancelled",
-      content = @Content(mediaType = "text/plain")),
-    @ApiResponse(responseCode = "401", description = "Order not found",
+    @ApiResponse(responseCode = "404", description = "Order not found",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)

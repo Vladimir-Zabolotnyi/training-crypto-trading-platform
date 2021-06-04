@@ -58,6 +58,15 @@ class OrderDetailsServiceTest {
     ID, CREATION_DATE,
     USER, ORDER_STATUS, ORDER_TYPE,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+  private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION1 = new OrderDetailsEntity(
+    ID, CREATION_DATE,
+    USER, ORDER_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+
+  private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION2 = new OrderDetailsEntity(
+    ID, CREATION_DATE,
+    USER, ORDER_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final OrderDetailsRestDto ORDER_DTO_BY_ID = new OrderDetailsRestDto(
     ID, CREATION_DATE,
@@ -113,14 +122,14 @@ class OrderDetailsServiceTest {
   }
   @Test
   void exceptionAlreadyCancelledOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
-    ORDER_BY_ID.setOrderStatus(OrderStatus.CANCELLED);
+    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
+    ORDER_BY_ID_FOR_EXCEPTION1.setOrderStatus(OrderStatus.CANCELLED);
     assertThrows(OrderAlreadyCancelledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
   @Test
   void exceptionAlreadyFulfilledOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
-    ORDER_BY_ID.setOrderStatus(OrderStatus.FULFILLED);
-    assertThrows(OrderAlreadyCancelledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
+    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION2));
+    ORDER_BY_ID_FOR_EXCEPTION2.setOrderStatus(OrderStatus.FULFILLED);
+    assertThrows(OrderAlreadyFulfilledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
 }

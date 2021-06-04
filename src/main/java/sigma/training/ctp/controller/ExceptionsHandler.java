@@ -24,12 +24,12 @@ public class ExceptionsHandler {
 
   @ExceptionHandler(value = {OrderAlreadyCancelledException.class})
   public ResponseEntity<Object> handleInvalidInputException(OrderAlreadyCancelledException ex) {
-    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.FORBIDDEN);
   }
 
   @ExceptionHandler(value = {OrderAlreadyFulfilledException.class})
   public ResponseEntity<Object> handleInvalidInputException(OrderAlreadyFulfilledException ex) {
-    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.FORBIDDEN);
   }
 
   @ExceptionHandler(value = {OrderNotFoundException.class})

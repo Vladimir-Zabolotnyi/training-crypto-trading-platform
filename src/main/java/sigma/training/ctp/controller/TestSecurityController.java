@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import sigma.training.ctp.dto.UserRestDto;
+import sigma.training.ctp.mapper.UserMapper;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.UserService;
 
@@ -24,6 +25,9 @@ public class TestSecurityController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  UserMapper userMapper;
 
   @GetMapping
   @Operation(summary = "Security test", description = "Check login and password")
@@ -38,6 +42,7 @@ public class TestSecurityController {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
                                                         .getAuthentication()
                                                         .getPrincipal();
-    return new UserRestDto(user.getId(), user.getLogin());
+
+    return userMapper.toRestDto(user);
   }
 }

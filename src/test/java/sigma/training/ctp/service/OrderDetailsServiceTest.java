@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
@@ -32,9 +33,14 @@ class OrderDetailsServiceTest {
   private static final OrderType ORDER_TYPE = OrderType.SELL;
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
-  private static final OrderDetailsEntity ORDER_FROM_BODY = new OrderDetailsEntity(null,null, null, ORDER_STATUS, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+  private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null,null, null, ORDER_STATUS, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
   private static final OrderDetailsEntity ORDER_DETAILS = new OrderDetailsEntity(
     USER,
+    ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(),ORDER_FROM_BODY.getCryptocurrencyAmount());
+  private static final OrderDetailsRestDto ORDER_DTO = new OrderDetailsRestDto(
+    null,null,
+    USER.getId(),
     ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE,
     ORDER_FROM_BODY.getCryptocurrencyPrice(),ORDER_FROM_BODY.getCryptocurrencyAmount());
 
@@ -45,6 +51,9 @@ class OrderDetailsServiceTest {
   @Mock
   OrderDetailsRepository orderDetailsRepository;
 
+  @Mock
+  OrderMapper orderMapper;
+
   @InjectMocks
   OrderDetailsService orderDetailsService;
 
@@ -54,11 +63,14 @@ class OrderDetailsServiceTest {
     USER.setId(ID);
     Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS)).thenReturn(ORDER_DETAILS);
-    OrderDetailsRestDto orderActual = orderDetailsService.saveOrder(ORDER_STATUS,CRYPTOCURRENCY_PRICE,CRYPTOCURRENCY_AMOUNT,ORDER_TYPE,USER);
-    orderActual.setCreationDate(CREATION_DATE);
-    OrderDetailsRestDto orderExpected = new OrderDetailsRestDto(null,CREATION_DATE,USER.getId(), ORDER_STATUS,ORDER_TYPE,CRYPTOCURRENCY_PRICE,CRYPTOCURRENCY_AMOUNT);
-    orderExpected.setCreationDate(orderActual.getCreationDate());
-    assertEquals(orderExpected, orderActual);
+    Mockito.when(orderMapper.toRestDto(ORDER_DETAILS)).thenReturn(ORDER_DTO);
+    Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY,USER)).thenReturn(ORDER_DETAILS);
+    OrderDetailsRestDto orderDtoActual = orderDetailsService.postOrder(ORDER_FROM_BODY,USER);
+    orderDtoActual.setUserId(ID);
+    orderDtoActual.setCreationDate(CREATION_DATE);
+    OrderDetailsRestDto orderDtoExpected = new OrderDetailsRestDto(null,CREATION_DATE,USER.getId(), ORDER_STATUS,ORDER_TYPE,CRYPTOCURRENCY_PRICE,CRYPTOCURRENCY_AMOUNT);
+    orderDtoExpected.setCreationDate(orderDtoActual.getCreationDate());
+    assertEquals(orderDtoExpected, orderDtoActual);
 
   }
 }

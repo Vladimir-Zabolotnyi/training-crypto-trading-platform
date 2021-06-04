@@ -47,7 +47,7 @@ public class OrderDetailsController {
                                   content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy","sell","SELL","BUY"}))  String orderType) throws InsufficientAmountCryptoException {
+                                  schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException {
     UserEntity user = userService.getCurrentUser();
     return orderDetailsService.saveOrder(
       order.getOrderStatus(),
@@ -55,6 +55,5 @@ public class OrderDetailsController {
       order.getCryptocurrencyAmount(),
       OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
       user);
-
   }
 }

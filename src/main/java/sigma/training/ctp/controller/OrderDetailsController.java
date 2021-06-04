@@ -85,10 +85,7 @@ public class OrderDetailsController {
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
     throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException {
-    UserEntity user = (UserEntity) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal();
-    return orderDetailsService.fulfillOrder(id, user);
+    return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
 
   }
 }

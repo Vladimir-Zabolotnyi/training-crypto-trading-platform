@@ -10,19 +10,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.persistence.entity.UserEntity;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
@@ -34,6 +26,8 @@ import java.util.Locale;
 @Tag(name = "Order Controller", description = "Allows to create/cancel/fulfill orders(buy/sell)")
 public class OrderDetailsController {
 
+  @Autowired
+  UserService userService;
   @Autowired
   OrderDetailsService orderDetailsService;
 
@@ -54,7 +48,7 @@ public class OrderDetailsController {
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
                                   schema = @Schema(allowableValues = {"buy","sell","SELL","BUY"}))  String orderType) throws InsufficientAmountCryptoException {
-    UserEntity user = UserService.getCurrentUser();
+    UserEntity user = userService.getCurrentUser();
     return orderDetailsService.saveOrder(
       order.getOrderStatus(),
       order.getCryptocurrencyPrice(),

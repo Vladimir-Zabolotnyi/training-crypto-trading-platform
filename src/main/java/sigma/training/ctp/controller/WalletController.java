@@ -15,11 +15,13 @@ import sigma.training.ctp.service.WalletService;
 public class WalletController {
 
   @Autowired
-  private WalletService service;
+  private UserService userService;
+  @Autowired
+  private WalletService walletService;
 
   @GetMapping(path = "/my-wallet")
   public WalletRestDto getUserWallet() {
-    UserEntity user = UserService.getCurrentUser();
-    return service.getWalletByUserId(user.getId());
+    UserEntity user = userService.getCurrentUser();
+    return walletService.getWalletByUserId(user.getId());
   }
 }

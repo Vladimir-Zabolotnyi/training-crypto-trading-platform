@@ -18,7 +18,7 @@ public class UserService implements UserDetailsService {
   @Autowired
   UserRepository userRepository;
 
-  public static UserEntity getCurrentUser() {
+  public UserEntity getCurrentUser() {
     return (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();

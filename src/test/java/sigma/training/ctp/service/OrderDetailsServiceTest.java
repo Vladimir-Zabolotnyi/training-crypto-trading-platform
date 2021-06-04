@@ -33,7 +33,7 @@ class OrderDetailsServiceTest {
   private static final OrderType ORDER_TYPE = OrderType.SELL;
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
-  private static final OrderDetailsEntity ORDER_FROM_BODY = new OrderDetailsEntity(null,null, null, ORDER_STATUS, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+  private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null,null, null, ORDER_STATUS, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
   private static final OrderDetailsEntity ORDER_DETAILS = new OrderDetailsEntity(
     USER,
     ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE,
@@ -64,7 +64,8 @@ class OrderDetailsServiceTest {
     Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS)).thenReturn(ORDER_DETAILS);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS)).thenReturn(ORDER_DTO);
-    OrderDetailsRestDto orderDtoActual = orderDetailsService.saveOrder(ORDER_STATUS,CRYPTOCURRENCY_PRICE,CRYPTOCURRENCY_AMOUNT,ORDER_TYPE,USER);
+    Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY,USER)).thenReturn(ORDER_DETAILS);
+    OrderDetailsRestDto orderDtoActual = orderDetailsService.postOrder(ORDER_FROM_BODY,USER);
     orderDtoActual.setUserId(ID);
     orderDtoActual.setCreationDate(CREATION_DATE);
     OrderDetailsRestDto orderDtoExpected = new OrderDetailsRestDto(null,CREATION_DATE,USER.getId(), ORDER_STATUS,ORDER_TYPE,CRYPTOCURRENCY_PRICE,CRYPTOCURRENCY_AMOUNT);

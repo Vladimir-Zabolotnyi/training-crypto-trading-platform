@@ -56,12 +56,8 @@ public class OrderDetailsController {
     UserEntity user = (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
-    return orderDetailsService.saveOrder(
-      order.getOrderStatus(),
-      order.getCryptocurrencyPrice(),
-      order.getCryptocurrencyAmount(),
-      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-      user);
+    order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
+    return orderDetailsService.postOrder(order, user);
 
   }
 }

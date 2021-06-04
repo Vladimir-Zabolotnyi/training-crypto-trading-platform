@@ -1,6 +1,5 @@
 package sigma.training.ctp.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +38,13 @@ class OrderMapperTest {
     CRYPTOCURRENCY_PRICE,
     CRYPTOCURRENCY_AMOUNT);
 
+  private static final OrderDetailsRestDto ORDER_DTO_WITHOUT_USER = new OrderDetailsRestDto(
+    ID, CREATION_DATE,
+    null, ORDER_STATUS,
+    ORDER_TYPE,
+    CRYPTOCURRENCY_PRICE,
+    CRYPTOCURRENCY_AMOUNT);
+
   OrderMapper orderMapper;
 
   @BeforeEach
@@ -55,6 +61,12 @@ class OrderMapperTest {
   @Test
   void toEntity() {
     OrderDetailsEntity orderActual = orderMapper.toEntity(ORDER_DTO);
+    assertEquals(ORDER, orderActual);
+  }
+
+  @Test
+  void toEntityWithUser() {
+    OrderDetailsEntity orderActual = orderMapper.toEntity(ORDER_DTO_WITHOUT_USER,USER);
     assertEquals(ORDER, orderActual);
   }
 }

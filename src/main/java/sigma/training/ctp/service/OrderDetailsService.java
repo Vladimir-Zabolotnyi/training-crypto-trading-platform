@@ -27,8 +27,8 @@ public class OrderDetailsService {
   OrderMapper orderMapper;
 
   @Transactional
-  public OrderDetailsRestDto saveOrder(OrderStatus orderStatus, BigDecimal cryptocurrencyPrice, BigDecimal cryptocurrencyAmount, OrderType orderType, UserEntity user) throws InsufficientAmountCryptoException {
-    OrderDetailsEntity order = new OrderDetailsEntity(user, orderStatus, orderType, cryptocurrencyPrice, cryptocurrencyAmount);
+  public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException {
+    OrderDetailsEntity order = orderMapper.toEntity(orderDto,user);
     walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
     return orderMapper.toRestDto(orderDetailsRepository.save(order)) ;
   }

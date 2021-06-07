@@ -12,8 +12,8 @@ import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.service.WalletService;
 
 @Schema(
-  name = "Wallet Controller",
-  description = "An endpoint to the wallet service object",
+  name = "Wallet controller",
+  description = "An access point to the wallet data",
   anyOf = WalletController.class
 )
 @RestController
@@ -25,17 +25,16 @@ public class WalletController {
   private WalletService walletService;
 
   @Operation(
-    method = "GET",
-    summary = "Returns the user wallet and puts it into the DTO-object called WalletRestDto",
+    summary = "Returns the user's wallet balance",
     responses = {
       @ApiResponse(
         responseCode = "200",
-        description = "A JSON-object that contains the information about the money and cryptocurrency balance",
-        content = @Content(mediaType = "application/json", schema = @Schema(anyOf = WalletRestDto.class))
+        description = "A model that contains the information about the money and cryptocurrency balance",
+        content = @Content(schema = @Schema(anyOf = WalletRestDto.class))
       ),
       @ApiResponse(
         responseCode = "401",
-        description = "The proposed user hasn't been authorized"
+        description = "Unauthorized"
       )
     }
   )

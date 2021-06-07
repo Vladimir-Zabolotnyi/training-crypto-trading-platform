@@ -7,15 +7,15 @@ import lombok.NonNull;
 import java.math.BigDecimal;
 
 @Schema(
-  name = "Wallet REST DTO",
-  description = "A DTO object for displaying the balance state of the current user"
+  name = "The wallet balance model",
+  description = "A model for displaying the balance state of the user"
 )
 @Data
 public class WalletRestDto {
 
   @Schema(
     name = "Money balance",
-    description = "The amount of the real money by some fixed currency",
+    description = "The amount of the real money",
     example = "13.37; 228.00; 17.0; 441",
     anyOf = String.class
   )
@@ -24,7 +24,7 @@ public class WalletRestDto {
 
   @Schema(
     name = "Cryptocurrency balance",
-    description = "The virtual currency from the user's wallet",
+    description = "The cryptocurrency balance",
     example = "76.46; 78.00; 77.0; 79",
     anyOf = String.class
   )

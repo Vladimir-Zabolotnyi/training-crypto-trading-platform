@@ -17,7 +17,7 @@ public class ExceptionsHandler {
   }
 
   @ExceptionHandler(value = {ConstraintViolationException.class})
-  public ResponseEntity<Object> handleInvalidInputException() {
-    return new ResponseEntity<Object>("Value must be more than or equals to 0.00", HttpStatus.BAD_REQUEST);
+  public ResponseEntity<Object> handleInvalidInputException(ConstraintViolationException ex) {
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 }

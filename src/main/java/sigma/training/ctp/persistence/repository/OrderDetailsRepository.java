@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 
 @Repository
-public interface OrderDetailsRepository extends JpaRepository<OrderDetailsEntity,Long>, JpaSpecificationExecutor<OrderDetailsEntity> {
+public interface OrderDetailsRepository extends JpaRepository<OrderDetailsEntity, Long>, JpaSpecificationExecutor<OrderDetailsEntity> {
 }

@@ -12,6 +12,7 @@ import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 
 import javax.validation.ConstraintViolationException;
+
 import sigma.training.ctp.exception.NoActiveOrderFoundException;
 
 @ControllerAdvice
@@ -21,6 +22,7 @@ public class ExceptionsHandler {
   public ResponseEntity<Object> handleInvalidInputException(InsufficientAmountCryptoException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
+
   @ExceptionHandler(value = {InsufficientAmountBankCurrencyException.class})
   public ResponseEntity<Object> handleInvalidInputException(InsufficientAmountBankCurrencyException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -54,6 +56,6 @@ public class ExceptionsHandler {
 
   @ExceptionHandler(value = {CannotFulfillOwnOrderException.class})
   public ResponseEntity<Object> handleInvalidInputException(CannotFulfillOwnOrderException ex) {
-    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NO_CONTENT);
   }
 }

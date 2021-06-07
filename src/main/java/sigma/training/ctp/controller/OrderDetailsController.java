@@ -27,7 +27,6 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
-import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.exception.NoActiveOrderFoundException;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
@@ -98,9 +97,9 @@ public class OrderDetailsController {
   @Operation(summary = "Get all order", description = "Allows to obtain information about all active orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
-      content = @Content(mediaType = "application/json",array = @ArraySchema(
+      content = @Content(mediaType = "application/json", array = @ArraySchema(
         schema = @Schema(implementation = OrderDetailsRestDto.class)))),
-    @ApiResponse(responseCode = "404", description = "No active orders were found",
+    @ApiResponse(responseCode = "204", description = "No active orders were found",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)

@@ -40,7 +40,7 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public OrderDetailsRestDto fulfillOrder(Long orderId,UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+  public OrderDetailsRestDto fulfillOrder(Long orderId, UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       throw new OrderAlreadyCancelledException(orderId);
@@ -48,22 +48,23 @@ public class OrderDetailsService {
     if (order.getOrderStatus() == OrderStatus.FULFILLED) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
-    if (order.getUser().getId() == currentUser.getId()){
+    if (order.getUser().getId() == currentUser.getId()) {
       throw new CannotFulfillOwnOrderException();
     }
-    walletService.subtractWalletMoneyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
-    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
-    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    walletService.subtractWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
   }
 
   @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType,UserEntity currentUser) throws NoActiveOrderFoundException {
+  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrderFoundException {
     List<OrderDetailsEntity> orderList = orderDetailsRepository.findAll(
-      OrderSpecification.byOrderStatus(OrderStatus.CREATED).and(OrderSpecification.byOrderType(orderType)).
-        and(OrderSpecification.byUserNot(currentUser.getId())).
-        and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+      OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+        .and(OrderSpecification.byOrderType(orderType))
+        .and(OrderSpecification.byUserNot(currentUser.getId()))
+        .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
     if (orderList.isEmpty()) {
       throw new NoActiveOrderFoundException();
     }

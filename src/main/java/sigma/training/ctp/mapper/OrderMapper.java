@@ -23,11 +23,13 @@ public class OrderMapper implements Mapper<OrderDetailsEntity, OrderDetailsRestD
       order.getCryptocurrencyAmount());
 
   }
+
   public List<OrderDetailsRestDto> toRestDto(List<OrderDetailsEntity> orderList) {
-   return orderList.stream().map(
-     orderDetailsEntity -> toRestDto(orderDetailsEntity)).collect(Collectors.toList());
+    return orderList.stream().map(
+      orderDetailsEntity -> toRestDto(orderDetailsEntity)).collect(Collectors.toList());
 
   }
+
   @Override
   public OrderDetailsEntity toEntity(OrderDetailsRestDto orderDto) {
     UserEntity user = new UserEntity();

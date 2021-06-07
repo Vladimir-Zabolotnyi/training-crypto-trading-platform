@@ -91,16 +91,6 @@ public class WalletServiceTest {
   }
 
   @Test
-  void purchaseCryptocurrency() throws InsufficientAmountBankCurrencyException {
-    when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
-    when(repository.findWalletEntityByUserId(ID_BUY)).thenReturn(WALLET);
-    when(service.subtractWalletMoneyBalanceByUserId(ID_BUY,CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(WALLET);
-    when(service.addWalletMoneyBalanceByUserId(ID,CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(WALLET);
-    when(service.addWalletCryptocurrencyBalanceByUserId(ID_BUY,CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET);
-    assertTrue(service.purchaseCryptocurrency(ID_BUY,ID,CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE));
-  }
-
-  @Test
   void subtractWalletMoneyBalanceByUserId() throws InsufficientAmountBankCurrencyException {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_BEFORE_SUBTRACT);
     when(repository.save(WALLET_AFTER_SUBTRACT_MONEY)).thenReturn(WALLET_AFTER_SUBTRACT_MONEY);

@@ -85,7 +85,7 @@ public class OrderDetailsController {
     @PathVariable("id") @Parameter(
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
-    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException, CannotFulfillOwnOrderException {
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
     return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
 
   }

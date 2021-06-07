@@ -39,18 +39,20 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public OrderDetailsRestDto fulfillOrder(Long order_id,UserEntity current_user) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, InsufficientAmountBankCurrencyException, CannotFulfillOwnOrderException {
-    OrderDetailsEntity order = orderDetailsRepository.findById(order_id).orElseThrow(() -> new OrderNotFoundException(order_id));
+  public OrderDetailsRestDto fulfillOrder(Long orderId,UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException,CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+    OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
-      throw new OrderAlreadyCancelledException(order_id);
+      throw new OrderAlreadyCancelledException(orderId);
     }
     if (order.getOrderStatus() == OrderStatus.FULFILLED) {
-      throw new OrderAlreadyFulfilledException(order_id);
+      throw new OrderAlreadyFulfilledException(orderId);
     }
-    if (order.getUser().getId() == current_user.getId()){
+    if (order.getUser().getId() == currentUser.getId()){
       throw new CannotFulfillOwnOrderException();
     }
-    walletService.purchaseCryptocurrency(current_user.getId(),order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
+    walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
+    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
   }

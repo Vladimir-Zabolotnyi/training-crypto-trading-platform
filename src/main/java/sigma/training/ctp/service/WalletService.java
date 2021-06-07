@@ -34,13 +34,6 @@ public class WalletService {
     return repository.save(wallet);
   }
 
-  public boolean purchaseCryptocurrency(Long user_buy_id, Long user_sell_id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) throws InsufficientAmountBankCurrencyException {
-    subtractWalletMoneyBalanceByUserId(user_buy_id, cryptocurrencyAmount, cryptocurrencyPrice);
-    addWalletMoneyBalanceByUserId(user_sell_id, cryptocurrencyAmount, cryptocurrencyPrice);
-    addWalletCryptocurrencyBalanceByUserId(user_buy_id, cryptocurrencyAmount);
-    return true;
-  }
-
   public WalletEntity subtractWalletMoneyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) throws InsufficientAmountBankCurrencyException {
     WalletEntity wallet = repository.findWalletEntityByUserId(id);
     BigDecimal moneyBalance = wallet.getMoneyBalance();

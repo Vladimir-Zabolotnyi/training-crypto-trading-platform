@@ -105,11 +105,10 @@ class OrderDetailsServiceTest {
   }
 
   @Test
-  void fulfillOrder() throws InsufficientAmountBankCurrencyException, OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException {
+  void fulfillOrder() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
-    Mockito.when(walletService.purchaseCryptocurrency(ID_2, ID, CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(true);
     Mockito.when(orderMapper.toRestDto(ORDER_BY_ID)).thenReturn(ORDER_DTO_BY_ID);
     OrderDetailsRestDto actualFulfilledOrder = orderDetailsService.fulfillOrder(ID, USER_TO_BUY);
     ORDER_BY_ID.setOrderStatus(OrderStatus.FULFILLED);

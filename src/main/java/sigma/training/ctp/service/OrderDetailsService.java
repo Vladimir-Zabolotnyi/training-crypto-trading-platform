@@ -38,7 +38,8 @@ public class OrderDetailsService {
   public List<OrderDetailsRestDto> getAllOrders(OrderType orderType,UserEntity currentUser) throws NoActiveOrderFoundException {
     List<OrderDetailsEntity> orderList = orderDetailsRepository.findAll(
       OrderSpecification.byOrderStatus(OrderStatus.CREATED).and(OrderSpecification.byOrderType(orderType)).
-        and(OrderSpecification.byUserNot(currentUser.getId())));
+        and(OrderSpecification.byUserNot(currentUser.getId())).
+        and(OrderSpecification.orderByCryptocurrencyAmount(true)));
     if (orderList.isEmpty()) {
       throw new NoActiveOrderFoundException();
     }

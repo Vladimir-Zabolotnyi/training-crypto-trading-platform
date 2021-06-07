@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 
 @Entity
@@ -33,10 +34,12 @@ public class WalletEntity {
 
   @Column(name = "money_balance")
   @NonNull
+  @DecimalMin(value = "0.00")
   private BigDecimal moneyBalance;
 
   @Column(name = "cryptocurrency_balance")
   @NonNull
+  @DecimalMin(value = "0.00")
   private BigDecimal cryptocurrencyBalance;
 
 

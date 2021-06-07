@@ -10,6 +10,8 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 
+import javax.validation.ConstraintViolationException;
+
 @ControllerAdvice
 public class ExceptionsHandler {
 
@@ -35,5 +37,10 @@ public class ExceptionsHandler {
   @ExceptionHandler(value = {OrderNotFoundException.class})
   public ResponseEntity<Object> handleInvalidInputException(OrderNotFoundException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(value = {ConstraintViolationException.class})
+  public ResponseEntity<Object> handleInvalidInputException(ConstraintViolationException ex) {
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 }

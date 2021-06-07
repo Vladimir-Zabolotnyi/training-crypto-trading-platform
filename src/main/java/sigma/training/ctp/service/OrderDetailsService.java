@@ -4,7 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
+import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.OrderAlreadyCancelledException;
+import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
+import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
@@ -28,8 +33,27 @@ public class OrderDetailsService {
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException {
-    OrderDetailsEntity order = orderMapper.toEntity(orderDto,user);
+    OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-    return orderMapper.toRestDto(orderDetailsRepository.save(order)) ;
+    return orderMapper.toRestDto(orderDetailsRepository.save(order));
+  }
+
+  @Transactional
+  public OrderDetailsRestDto fulfillOrder(Long orderId,UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException,CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+    OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
+    if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+      throw new OrderAlreadyCancelledException(orderId);
+    }
+    if (order.getOrderStatus() == OrderStatus.FULFILLED) {
+      throw new OrderAlreadyFulfilledException(orderId);
+    }
+    if (order.getUser().getId() == currentUser.getId()){
+      throw new CannotFulfillOwnOrderException();
+    }
+    walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
+    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    order.setOrderStatus(OrderStatus.FULFILLED);
+    return orderMapper.toRestDto(order);
   }
 }

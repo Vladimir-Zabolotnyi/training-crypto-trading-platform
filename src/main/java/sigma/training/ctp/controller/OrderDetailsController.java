@@ -19,7 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
+import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.OrderAlreadyCancelledException;
+import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
+import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
@@ -57,5 +62,31 @@ public class OrderDetailsController {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     return orderDetailsService.postOrder(order, userService.getCurrentUser());
+
+  }
+
+  @Operation(summary = "Fulfill Order", description = "Allows to fulfill order")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Order fulfilled",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency in the wallet",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "403", description = "Order already fulfilled or cancelled",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "404", description = "Order not found",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "406", description = "You are not able to fulfill own order",
+      content = @Content(mediaType = "text/plain"))
+  })
+  @ResponseStatus(HttpStatus.OK)
+  @PostMapping(path = "/{id}/fulfill")
+  public @ResponseBody
+  OrderDetailsRestDto fulfillOrder(
+    @PathVariable("id") @Parameter(
+      description = "id of the order",
+      content = @Content(schema = @Schema(implementation = Long.class))) Long id)
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+    return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
+
   }
 }

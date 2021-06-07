@@ -69,7 +69,7 @@ public class OrderDetailsController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Order fulfilled",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
-    @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency in the wallet",
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency/cryptocurrency in the wallet",
       content = @Content(mediaType = "text/plain")),
     @ApiResponse(responseCode = "403", description = "Order already fulfilled or cancelled",
       content = @Content(mediaType = "text/plain")),
@@ -85,7 +85,7 @@ public class OrderDetailsController {
     @PathVariable("id") @Parameter(
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
-    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
 
   }

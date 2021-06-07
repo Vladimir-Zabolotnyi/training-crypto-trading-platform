@@ -39,7 +39,7 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public OrderDetailsRestDto fulfillOrder(Long orderId,UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException,CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+  public OrderDetailsRestDto fulfillOrder(Long orderId, UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       throw new OrderAlreadyCancelledException(orderId);
@@ -47,12 +47,19 @@ public class OrderDetailsService {
     if (order.getOrderStatus() == OrderStatus.FULFILLED) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
-    if (order.getUser().getId() == currentUser.getId()){
+    if (order.getUser().getId() == currentUser.getId()) {
       throw new CannotFulfillOwnOrderException();
     }
-    walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
-    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
-    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    if (order.getOrderType() == OrderType.SELL) {
+      walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+      walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+      walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+    }
+    if (order.getOrderType() == OrderType.BUY) {
+      walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+      walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+      walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+    }
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
   }

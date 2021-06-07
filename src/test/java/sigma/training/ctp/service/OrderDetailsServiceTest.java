@@ -12,7 +12,7 @@ import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
-import sigma.training.ctp.exception.NoActiveOrderFoundException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
@@ -22,12 +22,11 @@ import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
-import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
-import javax.swing.text.html.HTMLDocument;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,7 +155,7 @@ class OrderDetailsServiceTest {
   }
 
   @Test
-  void getAllOrders() throws NoActiveOrderFoundException {
+  void getAllOrders() throws NoActiveOrdersFoundException {
     USER.setId(ID_2);
     orderList.add(ORDER_1);
     orderList.add(ORDER_BY_ID);
@@ -167,4 +166,11 @@ class OrderDetailsServiceTest {
     Mockito.when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
     assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE, USER));
   }
+
+  @Test
+  void exceptionNoActiveOrdersFound() {
+    Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(Collections.emptyList());
+    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+  }
+
 }

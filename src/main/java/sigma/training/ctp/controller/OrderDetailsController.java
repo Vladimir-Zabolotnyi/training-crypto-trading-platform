@@ -27,7 +27,7 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
-import sigma.training.ctp.exception.NoActiveOrderFoundException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
@@ -107,7 +107,7 @@ public class OrderDetailsController {
   public @ResponseBody
   List<OrderDetailsRestDto> getAllOrders(@PathVariable("orderType") @Parameter(
     description = "type of the order",
-    schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws NoActiveOrderFoundException {
+    schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws NoActiveOrdersFoundException {
 
     return orderDetailsService.getAllOrders(
       OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),

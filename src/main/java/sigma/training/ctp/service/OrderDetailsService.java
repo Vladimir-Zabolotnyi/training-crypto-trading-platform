@@ -10,7 +10,7 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
-import sigma.training.ctp.exception.NoActiveOrderFoundException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
@@ -59,14 +59,14 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrderFoundException {
+  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
     List<OrderDetailsEntity> orderList = orderDetailsRepository.findAll(
       OrderSpecification.byOrderStatus(OrderStatus.CREATED)
         .and(OrderSpecification.byOrderType(orderType))
         .and(OrderSpecification.byUserNot(currentUser.getId()))
         .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
     if (orderList.isEmpty()) {
-      throw new NoActiveOrderFoundException();
+      throw new NoActiveOrdersFoundException();
     }
     return orderMapper.toRestDto(orderList);
   }

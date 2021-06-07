@@ -12,3 +12,16 @@ VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.
 INSERT INTO wallet VALUES
 (1, 1, 228.13, 37),
 (2, 2, 0.33, 0.0);
+
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (1, '2021-06-04 13:28:39',1,'CREATED','SELL',100,5);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (2, '2021-06-04 13:28:39',1,'CREATED','SELL',25,12);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (3, '2021-06-04 14:23:39',1,'FULFILLED','SELL',32,5);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (4, '2021-06-04 15:28:39',1,'CANCELLED','SELL',56,9);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (5, '2021-06-05 22:28:39',2,'CREATED','SELL',66,2);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (6, '2021-06-06 09:28:39',2,'CREATED','SELL',29,8);

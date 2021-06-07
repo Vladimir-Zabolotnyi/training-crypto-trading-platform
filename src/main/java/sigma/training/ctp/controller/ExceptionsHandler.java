@@ -13,7 +13,7 @@ import sigma.training.ctp.exception.OrderNotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
-import sigma.training.ctp.exception.NoActiveOrderFoundException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 
 @ControllerAdvice
 public class ExceptionsHandler {
@@ -49,8 +49,8 @@ public class ExceptionsHandler {
 
   }
 
-  @ExceptionHandler(value = {NoActiveOrderFoundException.class})
-  public ResponseEntity<Object> handleInvalidInputException(NoActiveOrderFoundException ex) {
+  @ExceptionHandler(value = {NoActiveOrdersFoundException.class})
+  public ResponseEntity<Object> handleInvalidInputException(NoActiveOrdersFoundException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
   }
 

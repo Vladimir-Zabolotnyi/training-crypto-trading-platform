@@ -1,16 +1,13 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
-import sigma.training.ctp.dto.WalletRestDto;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
 @Service

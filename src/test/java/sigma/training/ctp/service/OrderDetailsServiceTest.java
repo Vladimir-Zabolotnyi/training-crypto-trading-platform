@@ -91,6 +91,7 @@ class OrderDetailsServiceTest {
   void postOrder() throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
+    Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT,CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS)).thenReturn(ORDER_DETAILS);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS)).thenReturn(ORDER_DTO);
     Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY, USER)).thenReturn(ORDER_DETAILS);

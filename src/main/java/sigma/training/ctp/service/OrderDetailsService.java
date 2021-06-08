@@ -11,8 +11,8 @@ import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
-import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderNotFoundException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
@@ -21,8 +21,8 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
-
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class OrderDetailsService {
@@ -39,9 +39,16 @@ public class OrderDetailsService {
   OrderMapper orderMapper;
 
   @Transactional
-  public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException {
+  public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
-    walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+    switch (order.getOrderType()) {
+      case SELL:
+        walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        break;
+      case BUY:
+        walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        break;
+    }
     return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
 
@@ -99,11 +106,26 @@ public class OrderDetailsService {
 
   @Transactional
   public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
-    List<OrderDetailsEntity> orderList = orderDetailsRepository.findAll(
-      OrderSpecification.byOrderStatus(OrderStatus.CREATED)
-        .and(OrderSpecification.byOrderType(orderType))
-        .and(OrderSpecification.byUserNot(currentUser.getId()))
-        .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+    List<OrderDetailsEntity> orderList;
+    switch (orderType) {
+      case SELL:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+            .and(OrderSpecification.byOrderType(orderType))
+            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+        break;
+      case BUY:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+            .and(OrderSpecification.byOrderType(orderType))
+            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
+        break;
+      default:
+        orderList = new ArrayList<>();
+    }
+
     if (orderList.isEmpty()) {
       throw new NoActiveOrdersFoundException();
     }

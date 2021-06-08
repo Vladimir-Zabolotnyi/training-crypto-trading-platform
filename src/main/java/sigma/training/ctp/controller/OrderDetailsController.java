@@ -49,7 +49,7 @@ public class OrderDetailsController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "order created",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
-    @ApiResponse(responseCode = "400", description = "Insufficient amount of cryptocurrency in the wallet",
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of cryptocurrency/money in the wallet",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.CREATED)
@@ -60,7 +60,7 @@ public class OrderDetailsController {
                                   content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException {
+                                  schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     return orderDetailsService.postOrder(order, userService.getCurrentUser());
@@ -126,7 +126,7 @@ public class OrderDetailsController {
     return orderDetailsService.cancelOrder(orderId);
   }
 
-  @Operation(summary = "Get all order", description = "Allows to obtain information about all active orders")
+  @Operation(summary = "Get all order", description = "Allows to obtain information about all sell//buy active orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(

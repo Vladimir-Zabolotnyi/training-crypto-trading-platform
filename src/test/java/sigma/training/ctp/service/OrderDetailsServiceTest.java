@@ -6,11 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
@@ -23,6 +25,9 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +56,13 @@ class OrderDetailsServiceTest {
     USER, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
+  private static final OrderDetailsEntity ORDER = new OrderDetailsEntity(
+    USER, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+
+  private static final OrderDetailsEntity ORDER_1 = new OrderDetailsEntity(null, null,
+    USER, ORDER_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
   private static final OrderDetailsEntity ORDER_DETAILS_BUY = new OrderDetailsEntity(
     USER, ORDER_TYPE_BUY,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
@@ -69,6 +81,9 @@ class OrderDetailsServiceTest {
 
   private static final OrderDetailsEntity ORDER_BY_ID = new OrderDetailsEntity(
     ID, CREATION_DATE,
+    USER, ORDER_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+
     USER, ORDER_STATUS, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
   private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION1 = new OrderDetailsEntity(
@@ -85,6 +100,9 @@ class OrderDetailsServiceTest {
     ID, CREATION_DATE,
     USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
+
+  private static final List<OrderDetailsEntity> orderList = new ArrayList<>();
+  private static final List<OrderDetailsRestDto> orderDtoList = new ArrayList<>();
 
   @Mock
   WalletService walletService;
@@ -103,6 +121,16 @@ class OrderDetailsServiceTest {
   void postOrder() throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
+    Mockito.when(orderDetailsRepository.save(ORDER)).thenReturn(ORDER);
+    Mockito.when(orderMapper.toRestDto(ORDER)).thenReturn(ORDER_DTO);
+    Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY, USER)).thenReturn(ORDER);
+    OrderDetailsRestDto orderDtoActual = orderDetailsService.postOrder(ORDER_FROM_BODY, USER);
+    orderDtoActual.setUserId(ID);
+    orderDtoActual.setCreationDate(CREATION_DATE);
+    orderDtoActual.setOrderStatus(ORDER_STATUS);
+    OrderDetailsRestDto orderDtoExpected = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+    orderDtoExpected.setCreationDate(orderDtoActual.getCreationDate());
+    assertEquals(orderDtoExpected, orderDtoActual);
     Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT,CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_SELL)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_BUY)).thenReturn(ORDER_DETAILS_BUY);
@@ -141,23 +169,46 @@ class OrderDetailsServiceTest {
   @Test
   void exceptionNotFoundOrder() {
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.empty());
-    assertThrows(OrderNotFoundException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
+    assertThrows(OrderNotFoundException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
+
   @Test
   void exceptionAlreadyCancelledOrder() {
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
     ORDER_BY_ID_FOR_EXCEPTION1.setOrderStatus(OrderStatus.CANCELLED);
-    assertThrows(OrderAlreadyCancelledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
+    assertThrows(OrderAlreadyCancelledException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
+
   @Test
   void exceptionAlreadyFulfilledOrder() {
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION2));
     ORDER_BY_ID_FOR_EXCEPTION2.setOrderStatus(OrderStatus.FULFILLED);
-    assertThrows(OrderAlreadyFulfilledException.class,()->orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
+    assertThrows(OrderAlreadyFulfilledException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
+
   @Test
   void exceptionNotFulfilledOwnOrder() {
     Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
-    assertThrows(CannotFulfillOwnOrderException.class,()->orderDetailsService.fulfillOrder(ID, USER));
+    assertThrows(CannotFulfillOwnOrderException.class, () -> orderDetailsService.fulfillOrder(ID, USER));
   }
+
+  @Test
+  void getAllOrders() throws NoActiveOrdersFoundException {
+    USER.setId(ID_2);
+    orderList.add(ORDER_1);
+    orderList.add(ORDER_BY_ID);
+    orderDtoList.add(ORDER_DTO);
+    orderDtoList.add(ORDER_DTO_BY_ID);
+
+    Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(orderList);
+    Mockito.when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
+    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+  }
+
+  @Test
+  void exceptionNoActiveOrdersFound() {
+    Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(Collections.emptyList());
+    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+  }
+
 }

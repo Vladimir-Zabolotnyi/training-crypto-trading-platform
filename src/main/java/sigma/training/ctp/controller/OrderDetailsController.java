@@ -95,7 +95,7 @@ public class OrderDetailsController {
     responses = {
       @ApiResponse(
         responseCode = "200",
-        description = "The order status has been successfully cancelled",
+        description = "The order has been successfully cancelled",
         content = @Content
           (schema = @Schema(
             description = "A model for the order details information", implementation = OrderDetailsRestDto.class)

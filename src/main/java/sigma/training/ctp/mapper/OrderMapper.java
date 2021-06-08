@@ -5,6 +5,9 @@ import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class OrderMapper implements Mapper<OrderDetailsEntity, OrderDetailsRestDto> {
 
@@ -18,6 +21,12 @@ public class OrderMapper implements Mapper<OrderDetailsEntity, OrderDetailsRestD
       order.getOrderType(),
       order.getCryptocurrencyPrice(),
       order.getCryptocurrencyAmount());
+
+  }
+
+  public List<OrderDetailsRestDto> toRestDto(List<OrderDetailsEntity> orderList) {
+    return orderList.stream().map(
+      orderDetailsEntity -> toRestDto(orderDetailsEntity)).collect(Collectors.toList());
 
   }
 

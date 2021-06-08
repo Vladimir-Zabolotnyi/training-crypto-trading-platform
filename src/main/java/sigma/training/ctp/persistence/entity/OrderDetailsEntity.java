@@ -64,7 +64,8 @@ public class OrderDetailsEntity {
   private BigDecimal cryptocurrencyAmount;
 
 
-  public OrderDetailsEntity(UserEntity user, OrderType orderType, @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
+  public OrderDetailsEntity(UserEntity user, OrderType orderType,
+                            @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
     this.user = user;
     this.orderType = orderType;
     this.cryptocurrencyPrice = cryptocurrencyPrice;

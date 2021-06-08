@@ -17,8 +17,6 @@ import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.Instant;
 
 @Service
 public class OrderDetailsService {
@@ -34,18 +32,19 @@ public class OrderDetailsService {
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
-    if(order.getOrderType()==OrderType.SELL){
-    walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+    switch (order.getOrderType()) {
+      case SELL:
+        walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        break;
+      case BUY:
+        walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        break;
     }
-    if(order.getOrderType()==OrderType.BUY){
-      walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
-    }
-
     return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
 
   @Transactional
-  public OrderDetailsRestDto fulfillOrder(Long orderId,UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException,CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
+  public OrderDetailsRestDto fulfillOrder(Long orderId, UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
     OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       throw new OrderAlreadyCancelledException(orderId);
@@ -53,12 +52,12 @@ public class OrderDetailsService {
     if (order.getOrderStatus() == OrderStatus.FULFILLED) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
-    if (order.getUser().getId() == currentUser.getId()){
+    if (order.getUser().getId() == currentUser.getId()) {
       throw new CannotFulfillOwnOrderException();
     }
-    walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
-    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(),order.getCryptocurrencyAmount(),order.getCryptocurrencyPrice());
-    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
+    walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+    walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+    walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
   }

@@ -94,7 +94,7 @@ public class OrderDetailsController {
   }
 
 
-  @Operation(summary = "Get all order", description = "Allows to obtain information about all active orders")
+  @Operation(summary = "Get all order", description = "Allows to obtain information about all sell//buy active orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(

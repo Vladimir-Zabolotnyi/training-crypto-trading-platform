@@ -50,15 +50,19 @@ public class OrderDetailsService {
     if (order.getUser().getId() == currentUser.getId()) {
       throw new CannotFulfillOwnOrderException();
     }
-    if (order.getOrderType() == OrderType.SELL) {
-      walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
-      walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
-      walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
-    }
-    if (order.getOrderType() == OrderType.BUY) {
-      walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-      walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
-      walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+    switch (order.getOrderType()) {
+      case SELL: {
+        walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+        walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+      }
+      break;
+      case BUY: {
+        walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+        walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+      }
+      break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);

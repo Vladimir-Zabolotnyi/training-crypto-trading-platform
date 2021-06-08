@@ -30,8 +30,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderDetailsServiceTest {
@@ -49,6 +50,10 @@ class OrderDetailsServiceTest {
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
   private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null, null, null, null, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+
+  private static final OrderStatus CREATED_STSTUS = OrderStatus.CREATED;
+  private static final OrderStatus FULFILLED_STATUS = OrderStatus.FULFILLED;
+  private static final OrderStatus CANCELLED_STATUS = OrderStatus.CANCELLED;
 
   private static final OrderDetailsEntity ORDER = new OrderDetailsEntity(
     USER, ORDER_TYPE,
@@ -84,6 +89,32 @@ class OrderDetailsServiceTest {
     USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
+  /* cancelOrder(id) */
+
+  private static final OrderDetailsEntity CANCEL_SELL_ORDER_STATUS_CREATED = new OrderDetailsEntity(
+    ID, CREATION_DATE,
+    USER, CREATED_STSTUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+
+  private static final OrderDetailsEntity CANCEL_SELL_ORDER_STATUS_FULFILLED = new OrderDetailsEntity(
+    ID, CREATION_DATE,
+    USER, FULFILLED_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+
+  private static final OrderDetailsEntity CANCEL_SELL_ORDER_STATUS_CANCELLED = new OrderDetailsEntity(
+    ID, CREATION_DATE,
+    USER, CANCELLED_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+
+  private static final OrderDetailsRestDto CANCEL_SELL_ORDER_DTO_1 = new OrderDetailsRestDto(
+    ID, CREATION_DATE,
+    USER.getId(), CANCELLED_STATUS, ORDER_TYPE,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+
   private static final List<OrderDetailsEntity> orderList = new ArrayList<>();
   private static final List<OrderDetailsRestDto> orderDtoList = new ArrayList<>();
 
@@ -103,10 +134,10 @@ class OrderDetailsServiceTest {
   @Test
   void postOrder() throws InsufficientAmountCryptoException {
     USER.setId(ID);
-    Mockito.when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
-    Mockito.when(orderDetailsRepository.save(ORDER)).thenReturn(ORDER);
-    Mockito.when(orderMapper.toRestDto(ORDER)).thenReturn(ORDER_DTO);
-    Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY, USER)).thenReturn(ORDER);
+    when(walletService.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT)).thenReturn(WALLET_AFTER_UPDATE);
+    when(orderDetailsRepository.save(ORDER)).thenReturn(ORDER);
+    when(orderMapper.toRestDto(ORDER)).thenReturn(ORDER_DTO);
+    when(orderMapper.toEntity(ORDER_FROM_BODY, USER)).thenReturn(ORDER);
     OrderDetailsRestDto orderDtoActual = orderDetailsService.postOrder(ORDER_FROM_BODY, USER);
     orderDtoActual.setUserId(ID);
     orderDtoActual.setCreationDate(CREATION_DATE);
@@ -121,8 +152,8 @@ class OrderDetailsServiceTest {
   void fulfillOrder() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
-    Mockito.when(orderMapper.toRestDto(ORDER_BY_ID)).thenReturn(ORDER_DTO_BY_ID);
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
+    when(orderMapper.toRestDto(ORDER_BY_ID)).thenReturn(ORDER_DTO_BY_ID);
     OrderDetailsRestDto actualFulfilledOrder = orderDetailsService.fulfillOrder(ID, USER_TO_BUY);
     ORDER_BY_ID.setOrderStatus(OrderStatus.FULFILLED);
     assertEquals(ORDER_DTO_BY_ID, actualFulfilledOrder);
@@ -130,27 +161,27 @@ class OrderDetailsServiceTest {
 
   @Test
   void exceptionNotFoundOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.empty());
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.empty());
     assertThrows(OrderNotFoundException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
 
   @Test
   void exceptionAlreadyCancelledOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
     ORDER_BY_ID_FOR_EXCEPTION1.setOrderStatus(OrderStatus.CANCELLED);
     assertThrows(OrderAlreadyCancelledException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
 
   @Test
   void exceptionAlreadyFulfilledOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION2));
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION2));
     ORDER_BY_ID_FOR_EXCEPTION2.setOrderStatus(OrderStatus.FULFILLED);
     assertThrows(OrderAlreadyFulfilledException.class, () -> orderDetailsService.fulfillOrder(ID, USER_TO_BUY));
   }
 
   @Test
   void exceptionNotFulfilledOwnOrder() {
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_FOR_EXCEPTION1));
     assertThrows(CannotFulfillOwnOrderException.class, () -> orderDetailsService.fulfillOrder(ID, USER));
   }
 
@@ -162,15 +193,50 @@ class OrderDetailsServiceTest {
     orderDtoList.add(ORDER_DTO);
     orderDtoList.add(ORDER_DTO_BY_ID);
 
-    Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(orderList);
-    Mockito.when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
+    when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(orderList);
+    when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
     assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE, USER));
   }
 
   @Test
   void exceptionNoActiveOrdersFound() {
-    Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(Collections.emptyList());
+    when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
     assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+  }
+
+  /* cancelOrder(id) */
+
+  @Test
+  public void testCancelOrderPassCreatedStatusCheckOrderStatus()
+    throws OrderAlreadyFulfilledException, OrderAlreadyCancelledException, OrderNotFoundException {
+
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(CANCEL_SELL_ORDER_STATUS_CREATED));
+    when(orderMapper.toRestDto(CANCEL_SELL_ORDER_STATUS_CREATED)).thenReturn(CANCEL_SELL_ORDER_DTO_1);
+
+    OrderDetailsRestDto actual = orderDetailsService.cancelOrder(ID);
+
+    assertEquals(CANCEL_SELL_ORDER_DTO_1.getOrderStatus(), actual.getOrderStatus());
+  }
+
+  @Test
+  public void testCancelOrderPassFulfilledStatus() {
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(CANCEL_SELL_ORDER_STATUS_FULFILLED));
+
+    assertThrows(OrderAlreadyFulfilledException.class, () -> orderDetailsService.cancelOrder(ID));
+  }
+
+  @Test
+  public void testCancelOrderPassCancelledStatus() {
+    when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(CANCEL_SELL_ORDER_STATUS_CANCELLED));
+
+    assertThrows(OrderAlreadyCancelledException.class, () -> orderDetailsService.cancelOrder(ID));
+  }
+
+  @Test
+  public void testCancelOrderPassNonExistingOrderId() {
+    Long id = 555L;
+
+    assertThrows(OrderNotFoundException.class, () -> orderDetailsService.cancelOrder(id));
   }
 
 }

@@ -19,6 +19,7 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -60,11 +61,26 @@ public class OrderDetailsService {
 
   @Transactional
   public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
-    List<OrderDetailsEntity> orderList = orderDetailsRepository.findAll(
-      OrderSpecification.byOrderStatus(OrderStatus.CREATED)
-        .and(OrderSpecification.byOrderType(orderType))
-        .and(OrderSpecification.byUserNot(currentUser.getId()))
-        .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+    List<OrderDetailsEntity> orderList;
+    switch (orderType) {
+      case SELL:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+            .and(OrderSpecification.byOrderType(orderType))
+            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+        break;
+      case BUY:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+            .and(OrderSpecification.byOrderType(orderType))
+            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
+        break;
+      default:
+        orderList = new ArrayList<>();
+    }
+
     if (orderList.isEmpty()) {
       throw new NoActiveOrdersFoundException();
     }

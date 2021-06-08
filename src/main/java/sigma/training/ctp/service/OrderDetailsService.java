@@ -1,27 +1,28 @@
 package sigma.training.ctp.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
-import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
-import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
+import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
+import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.Instant;
 
 @Service
 public class OrderDetailsService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrderDetailsService.class);
+
   @Autowired
   OrderDetailsRepository orderDetailsRepository;
 
@@ -55,5 +56,29 @@ public class OrderDetailsService {
     walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(),order.getCryptocurrencyAmount());
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
+  }
+
+  @Transactional
+  public OrderDetailsRestDto cancelOrder(Long orderId)
+    throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
+    OrderDetailsEntity order = orderDetailsRepository
+      .findById(orderId)
+      .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+    LOGGER.info("cancel order method");
+    LOGGER.info("order status = " + order.getOrderStatus().toString());
+
+    if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
+      throw new OrderAlreadyFulfilledException(orderId);
+    }
+    else if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+      throw new OrderAlreadyCancelledException(orderId);
+    }
+    else {
+      order.setOrderStatus(OrderStatus.CANCELLED);
+      orderDetailsRepository.save(order);
+
+      return orderMapper.toRestDto(order);
+    }
   }
 }

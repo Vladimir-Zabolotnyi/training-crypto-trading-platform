@@ -10,13 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
@@ -42,7 +36,6 @@ public class OrderDetailsController {
   @Autowired
   OrderDetailsService orderDetailsService;
 
-
   @Operation(summary = "Create Order", description = "Allows to create order")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "order created",
@@ -62,7 +55,6 @@ public class OrderDetailsController {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     return orderDetailsService.postOrder(order, userService.getCurrentUser());
-
   }
 
   @Operation(summary = "Fulfill Order", description = "Allows to fulfill order")
@@ -88,5 +80,40 @@ public class OrderDetailsController {
     throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException {
     return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
 
+  }
+
+  @Operation(summary = "This feature allows to cancel the order",
+    responses = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "The order status has been successfully cancelled",
+        content = @Content
+          (schema = @Schema(
+          description = "A model for the order details information", implementation = OrderDetailsRestDto.class)
+        )
+      ),
+      @ApiResponse(
+        responseCode = "400",
+        description = "The order was fulfilled or cancelled"
+      ),
+      @ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized"
+      ),
+      @ApiResponse(
+        responseCode = "404",
+        description = "The proposed id can not be found in the order table"
+      ),
+    })
+  @DeleteMapping(path = "/{id}")
+  public @ResponseBody OrderDetailsRestDto cancelOrder(
+    @PathVariable("id")
+    @Parameter(
+      description = "the id of the order",
+      content = @Content(schema = @Schema(implementation = Long.class))
+    ) Long orderId
+  ) throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
+
+    return orderDetailsService.cancelOrder(orderId);
   }
 }

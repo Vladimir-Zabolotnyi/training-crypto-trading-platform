@@ -25,3 +25,16 @@ INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,crypt
 VALUES (5, '2021-06-05 22:28:39',2,'CREATED','SELL',66,2);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (6, '2021-06-06 09:28:39',2,'CREATED','SELL',29,8);
+
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (7, '2021-06-08 15:28:39',1,'CREATED','BUY',110,4);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (8, '2021-06-08 15:28:39',1,'CREATED','BUY',145,77);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (9, '2021-06-10 02:28:39',1,'FULFILLED','BUY',123,7);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (10, '2021-06-10 21:28:39',1,'CANCELLED','BUY',75,10);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (11, '2021-06-12 15:28:39',2,'CREATED','BUY',220,24);
+INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
+VALUES (12, '2021-06-13 02:28:39',2,'CREATED','BUY',456,12);

@@ -11,6 +11,7 @@ import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
+import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
@@ -20,8 +21,8 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.Instant;
+
+import java.util.List;
 
 @Service
 public class OrderDetailsService {

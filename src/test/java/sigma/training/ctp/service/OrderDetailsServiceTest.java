@@ -43,28 +43,27 @@ class OrderDetailsServiceTest {
   private static final BigDecimal CRYPTOCURRENCY_PRICE = new BigDecimal("400");
   private static final OrderStatus ORDER_STATUS = OrderStatus.CREATED;
   private static final OrderStatus ORDER_STATUS_AFTER_PURCHASE = OrderStatus.CREATED;
+
   private static final UserEntity USER = new UserEntity();
+
   private static final UserEntity USER_TO_BUY = new UserEntity();
   private static final UserEntity USER_TO_SELL = new UserEntity();
+
   private static final OrderType ORDER_TYPE_SELL = OrderType.SELL;
   private static final OrderType ORDER_TYPE_BUY = OrderType.BUY;
 
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
-  private static final OrderDetailsRestDto ORDER_FROM_BODY_SELL = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_SEll, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+
+  private static final OrderDetailsRestDto ORDER_FROM_BODY_SELL = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_SELL, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
   private static final OrderDetailsRestDto ORDER_FROM_BODY_BUY = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_BUY, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
 
-  private static final OrderDetailsEntity ORDER = new OrderDetailsEntity(
-    USER, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
   private static final OrderDetailsEntity ORDER_DETAILS_SELL = new OrderDetailsEntity(
-    USER, ORDER_TYPE_SEll,
+    USER, ORDER_TYPE_SELL,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
-  private static final OrderDetailsEntity ORDER_1 = new OrderDetailsEntity(null, null,
+  private static final OrderDetailsEntity ORDER_SELL = new OrderDetailsEntity(null, null,
     USER, ORDER_STATUS, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-    USER, ORDER_STATUS, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_DETAILS_BUY = new OrderDetailsEntity(
@@ -74,53 +73,43 @@ class OrderDetailsServiceTest {
   private static final OrderDetailsRestDto ORDER_DTO_SELL = new OrderDetailsRestDto(
     null, null,
     USER.getId(),
-    ORDER_FROM_BODY_SELL.getOrderStatus(), ORDER_TYPE_SEll,
+    ORDER_FROM_BODY_SELL.getOrderStatus(), ORDER_TYPE_SELL,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsRestDto ORDER_DTO_BUY = new OrderDetailsRestDto(
     null, null,
     USER.getId(),
-    ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
     ORDER_FROM_BODY_SELL.getOrderStatus(), ORDER_TYPE_BUY,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_SELL = new OrderDetailsEntity(
     ID, CREATION_DATE,
     USER, ORDER_STATUS, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+    ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_BUY = new OrderDetailsEntity(
     ID_2, CREATION_DATE,
     USER_TO_SELL, ORDER_STATUS, ORDER_TYPE_BUY,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-    USER, ORDER_STATUS, ORDER_TYPE_SEll,
-    ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
+    ORDER_FROM_BODY_BUY.getCryptocurrencyPrice(), ORDER_FROM_BODY_BUY.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION1 = new OrderDetailsEntity(
     ID, CREATION_DATE,
     USER, ORDER_STATUS, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-    USER, ORDER_STATUS, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION2 = new OrderDetailsEntity(
     ID, CREATION_DATE,
     USER, ORDER_STATUS, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-    USER, ORDER_STATUS, ORDER_TYPE_SEll,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsRestDto ORDER_DTO_BY_ID_SELL = new OrderDetailsRestDto(
     ID, CREATION_DATE,
     USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+    ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final OrderDetailsRestDto ORDER_DTO_BY_ID_BUY = new OrderDetailsRestDto(
     ID_2, CREATION_DATE,
-    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SELL,
-    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SEll,
+    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_BUY,
     ORDER_FROM_BODY_SELL.getCryptocurrencyPrice(), ORDER_FROM_BODY_SELL.getCryptocurrencyAmount());
 
   private static final List<OrderDetailsEntity> orderList = new ArrayList<>();
@@ -156,7 +145,7 @@ class OrderDetailsServiceTest {
     orderDtoActualBuy.setUserId(ID);
     orderDtoActualBuy.setCreationDate(CREATION_DATE);
     orderDtoActualBuy.setOrderStatus(ORDER_STATUS);
-    OrderDetailsRestDto orderDtoExpectedSell = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE_SEll, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+    OrderDetailsRestDto orderDtoExpectedSell = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE_SELL, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
     OrderDetailsRestDto orderDtoExpectedBuy = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE_BUY, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
     orderDtoExpectedSell.setCreationDate(orderDtoActualSell.getCreationDate());
     orderDtoExpectedBuy.setCreationDate(orderDtoActualBuy.getCreationDate());
@@ -211,7 +200,7 @@ class OrderDetailsServiceTest {
   @Test
   void getAllOrders() throws NoActiveOrdersFoundException {
     USER.setId(ID_2);
-    orderList.add(ORDER_1);
+    orderList.add(ORDER_SELL);
     orderList.add(ORDER_BY_ID_SELL);
     orderDtoList.add(ORDER_DTO_SELL);
     orderDtoList.add(ORDER_DTO_BY_ID_SELL);

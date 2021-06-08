@@ -1,6 +1,5 @@
 package sigma.training.ctp.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -92,7 +91,7 @@ public class OrderDetailsController {
     return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
   }
 
-  @Operation(summary = "This feature allows to cancel the order",
+  @Operation(summary = "Allows to cancel the order",
     responses = {
       @ApiResponse(
         responseCode = "200",
@@ -112,7 +111,7 @@ public class OrderDetailsController {
       ),
       @ApiResponse(
         responseCode = "404",
-        description = "The proposed id can not be found in the order table"
+        description = "The proposed order's id can not be found"
       ),
     })
   @DeleteMapping(path = "/{id}")

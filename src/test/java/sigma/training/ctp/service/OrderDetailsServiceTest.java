@@ -29,7 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -98,8 +100,6 @@ class OrderDetailsServiceTest {
     ID_2, CREATION_DATE,
     USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
-
-  /* cancelOrder(id) */
 
   private static final OrderDetailsEntity CANCEL_SELL_ORDER_STATUS_CREATED = new OrderDetailsEntity(
     ID, CREATION_DATE,
@@ -219,8 +219,6 @@ class OrderDetailsServiceTest {
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
     assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
   }
-
-  /* cancelOrder(id) */
 
   @Test
   public void testCancelOrderPassCreatedStatusCheckOrderStatus()

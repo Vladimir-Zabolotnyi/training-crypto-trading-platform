@@ -45,43 +45,55 @@ class OrderDetailsServiceTest {
   private static final OrderStatus ORDER_STATUS_AFTER_PURCHASE = OrderStatus.CREATED;
   private static final UserEntity USER = new UserEntity();
   private static final UserEntity USER_TO_BUY = new UserEntity();
-  private static final OrderType ORDER_TYPE = OrderType.SELL;
+  private static final UserEntity USER_TO_SELL = new UserEntity();
+  private static final OrderType ORDER_TYPE_SELL = OrderType.SELL;
+  private static final OrderType ORDER_TYPE_BUY = OrderType.BUY;
   private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
   private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null, null, null, null, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
 
   private static final OrderDetailsEntity ORDER = new OrderDetailsEntity(
-    USER, ORDER_TYPE,
+    USER, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_1 = new OrderDetailsEntity(null, null,
-    USER, ORDER_STATUS, ORDER_TYPE,
+    USER, ORDER_STATUS, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final OrderDetailsRestDto ORDER_DTO = new OrderDetailsRestDto(
     null, null,
     USER.getId(),
-    ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE,
+    ORDER_FROM_BODY.getOrderStatus(), ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
-  private static final OrderDetailsEntity ORDER_BY_ID = new OrderDetailsEntity(
+  private static final OrderDetailsEntity ORDER_BY_ID_SELL = new OrderDetailsEntity(
     ID, CREATION_DATE,
-    USER, ORDER_STATUS, ORDER_TYPE,
+    USER, ORDER_STATUS, ORDER_TYPE_SELL,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+
+  private static final OrderDetailsEntity ORDER_BY_ID_BUY = new OrderDetailsEntity(
+    ID_2, CREATION_DATE,
+    USER_TO_SELL, ORDER_STATUS, ORDER_TYPE_BUY,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION1 = new OrderDetailsEntity(
     ID, CREATION_DATE,
-    USER, ORDER_STATUS, ORDER_TYPE,
+    USER, ORDER_STATUS, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final OrderDetailsEntity ORDER_BY_ID_FOR_EXCEPTION2 = new OrderDetailsEntity(
     ID, CREATION_DATE,
-    USER, ORDER_STATUS, ORDER_TYPE,
+    USER, ORDER_STATUS, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
-  private static final OrderDetailsRestDto ORDER_DTO_BY_ID = new OrderDetailsRestDto(
+  private static final OrderDetailsRestDto ORDER_DTO_BY_ID_SELL = new OrderDetailsRestDto(
     ID, CREATION_DATE,
-    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE,
+    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SELL,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
+
+  private static final OrderDetailsRestDto ORDER_DTO_BY_ID_BUY = new OrderDetailsRestDto(
+    ID_2, CREATION_DATE,
+    USER.getId(), ORDER_STATUS_AFTER_PURCHASE, ORDER_TYPE_SELL,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount());
 
   private static final List<OrderDetailsEntity> orderList = new ArrayList<>();
@@ -111,7 +123,7 @@ class OrderDetailsServiceTest {
     orderDtoActual.setUserId(ID);
     orderDtoActual.setCreationDate(CREATION_DATE);
     orderDtoActual.setOrderStatus(ORDER_STATUS);
-    OrderDetailsRestDto orderDtoExpected = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
+    OrderDetailsRestDto orderDtoExpected = new OrderDetailsRestDto(null, CREATION_DATE, USER.getId(), ORDER_STATUS, ORDER_TYPE_SELL, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
     orderDtoExpected.setCreationDate(orderDtoActual.getCreationDate());
     assertEquals(orderDtoExpected, orderDtoActual);
 
@@ -121,11 +133,17 @@ class OrderDetailsServiceTest {
   void fulfillOrder() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
-    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID));
-    Mockito.when(orderMapper.toRestDto(ORDER_BY_ID)).thenReturn(ORDER_DTO_BY_ID);
-    OrderDetailsRestDto actualFulfilledOrder = orderDetailsService.fulfillOrder(ID, USER_TO_BUY);
-    ORDER_BY_ID.setOrderStatus(OrderStatus.FULFILLED);
-    assertEquals(ORDER_DTO_BY_ID, actualFulfilledOrder);
+    USER_TO_SELL.setId(ID_2);
+    Mockito.when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_SELL));
+    Mockito.when(orderDetailsRepository.findById(ID_2)).thenReturn(Optional.of(ORDER_BY_ID_BUY));
+    Mockito.when(orderMapper.toRestDto(ORDER_BY_ID_SELL)).thenReturn(ORDER_DTO_BY_ID_SELL);
+    Mockito.when(orderMapper.toRestDto(ORDER_BY_ID_BUY)).thenReturn(ORDER_DTO_BY_ID_BUY);
+    OrderDetailsRestDto actualFulfilledOrderSell = orderDetailsService.fulfillOrder(ID, USER_TO_BUY);
+    OrderDetailsRestDto actualFulfilledOrderBuy = orderDetailsService.fulfillOrder(ID_2, USER);
+    ORDER_BY_ID_BUY.setOrderStatus(OrderStatus.FULFILLED);
+    ORDER_BY_ID_SELL.setOrderStatus(OrderStatus.FULFILLED);
+    assertEquals(ORDER_DTO_BY_ID_SELL, actualFulfilledOrderSell);
+    assertEquals(ORDER_DTO_BY_ID_BUY, actualFulfilledOrderBuy);
   }
 
   @Test
@@ -158,19 +176,19 @@ class OrderDetailsServiceTest {
   void getAllOrders() throws NoActiveOrdersFoundException {
     USER.setId(ID_2);
     orderList.add(ORDER_1);
-    orderList.add(ORDER_BY_ID);
+    orderList.add(ORDER_BY_ID_SELL);
     orderDtoList.add(ORDER_DTO);
-    orderDtoList.add(ORDER_DTO_BY_ID);
+    orderDtoList.add(ORDER_DTO_BY_ID_SELL);
 
     Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(orderList);
     Mockito.when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
-    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
   }
 
   @Test
   void exceptionNoActiveOrdersFound() {
     Mockito.when(orderDetailsRepository.findAll(Mockito.any(Specification.class))).thenReturn(Collections.emptyList());
-    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE, USER));
+    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
   }
 
 }

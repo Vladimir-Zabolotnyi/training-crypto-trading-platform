@@ -1,7 +1,5 @@
 package sigma.training.ctp.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
@@ -26,8 +24,6 @@ import java.util.ArrayList;
 
 @Service
 public class OrderDetailsService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(OrderDetailsService.class);
 
   @Autowired
   OrderDetailsRepository orderDetailsRepository;
@@ -87,9 +83,6 @@ public class OrderDetailsService {
       .findById(orderId)
       .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-    LOGGER.info("cancel order method");
-    LOGGER.info("order status = " + order.getOrderStatus());
-
     if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
@@ -97,13 +90,8 @@ public class OrderDetailsService {
       throw new OrderAlreadyCancelledException(orderId);
     }
 
-    LOGGER.info("order type = " + order.getOrderType());
-
     switch (order.getOrderType()) {
       case SELL: {
-        LOGGER.info("user id = " + order.getUser().getId());
-        LOGGER.info("cryptocurrency amount = " + order.getCryptocurrencyAmount());
-
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
       }
       break;

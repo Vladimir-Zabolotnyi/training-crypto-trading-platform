@@ -88,28 +88,31 @@ public class OrderDetailsService {
       .orElseThrow(() -> new OrderNotFoundException(orderId));
 
     LOGGER.info("cancel order method");
+    LOGGER.info("order status = " + order.getOrderStatus());
 
     if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
-    else if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+    if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
       throw new OrderAlreadyCancelledException(orderId);
     }
-    else {
-      LOGGER.info("order = " + order);
 
-      switch (order.getOrderType()) {
-        case SELL: {
-          walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-        }
-        break;
+    LOGGER.info("order type = " + order.getOrderType());
+
+    switch (order.getOrderType()) {
+      case SELL: {
+        LOGGER.info("user id = " + order.getUser().getId());
+        LOGGER.info("cryptocurrency amount = " + order.getCryptocurrencyAmount());
+
+        walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
       }
-
-      order.setOrderStatus(OrderStatus.CANCELLED);
-      orderDetailsRepository.save(order);
-
-      return orderMapper.toRestDto(order);
+      break;
     }
+
+    order.setOrderStatus(OrderStatus.CANCELLED);
+    orderDetailsRepository.save(order);
+
+    return orderMapper.toRestDto(order);
   }
 
   @Transactional

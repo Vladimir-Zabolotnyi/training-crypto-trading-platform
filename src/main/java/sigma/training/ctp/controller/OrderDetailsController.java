@@ -102,7 +102,7 @@ public class OrderDetailsController {
           )
       ),
       @ApiResponse(
-        responseCode = "400",
+        responseCode = "403",
         description = "The order was fulfilled or cancelled"
       ),
       @ApiResponse(
@@ -126,7 +126,7 @@ public class OrderDetailsController {
     return orderDetailsService.cancelOrder(orderId);
   }
 
-  @Operation(summary = "Get all order", description = "Allows to obtain information about all sell//buy active orders")
+  @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy active orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(

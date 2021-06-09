@@ -130,6 +130,12 @@ class OrderDetailsServiceTest {
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
   );
 
+  private static final OrderDetailsEntity CANCEL_BUY_ORDER_STATUS_CREATED = new OrderDetailsEntity(
+    ID_2, CREATION_DATE,
+    USER, CREATED_STATUS, ORDER_TYPE_BUY,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+
   private static final OrderDetailsEntity CANCEL_SELL_ORDER_STATUS_FULFILLED = new OrderDetailsEntity(
     ID, CREATION_DATE,
     USER, FULFILLED_STATUS, ORDER_TYPE_SELL,
@@ -145,6 +151,11 @@ class OrderDetailsServiceTest {
   private static final OrderDetailsRestDto CANCEL_SELL_ORDER_DTO_1 = new OrderDetailsRestDto(
     ID, CREATION_DATE,
     USER.getId(), CANCELLED_STATUS, ORDER_TYPE_SELL,
+    ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
+  );
+  private static final OrderDetailsRestDto CANCEL_BUY_ORDER_DTO_1 = new OrderDetailsRestDto(
+    ID_2, CREATION_DATE,
+    USER.getId(), CANCELLED_STATUS, ORDER_TYPE_BUY,
     ORDER_FROM_BODY.getCryptocurrencyPrice(), ORDER_FROM_BODY.getCryptocurrencyAmount()
   );
 
@@ -257,11 +268,15 @@ class OrderDetailsServiceTest {
     throws OrderAlreadyFulfilledException, OrderAlreadyCancelledException, OrderNotFoundException {
 
     when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(CANCEL_SELL_ORDER_STATUS_CREATED));
+    when(orderDetailsRepository.findById(ID_2)).thenReturn(Optional.of(CANCEL_BUY_ORDER_STATUS_CREATED));
     when(orderMapper.toRestDto(CANCEL_SELL_ORDER_STATUS_CREATED)).thenReturn(CANCEL_SELL_ORDER_DTO_1);
+    when(orderMapper.toRestDto(CANCEL_BUY_ORDER_STATUS_CREATED)).thenReturn(CANCEL_BUY_ORDER_DTO_1);
 
-    OrderDetailsRestDto actual = orderDetailsService.cancelOrder(ID);
+    OrderDetailsRestDto actualSell = orderDetailsService.cancelOrder(ID);
+    OrderDetailsRestDto actualBuy = orderDetailsService.cancelOrder(ID_2);
 
-    assertEquals(CANCEL_SELL_ORDER_DTO_1.getOrderStatus(), actual.getOrderStatus());
+    assertEquals(CANCEL_SELL_ORDER_DTO_1.getOrderStatus(), actualSell.getOrderStatus());
+    assertEquals(CANCEL_BUY_ORDER_DTO_1.getOrderStatus(), actualBuy.getOrderStatus());
   }
 
   @Test

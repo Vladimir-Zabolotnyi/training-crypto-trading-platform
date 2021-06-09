@@ -43,7 +43,7 @@ public class OrderDetailsService {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
-        walletService.reduceWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
         break;
       case BUY:
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
@@ -72,7 +72,7 @@ public class OrderDetailsService {
       break;
       case BUY:
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-        walletService.reduceWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
+        walletService.subtractWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
         walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
       break;
     }
@@ -96,12 +96,18 @@ public class OrderDetailsService {
     else if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
       throw new OrderAlreadyCancelledException(orderId);
     }
-    else {
+    switch(order.getOrderType()){
+      case SELL:
+        break;
+      case BUY:
+        walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        break;
+    }
       order.setOrderStatus(OrderStatus.CANCELLED);
       orderDetailsRepository.save(order);
 
       return orderMapper.toRestDto(order);
-    }
+
   }
 
   @Transactional

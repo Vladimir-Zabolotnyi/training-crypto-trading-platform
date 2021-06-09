@@ -28,6 +28,7 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
@@ -122,7 +123,6 @@ public class OrderDetailsController {
       content = @Content(schema = @Schema(implementation = Long.class))
     ) Long orderId
   ) throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
-
     return orderDetailsService.cancelOrder(orderId);
   }
 

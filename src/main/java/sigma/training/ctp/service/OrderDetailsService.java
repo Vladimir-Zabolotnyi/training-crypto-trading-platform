@@ -88,7 +88,6 @@ public class OrderDetailsService {
       .orElseThrow(() -> new OrderNotFoundException(orderId));
 
     LOGGER.info("cancel order method");
-    LOGGER.info("order status = " + order.getOrderStatus().toString());
 
     if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
       throw new OrderAlreadyFulfilledException(orderId);
@@ -97,6 +96,14 @@ public class OrderDetailsService {
       throw new OrderAlreadyCancelledException(orderId);
     }
     else {
+      LOGGER.info("order = " + order);
+
+      switch (order.getOrderType()) {
+        case SELL: {
+          walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        } break;
+      }
+
       order.setOrderStatus(OrderStatus.CANCELLED);
       orderDetailsRepository.save(order);
 

@@ -1,7 +1,5 @@
 package sigma.training.ctp.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
@@ -26,8 +24,6 @@ import java.util.ArrayList;
 
 @Service
 public class OrderDetailsService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(OrderDetailsService.class);
 
   @Autowired
   OrderDetailsRepository orderDetailsRepository;
@@ -87,27 +83,24 @@ public class OrderDetailsService {
       .findById(orderId)
       .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-    LOGGER.info("cancel order method");
-    LOGGER.info("order status = " + order.getOrderStatus().toString());
-
     if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
       throw new OrderAlreadyFulfilledException(orderId);
     }
-    else if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+    if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
       throw new OrderAlreadyCancelledException(orderId);
     }
-    switch(order.getOrderType()){
-      case SELL:
-        break;
-      case BUY:
-        walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
-        break;
+
+    switch (order.getOrderType()) {
+      case SELL: {
+        walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+      }
+      break;
     }
-      order.setOrderStatus(OrderStatus.CANCELLED);
-      orderDetailsRepository.save(order);
 
-      return orderMapper.toRestDto(order);
+    order.setOrderStatus(OrderStatus.CANCELLED);
+    orderDetailsRepository.save(order);
 
+    return orderMapper.toRestDto(order);
   }
 
   @Transactional

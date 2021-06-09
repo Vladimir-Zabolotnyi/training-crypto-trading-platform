@@ -1,5 +1,7 @@
 package sigma.training.ctp.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
@@ -19,11 +21,14 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class OrderDetailsService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(OrderDetailsService.class);
+
   @Autowired
   OrderDetailsRepository orderDetailsRepository;
 
@@ -73,6 +78,30 @@ public class OrderDetailsService {
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
+  }
+
+  @Transactional
+  public OrderDetailsRestDto cancelOrder(Long orderId)
+    throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
+    OrderDetailsEntity order = orderDetailsRepository
+      .findById(orderId)
+      .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+    LOGGER.info("cancel order method");
+    LOGGER.info("order status = " + order.getOrderStatus().toString());
+
+    if (order.getOrderStatus().equals(OrderStatus.FULFILLED)) {
+      throw new OrderAlreadyFulfilledException(orderId);
+    }
+    else if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+      throw new OrderAlreadyCancelledException(orderId);
+    }
+    else {
+      order.setOrderStatus(OrderStatus.CANCELLED);
+      orderDetailsRepository.save(order);
+
+      return orderMapper.toRestDto(order);
+    }
   }
 
   @Transactional

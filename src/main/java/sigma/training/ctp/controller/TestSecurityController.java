@@ -1,5 +1,6 @@
 package sigma.training.ctp.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,7 @@ import sigma.training.ctp.service.UserService;
 
 @RestController
 @RequestMapping("/test")
+@Hidden
 @Tag(name = "Security Controller Test", description = "Allows to check Basic Auth")
 public class TestSecurityController {
 

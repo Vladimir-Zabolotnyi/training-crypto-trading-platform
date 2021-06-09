@@ -62,7 +62,7 @@ public class OrderDetailsController {
                                   content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+                                  schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     return orderDetailsService.postOrder(order, userService.getCurrentUser());
@@ -141,7 +141,7 @@ public class OrderDetailsController {
   public @ResponseBody
   List<OrderDetailsRestDto> getAllOrders(@RequestParam(name = "orderType") @Parameter(in = ParameterIn.QUERY,
     description = "type of the order",
-    schema = @Schema(allowableValues = {"buy", "sell", "SELL", "BUY"})) String orderType) throws NoActiveOrdersFoundException {
+    schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws NoActiveOrdersFoundException {
 
     return orderDetailsService.getAllOrders(
       OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),

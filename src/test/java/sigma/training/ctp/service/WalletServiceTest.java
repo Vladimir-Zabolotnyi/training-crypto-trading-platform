@@ -1,6 +1,5 @@
 package sigma.training.ctp.service;
 
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -80,14 +79,14 @@ public class WalletServiceTest {
       WALLET_AFTER_UPDATE.getUser(),
       WALLET_BEFORE_UPDATE.getMoneyBalance(),
       CRYPTOCURRENCY_BALANCE_REDUCED);
-    WalletEntity actual = service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
+    WalletEntity actual = service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT);
     assertEquals(expected.getCryptocurrencyBalance(), actual.getCryptocurrencyBalance());
   }
 
   @Test
   void exceptionReduceWalletCryptocurrencyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_FOR_EXCEPTION);
-    assertThrows(InsufficientAmountCryptoException.class, () -> service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
+    assertThrows(InsufficientAmountCryptoException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
   }
 
   @Test
@@ -117,6 +116,6 @@ public class WalletServiceTest {
   @Test
   void exceptionSubtractWalletMoneyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_FOR_EXCEPTION);
-    assertThrows(InsufficientAmountCryptoException.class, () -> service.reduceWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
+    assertThrows(InsufficientAmountCryptoException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
   }
 }

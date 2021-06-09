@@ -24,7 +24,7 @@ public class WalletService {
     return walletMapper.toRestDto(wallet);
   }
 
-  public WalletEntity reduceWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
+  public WalletEntity subtractWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
     WalletEntity wallet = repository.findWalletEntityByUserId(id);
     BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
     if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {

@@ -8,6 +8,8 @@ INSERT INTO user(id, name, login, password)
 VALUES (1, 'Jack', 'Jacklog', '$2a$10$cc9PZ/P.BJre5fGkZ1K/ROhc7HNskwrNB2yymrXTmombBlui5Q012');
 INSERT INTO user(id, name, login, password)
 VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.UglMuEJf8ue');
+INSERT INTO user(id, name, login, password)
+VALUES (3, 'Vlad', 'Vladlog', '$2a$10$BBP0NZDJG45hqP6z2xsHVu1TMRNTDvNFbpBUdIP.qN2N0XGsxWFFC');
 
 INSERT INTO wallet VALUES
 (1, 1, 228.13, 37),
@@ -38,3 +40,10 @@ INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,crypt
 VALUES (11, '2021-06-12 15:28:39',2,'CREATED','BUY',220,24);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (12, '2021-06-13 02:28:39',2,'CREATED','BUY',456,12);
+
+INSERT INTO role(id,user_id,role)
+VALUES (1, 1,'ROLE_USER');
+INSERT INTO role(id,user_id,role)
+VALUES (2,2,'ROLE_USER');
+INSERT INTO role(id,user_id,role)
+VALUES (3,3,'ROLE_ADMIN' );

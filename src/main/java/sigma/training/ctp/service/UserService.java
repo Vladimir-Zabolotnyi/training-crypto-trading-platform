@@ -32,4 +32,5 @@ public class UserService implements UserDetailsService {
     final Optional<UserEntity> user = userRepository.findUserByLogin(login);
     return user.orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
+
 }

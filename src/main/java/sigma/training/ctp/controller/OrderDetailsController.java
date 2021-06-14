@@ -79,7 +79,7 @@ public class OrderDetailsController {
       content = @Content(mediaType = "text/plain")),
     @ApiResponse(responseCode = "404", description = "Order not found",
       content = @Content(mediaType = "text/plain")),
-    @ApiResponse(responseCode = "406", description = "You are not able to fulfill own order",
+    @ApiResponse(responseCode = "405", description = "You are not able to fulfill own order",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)

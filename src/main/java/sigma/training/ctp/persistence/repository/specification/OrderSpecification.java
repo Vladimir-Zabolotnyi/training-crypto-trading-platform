@@ -25,6 +25,12 @@ public interface OrderSpecification {
         root.join("user", JoinType.INNER).get("id"), criteriaBuilder.literal(id));
   }
 
+  static Specification<OrderDetailsEntity> byUser(Long id) {
+    return (root, query, criteriaBuilder) ->
+      criteriaBuilder.equal(
+        root.join("user", JoinType.INNER).get("id"), criteriaBuilder.literal(id));
+  }
+
   static Specification<OrderDetailsEntity> orderByCryptocurrencyAmount(boolean asc) {
     return (root, query, criteriaBuilder) -> {
       query.orderBy(new OrderImpl(root.get("cryptocurrencyPrice"), asc));

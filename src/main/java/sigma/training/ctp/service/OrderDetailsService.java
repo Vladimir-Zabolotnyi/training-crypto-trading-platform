@@ -65,12 +65,12 @@ public class OrderDetailsService {
         walletService.subtractWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
-      break;
+        break;
       case BUY:
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
         walletService.subtractWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
         walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
-      break;
+        break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
     return orderMapper.toRestDto(order);
@@ -104,21 +104,71 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
+  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, OrderStatus orderStatus, Long id) throws NoActiveOrdersFoundException {
     List<OrderDetailsEntity> orderList;
     switch (orderType) {
       case SELL:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+          OrderSpecification.byOrderStatus(orderStatus)
             .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.byUser(id))
             .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
         break;
       case BUY:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
+          OrderSpecification.byOrderStatus(orderStatus)
             .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUserNot(currentUser.getId()))
+            .and(OrderSpecification.byUser(id))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
+        break;
+      default:
+        orderList = new ArrayList<>();
+    }
+
+    if (orderList.isEmpty()) {
+      throw new NoActiveOrdersFoundException();
+    }
+    return orderMapper.toRestDto(orderList);
+  }
+
+  @Transactional
+  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType) throws NoActiveOrdersFoundException {
+    List<OrderDetailsEntity> orderList;
+    switch (orderType) {
+      case SELL:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderType(orderType)
+            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+        break;
+      case BUY:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderType(orderType)
+            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
+        break;
+      default:
+        orderList = new ArrayList<>();
+    }
+
+    if (orderList.isEmpty()) {
+      throw new NoActiveOrdersFoundException();
+    }
+    return orderMapper.toRestDto(orderList);
+  }
+
+  @Transactional
+  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, Long id) throws NoActiveOrdersFoundException {
+    List<OrderDetailsEntity> orderList;
+    switch (orderType) {
+      case SELL:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderType(orderType)
+            .and(OrderSpecification.byUser(id))
+            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
+        break;
+      case BUY:
+        orderList = orderDetailsRepository.findAll(
+          OrderSpecification.byOrderType(orderType)
+            .and(OrderSpecification.byUser(id))
             .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
         break;
       default:

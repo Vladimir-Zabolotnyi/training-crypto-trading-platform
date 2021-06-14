@@ -254,13 +254,13 @@ class OrderDetailsServiceTest {
 
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(orderList);
     when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
-    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
+    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE_SELL,ORDER_STATUS, USER.getId()));
   }
 
   @Test
   void exceptionNoActiveOrdersFound() {
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
+    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE_SELL,ORDER_STATUS, USER.getId()));
   }
 
   @Test

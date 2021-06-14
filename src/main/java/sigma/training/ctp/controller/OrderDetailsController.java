@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
@@ -118,7 +119,8 @@ public class OrderDetailsController {
       ),
     })
   @DeleteMapping(path = "/{id}")
-  public @ResponseBody OrderDetailsRestDto cancelOrder(
+  public @ResponseBody
+  OrderDetailsRestDto cancelOrder(
     @PathVariable("id")
     @Parameter(
       description = "the id of the order",
@@ -128,23 +130,33 @@ public class OrderDetailsController {
     return orderDetailsService.cancelOrder(orderId);
   }
 
-  @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy active orders")
+  @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy  orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(
         schema = @Schema(implementation = OrderDetailsRestDto.class)))),
-    @ApiResponse(responseCode = "204", description = "No active orders were found",
+    @ApiResponse(responseCode = "204", description = "No  orders were found",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
   public @ResponseBody
-  List<OrderDetailsRestDto> getAllOrders(@RequestParam(name = "orderType") @Parameter(in = ParameterIn.QUERY,
-    description = "type of the order",
-    schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws NoActiveOrdersFoundException {
-
-    return orderDetailsService.getAllOrders(
-      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-      userService.getCurrentUser());
+  List<OrderDetailsRestDto> getAllOrders(
+    @RequestParam(name = "order_type") @Parameter(in = ParameterIn.QUERY,
+      description = "type of the order",
+      schema = @Schema(allowableValues = {"buy", "sell"})) String orderType,
+    @RequestParam(name = "order_status", required = false) @Parameter(in = ParameterIn.QUERY, required = false, allowEmptyValue = true,
+      description = "status of the order") String orderStatus,
+    @RequestParam(name = "user_id", required = false) @Parameter(in = ParameterIn.QUERY, required = false, allowEmptyValue = true,
+      description = "id of the user") Long id) throws NoActiveOrdersFoundException {
+    if (orderStatus == null & id == null) {
+      return orderDetailsService.getAllOrders(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
+    }
+    if (orderStatus == null) {
+      return orderDetailsService.getAllOrders(
+        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)), id);
+    }
+    return orderDetailsService.getAllOrders(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
+      OrderStatus.valueOf(orderStatus.toUpperCase(Locale.ROOT)), id);
   }
 }

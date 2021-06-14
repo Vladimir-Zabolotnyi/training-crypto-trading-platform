@@ -56,6 +56,6 @@ public class ExceptionsHandler {
 
   @ExceptionHandler(value = {CannotFulfillOwnOrderException.class})
   public ResponseEntity<Object> handleInvalidInputException(CannotFulfillOwnOrderException ex) {
-    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NO_CONTENT);
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
   }
 }

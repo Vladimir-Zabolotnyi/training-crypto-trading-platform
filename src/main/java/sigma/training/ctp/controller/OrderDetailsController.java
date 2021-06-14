@@ -145,9 +145,10 @@ public class OrderDetailsController {
     @RequestParam(name = "order_type") @Parameter(in = ParameterIn.QUERY,
       description = "type of the order",
       schema = @Schema(allowableValues = {"buy", "sell"})) String orderType,
-    @RequestParam(name = "order_status", required = false) @Parameter(in = ParameterIn.QUERY, required = false, allowEmptyValue = true,
-      description = "status of the order") String orderStatus,
-    @RequestParam(name = "user_id", required = false) @Parameter(in = ParameterIn.QUERY, required = false, allowEmptyValue = true,
+    @RequestParam(name = "order_status", required = false) @Parameter(in = ParameterIn.QUERY,
+      description = "status of the order",
+      schema = @Schema(allowableValues = {"buy", "sell"})) String orderStatus,
+    @RequestParam(name = "user_id", required = false) @Parameter(in = ParameterIn.QUERY,
       description = "id of the user") Long id) throws NoActiveOrdersFoundException {
     if (orderStatus == null & id == null) {
       return orderDetailsService.getAllOrders(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));

@@ -31,13 +31,14 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
-import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/orders")
@@ -147,17 +148,19 @@ public class OrderDetailsController {
       schema = @Schema(allowableValues = {"buy", "sell"})) String orderType,
     @RequestParam(name = "order_status", required = false) @Parameter(in = ParameterIn.QUERY,
       description = "status of the order",
-      schema = @Schema(allowableValues = {"buy", "sell"})) String orderStatus,
+      schema = @Schema(allowableValues = {"buy", "sell"})) Optional<String> orderStatus,
     @RequestParam(name = "user_id", required = false) @Parameter(in = ParameterIn.QUERY,
-      description = "id of the user") Long id) throws NoActiveOrdersFoundException {
-    if (orderStatus == null & id == null) {
-      return orderDetailsService.getAllOrders(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
-    }
-    if (orderStatus == null) {
+      description = "id of the user") Optional<Long> id) throws NoActiveOrdersFoundException {
+    if (orderStatus.isPresent() && id.isPresent()) {
       return orderDetailsService.getAllOrders(
-        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)), id);
+        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
+        OrderStatus.valueOf(orderStatus.get().toUpperCase(Locale.ROOT)), id.get());
     }
-    return orderDetailsService.getAllOrders(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-      OrderStatus.valueOf(orderStatus.toUpperCase(Locale.ROOT)), id);
+    if (id.isPresent()) {
+      return orderDetailsService.getAllOrders(
+        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)), id.get());
+    }
+    return orderDetailsService.getAllOrders(
+      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
   }
 }

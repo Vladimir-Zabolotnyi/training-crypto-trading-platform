@@ -13,6 +13,8 @@ public class AuditTrailService {
   @Autowired
   AuditTrailRepository auditTrailRepository;
 
+
+
   @Transactional
   public List<AuditTrail> getAllAuditTrails() {
     return auditTrailRepository.findAll();

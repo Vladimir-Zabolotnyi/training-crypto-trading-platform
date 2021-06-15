@@ -97,10 +97,12 @@ public class OrderDetailsService {
     }
 
     switch (order.getOrderType()) {
-      case SELL: {
+      case SELL:
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-      }
-      break;
+        break;
+      case BUY:
+        walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        break;
     }
 
     order.setOrderStatus(OrderStatus.CANCELLED);

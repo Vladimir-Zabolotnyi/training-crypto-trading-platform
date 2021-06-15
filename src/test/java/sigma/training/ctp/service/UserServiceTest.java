@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.repository.UserRepository;
 
@@ -48,6 +50,7 @@ class UserServiceTest {
     Mockito.when(userRepository.findUserByLogin(user2.getLogin())).thenReturn(Optional.of(user2));
     UserDetails userDet1 = userService.loadUserByUsername(user1.getLogin());
     UserDetails userDet2 = userService.loadUserByUsername(user2.getLogin());
+
     assertEquals(user1, userDet1);
     assertEquals(user2, userDet2);
   }

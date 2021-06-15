@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
+import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
@@ -30,13 +30,13 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
-import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
 
 import java.util.List;
 import java.util.Locale;
+
 
 @RestController
 @RequestMapping("/orders")
@@ -118,7 +118,8 @@ public class OrderDetailsController {
       ),
     })
   @DeleteMapping(path = "/{id}")
-  public @ResponseBody OrderDetailsRestDto cancelOrder(
+  public @ResponseBody
+  OrderDetailsRestDto cancelOrder(
     @PathVariable("id")
     @Parameter(
       description = "the id of the order",
@@ -128,23 +129,20 @@ public class OrderDetailsController {
     return orderDetailsService.cancelOrder(orderId);
   }
 
-  @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy active orders")
+  @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy  orders")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(
         schema = @Schema(implementation = OrderDetailsRestDto.class)))),
-    @ApiResponse(responseCode = "404", description = "No active orders were found",
+    @ApiResponse(responseCode = "404", description = "No  orders were found",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
   public @ResponseBody
-  List<OrderDetailsRestDto> getAllOrders(@RequestParam(name = "orderType") @Parameter(in = ParameterIn.QUERY,
-    description = "type of the order",
-    schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws NoActiveOrdersFoundException {
-
-    return orderDetailsService.getAllOrders(
-      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-      userService.getCurrentUser());
+  List<OrderDetailsRestDto> getAllOrders(@Parameter(in = ParameterIn.QUERY,
+    description = "order filter",
+    schema = @Schema(implementation = OrderFilterDto.class)) OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
+   return orderDetailsService.getAllOrders(orderFilterDto);
   }
 }

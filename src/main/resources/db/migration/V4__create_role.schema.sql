@@ -1,0 +1,11 @@
+CREATE TABLE role
+(
+    id   INT PRIMARY KEY    NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20) UNIQUE NOT NULL
+);
+
+ALTER TABLE user
+    ADD role_id INT,
+    ADD FOREIGN KEY (role_id) REFERENCES role (id);
+
+

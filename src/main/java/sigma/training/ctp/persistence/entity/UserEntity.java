@@ -9,8 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -31,10 +32,13 @@ public class UserEntity implements UserDetails {
   @Column(name = "password")
   private String password;
 
+  @OneToOne
+  @JoinColumn(name = "role_id", referencedColumnName = "id")
+  private RoleEntity role;
+
   @Override
-  @Transient
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    return Collections.singletonList(new SimpleGrantedAuthority(getRole().getName()));
   }
 
   @Override

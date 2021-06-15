@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
@@ -16,7 +17,9 @@ import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
+import sigma.training.ctp.mapper.OrderFilterMapper;
 import sigma.training.ctp.mapper.OrderMapper;
+import sigma.training.ctp.persistence.OrderFilter;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
@@ -28,6 +31,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,6 +66,9 @@ class OrderDetailsServiceTest {
   private static final OrderStatus CREATED_STATUS = OrderStatus.CREATED;
   private static final OrderStatus FULFILLED_STATUS = OrderStatus.FULFILLED;
   private static final OrderStatus CANCELLED_STATUS = OrderStatus.CANCELLED;
+
+  private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS,ORDER_TYPE_SELL,USER.getId());
+  private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString().toLowerCase(Locale.ROOT),ORDER_TYPE_SELL.toString().toLowerCase(Locale.ROOT),USER.getId());
 
   private static final OrderDetailsRestDto ORDER_FROM_BODY_SELL = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_SELL, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
   private static final OrderDetailsRestDto ORDER_FROM_BODY_BUY = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_BUY, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
@@ -170,6 +177,8 @@ class OrderDetailsServiceTest {
 
   @Mock
   OrderMapper orderMapper;
+  @Mock
+  OrderFilterMapper orderFilterMapper;
 
   @InjectMocks
   OrderDetailsService orderDetailsService;
@@ -254,13 +263,15 @@ class OrderDetailsServiceTest {
 
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(orderList);
     when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
-    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
+  when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
+    assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
   }
 
   @Test
   void exceptionNoActiveOrdersFound() {
+    when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_TYPE_SELL, USER));
+    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
   }
 
   @Test

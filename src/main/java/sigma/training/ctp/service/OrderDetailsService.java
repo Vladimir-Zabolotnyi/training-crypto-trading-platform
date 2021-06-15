@@ -1,9 +1,11 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
@@ -11,7 +13,9 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.mapper.OrderFilterMapper;
 import sigma.training.ctp.mapper.OrderMapper;
+import sigma.training.ctp.persistence.OrderFilter;
 import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
@@ -35,6 +39,9 @@ public class OrderDetailsService {
 
   @Autowired
   OrderMapper orderMapper;
+
+  @Autowired
+  OrderFilterMapper orderFilterMapper;
 
   @Autowired
   AuditTrailRepository auditTrailRepository;
@@ -81,12 +88,12 @@ public class OrderDetailsService {
         walletService.subtractWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         walletService.addWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
-      break;
+        break;
       case BUY:
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
         walletService.subtractWalletCryptocurrencyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount());
         walletService.addWalletMoneyBalanceByUserId(currentUser.getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
-      break;
+        break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
     auditTrail.setUser(currentUser);
@@ -111,10 +118,12 @@ public class OrderDetailsService {
     }
 
     switch (order.getOrderType()) {
-      case SELL: {
+      case SELL:
         walletService.addWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
-      }
-      break;
+        break;
+      case BUY:
+        walletService.addWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
+        break;
     }
 
     order.setOrderStatus(OrderStatus.CANCELLED);
@@ -127,22 +136,19 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
+  public List<OrderDetailsRestDto> getAllOrders(OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
+    OrderFilter orderFilter = orderFilterMapper.toEntity(orderFilterDto);
     AuditTrail auditTrail = new AuditTrail();
     List<OrderDetailsEntity> orderList;
-    switch (orderType) {
+    switch (orderFilter.getOrderType()) {
       case SELL:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
-            .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUserNot(currentUser.getId()))
+          orderFilterToCriteria(orderFilter)
             .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
         break;
       case BUY:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(OrderStatus.CREATED)
-            .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUserNot(currentUser.getId()))
+          orderFilterToCriteria(orderFilter)
             .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
         break;
       default:
@@ -156,5 +162,19 @@ public class OrderDetailsService {
 //    auditTrail.setDescription("Orders with id= " + order.getId() + " was cancelled");
     auditTrailRepository.save(auditTrail);
     return orderMapper.toRestDto(orderList);
+  }
+
+  private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {
+    Specification<OrderDetailsEntity> specification = OrderSpecification.byOrderType(orderFilter.getOrderType());
+
+    if (orderFilter.getUserId() == null) {
+        specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
+    }
+    if (orderFilter.getOrderStatus() == null) {
+     specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
+    }
+    return specification
+      .and(OrderSpecification.byUser(orderFilter.getUserId()))
+      .and(OrderSpecification.byOrderStatus(orderFilter.getOrderStatus()));
   }
 }

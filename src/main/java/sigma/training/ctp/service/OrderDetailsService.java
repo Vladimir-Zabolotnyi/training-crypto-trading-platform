@@ -135,15 +135,15 @@ public class OrderDetailsService {
   }
 
   private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {
+    Specification<OrderDetailsEntity> specification = OrderSpecification.byOrderType(orderFilter.getOrderType());
+
     if (orderFilter.getUserId() == null) {
-      return OrderSpecification.byOrderType(orderFilter.getOrderType())
-        .and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
+        specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
     }
     if (orderFilter.getOrderStatus() == null) {
-      return OrderSpecification.byOrderType(orderFilter.getOrderType())
-        .and(OrderSpecification.byUser(orderFilter.getUserId()));
+     specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
     }
-    return OrderSpecification.byOrderType(orderFilter.getOrderType())
+    return specification
       .and(OrderSpecification.byUser(orderFilter.getUserId()))
       .and(OrderSpecification.byOrderStatus(orderFilter.getOrderStatus()));
   }

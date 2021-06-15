@@ -9,7 +9,7 @@ import sigma.training.ctp.persistence.OrderFilter;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderFilterMapperTest {
   private static final OrderType ORDER_TYPE = OrderType.SELL;

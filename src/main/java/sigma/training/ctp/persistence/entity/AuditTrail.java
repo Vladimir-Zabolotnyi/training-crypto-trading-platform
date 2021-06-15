@@ -27,7 +27,7 @@ public class AuditTrail {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "creation_date")
+  @Column(name = "date")
   @Generated(GenerationTime.INSERT)
   private Instant date;
 

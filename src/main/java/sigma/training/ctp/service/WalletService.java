@@ -6,7 +6,9 @@ import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.mapper.WalletMapper;
+import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.WalletEntity;
+import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
@@ -16,11 +18,23 @@ public class WalletService {
 
   @Autowired
   private WalletRepository repository;
+
   @Autowired
   WalletMapper walletMapper;
 
+  @Autowired
+  AuditTrailRepository auditTrailRepository;
+
+  @Autowired
+  UserService userService;
+
   public WalletRestDto getWalletByUserId(Long id) {
+    AuditTrail auditTrail = new AuditTrail();
     WalletEntity wallet = repository.findWalletEntityByUserId(id);
+
+    auditTrail.setUser(userService.getCurrentUser());
+    auditTrail.setDescription("Wallet wit id= " + wallet.getId() + " was got");
+    auditTrailRepository.save(auditTrail);
     return walletMapper.toRestDto(wallet);
   }
 

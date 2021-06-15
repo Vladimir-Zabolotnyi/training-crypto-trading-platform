@@ -12,9 +12,11 @@ import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.mapper.OrderMapper;
+import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
+import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
@@ -34,8 +36,16 @@ public class OrderDetailsService {
   @Autowired
   OrderMapper orderMapper;
 
+  @Autowired
+  AuditTrailRepository auditTrailRepository;
+
+  @Autowired
+  UserService userService;
+
+
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+    AuditTrail auditTrail = new AuditTrail();
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
@@ -45,11 +55,17 @@ public class OrderDetailsService {
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         break;
     }
-    return orderMapper.toRestDto(orderDetailsRepository.save(order));
+    OrderDetailsRestDto orderDetailsRestDto = orderMapper.toRestDto(orderDetailsRepository.save(order));
+    auditTrail.setDate(orderDetailsRestDto.getCreationDate());
+    auditTrail.setUser(order.getUser());
+    auditTrail.setDescription("Order with id= " + orderDetailsRestDto.getId() + " was created");
+    auditTrailRepository.save(auditTrail);
+    return orderDetailsRestDto;
   }
 
   @Transactional
   public OrderDetailsRestDto fulfillOrder(Long orderId, UserEntity currentUser) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+    AuditTrail auditTrail = new AuditTrail();
     OrderDetailsEntity order = orderDetailsRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
     if (order.getOrderStatus() == OrderStatus.CANCELLED) {
       throw new OrderAlreadyCancelledException(orderId);
@@ -73,12 +89,16 @@ public class OrderDetailsService {
       break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
+    auditTrail.setUser(currentUser);
+    auditTrail.setDescription("Order with id= " + order.getId() + " was fulfilled");
+    auditTrailRepository.save(auditTrail);
     return orderMapper.toRestDto(order);
   }
 
   @Transactional
   public OrderDetailsRestDto cancelOrder(Long orderId)
     throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
+    AuditTrail auditTrail = new AuditTrail();
     OrderDetailsEntity order = orderDetailsRepository
       .findById(orderId)
       .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -100,11 +120,15 @@ public class OrderDetailsService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     orderDetailsRepository.save(order);
 
+    auditTrail.setUser(order.getUser());
+    auditTrail.setDescription("Order with id= " + order.getId() + " was cancelled");
+    auditTrailRepository.save(auditTrail);
     return orderMapper.toRestDto(order);
   }
 
   @Transactional
   public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, UserEntity currentUser) throws NoActiveOrdersFoundException {
+    AuditTrail auditTrail = new AuditTrail();
     List<OrderDetailsEntity> orderList;
     switch (orderType) {
       case SELL:
@@ -128,6 +152,9 @@ public class OrderDetailsService {
     if (orderList.isEmpty()) {
       throw new NoActiveOrdersFoundException();
     }
+    auditTrail.setUser(userService.getCurrentUser());
+//    auditTrail.setDescription("Orders with id= " + order.getId() + " was cancelled");
+    auditTrailRepository.save(auditTrail);
     return orderMapper.toRestDto(orderList);
   }
 }

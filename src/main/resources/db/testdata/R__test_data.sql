@@ -9,16 +9,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO role(id,role)
 VALUES (1, 'USER');
 INSERT INTO role(id,role)
-VALUES (2,'USER');
-INSERT INTO role(id,role)
-VALUES (3,'ADMIN');
+VALUES (2,'ADMIN');
 
 INSERT INTO user(id, name, login, password,role_id)
 VALUES (1, 'Jack', 'Jacklog', '$2a$10$cc9PZ/P.BJre5fGkZ1K/ROhc7HNskwrNB2yymrXTmombBlui5Q012',1);
 INSERT INTO user(id, name, login, password,role_id)
-VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.UglMuEJf8ue',2);
+VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.UglMuEJf8ue',1);
 INSERT INTO user(id, name, login, password,role_id)
-VALUES (3, 'Vlad', 'Vladlog', '$2a$10$BBP0NZDJG45hqP6z2xsHVu1TMRNTDvNFbpBUdIP.qN2N0XGsxWFFC',3);
+VALUES (3, 'Vlad', 'Vladlog', '$2a$10$BBP0NZDJG45hqP6z2xsHVu1TMRNTDvNFbpBUdIP.qN2N0XGsxWFFC',2);
 
 INSERT INTO wallet VALUES
 (1, 1, 228.13, 37),

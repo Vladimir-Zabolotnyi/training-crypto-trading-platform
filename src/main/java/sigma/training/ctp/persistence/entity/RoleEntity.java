@@ -1,7 +1,6 @@
 package sigma.training.ctp.persistence.entity;
 
 import lombok.Data;
-import sigma.training.ctp.dictionary.Role;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

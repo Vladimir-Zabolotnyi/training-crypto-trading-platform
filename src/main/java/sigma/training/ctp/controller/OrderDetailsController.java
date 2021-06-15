@@ -133,7 +133,7 @@ public class OrderDetailsController {
     @ApiResponse(responseCode = "200", description = "orders are obtained",
       content = @Content(mediaType = "application/json", array = @ArraySchema(
         schema = @Schema(implementation = OrderDetailsRestDto.class)))),
-    @ApiResponse(responseCode = "204", description = "No active orders were found",
+    @ApiResponse(responseCode = "404", description = "No active orders were found",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)

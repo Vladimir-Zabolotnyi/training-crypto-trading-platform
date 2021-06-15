@@ -38,3 +38,16 @@ INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,crypt
 VALUES (11, '2021-06-12 15:28:39',2,'CREATED','BUY',220,24);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (12, '2021-06-13 02:28:39',2,'CREATED','BUY',456,12);
+
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 13:28:39', '1', 'order with id 1 was created');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 13:28:39', '1', 'order with id 2 was created');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 13:28:39', '1', 'order with id 3 was created');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 13:33:39', '2', 'order with id 4 was created');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 14:23:39', '1', 'order with id 3 was fulfilled');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 15:28:39', '1', 'order with id 1 was cancelled');

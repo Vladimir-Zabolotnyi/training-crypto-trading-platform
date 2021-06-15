@@ -18,8 +18,8 @@ public class RoleEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "role")
-  private String role;
+  @Column(name = "name")
+  private String name;
 
 
 }

@@ -6,9 +6,9 @@ TRUNCATE user;
 SET FOREIGN_KEY_CHECKS = 1;
 
 
-INSERT INTO role(id,role)
+INSERT INTO role(id,name)
 VALUES (1, 'USER');
-INSERT INTO role(id,role)
+INSERT INTO role(id,name)
 VALUES (2,'ADMIN');
 
 INSERT INTO user(id, name, login, password,role_id)

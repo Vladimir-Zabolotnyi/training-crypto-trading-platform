@@ -7,6 +7,7 @@ import sigma.training.ctp.dictionary.Role;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class RoleEntity {
   private List<UserEntity> userList;
 
   @Column(name = "role")
-  private Role role;
+  private String role;
 
 
 }

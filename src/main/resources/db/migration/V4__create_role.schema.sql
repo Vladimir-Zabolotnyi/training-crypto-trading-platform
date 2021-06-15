@@ -2,6 +2,6 @@ CREATE TABLE role
 (
     id INT  PRIMARY KEY NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
-    role ENUM('ROLE_ADMIN','ROLE_USER') NOT NULL,
+    role VARCHAR(20) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );

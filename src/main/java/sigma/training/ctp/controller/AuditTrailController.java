@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import sigma.training.ctp.dto.AuditTrailDto;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.service.AuditTrailService;
@@ -25,7 +26,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/audit-trails")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 @Tag(name = "Audit trails controller", description = "Allows to see get audit-trails")
 public class AuditTrailController {
 
@@ -39,11 +39,13 @@ public class AuditTrailController {
       content = @Content(mediaType = "application/json", array = @ArraySchema(
         schema = @Schema(implementation = AuditTrail.class)))),
     @ApiResponse(responseCode = "404", description = "No audit-trails were found",
+      content = @Content(mediaType = "text/plain")),
+    @ApiResponse(responseCode = "403", description = "Not allowed",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
-  public @ResponseBody List<AuditTrail> getAllOrders() {
+  public @ResponseBody List<AuditTrailDto> getAllOrders() {
     return auditTrailService.getAllAuditTrails();
   }
 }

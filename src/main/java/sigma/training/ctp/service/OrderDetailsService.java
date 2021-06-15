@@ -158,8 +158,9 @@ public class OrderDetailsService {
     if (orderList.isEmpty()) {
       throw new NoActiveOrdersFoundException();
     }
+
     auditTrail.setUser(userService.getCurrentUser());
-//    auditTrail.setDescription("Orders with id= " + order.getId() + " was cancelled");
+    auditTrail.setDescription("All Orders were got");
     auditTrailRepository.save(auditTrail);
     return orderMapper.toRestDto(orderList);
   }

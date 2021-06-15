@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .csrf().disable()
       .httpBasic().and()
       .authorizeRequests()
-      .antMatchers("/audit-trails").hasRole("ADMIN")
+      .antMatchers("/audit-trails").hasAuthority("ADMIN")
       .anyRequest().authenticated();
 
   }

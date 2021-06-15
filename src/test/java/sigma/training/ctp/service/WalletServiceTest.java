@@ -11,6 +11,7 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.WalletEntity;
+import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
@@ -60,6 +61,12 @@ public class WalletServiceTest {
 
   @InjectMocks
   private WalletService service;
+
+  @Mock
+  AuditTrailRepository auditTrailRepository;
+
+  @Mock
+  UserService userService;
 
   @Test
   public void testGetWalletByUserIdCheckBalances() {

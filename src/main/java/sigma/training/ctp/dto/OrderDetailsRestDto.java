@@ -28,7 +28,7 @@ public class OrderDetailsRestDto {
   @Schema(description = "id of the user", example = "1")
   private Long userId;
 
-  @Schema(description = "status of the order", enumAsRef = true, example = "CREATED")
+  @Schema(description = "status of the order", enumAsRef = true, example = "created")
   private OrderStatus orderStatus;
 
   @Schema(description = "type of the order", enumAsRef = true,example = "sell")

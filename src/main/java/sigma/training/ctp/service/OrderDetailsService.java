@@ -1,9 +1,11 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dictionary.OrderStatus;
+import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
@@ -11,10 +13,11 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.mapper.OrderFilterMapper;
 import sigma.training.ctp.mapper.OrderMapper;
+import sigma.training.ctp.persistence.OrderFilter;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
@@ -33,6 +36,9 @@ public class OrderDetailsService {
 
   @Autowired
   OrderMapper orderMapper;
+
+  @Autowired
+  OrderFilterMapper orderFilterMapper;
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
@@ -104,21 +110,18 @@ public class OrderDetailsService {
   }
 
   @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, OrderStatus orderStatus, Long id) throws NoActiveOrdersFoundException {
+  public List<OrderDetailsRestDto> getAllOrders(OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
+    OrderFilter orderFilter = orderFilterMapper.toEntity(orderFilterDto);
     List<OrderDetailsEntity> orderList;
-    switch (orderType) {
+    switch (orderFilter.getOrderType()) {
       case SELL:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(orderStatus)
-            .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUser(id))
+          orderFilterToCriteria(orderFilter)
             .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
         break;
       case BUY:
         orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderStatus(orderStatus)
-            .and(OrderSpecification.byOrderType(orderType))
-            .and(OrderSpecification.byUser(id))
+          orderFilterToCriteria(orderFilter)
             .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
         break;
       default:
@@ -131,53 +134,17 @@ public class OrderDetailsService {
     return orderMapper.toRestDto(orderList);
   }
 
-  @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType) throws NoActiveOrdersFoundException {
-    List<OrderDetailsEntity> orderList;
-    switch (orderType) {
-      case SELL:
-        orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderType(orderType)
-            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
-        break;
-      case BUY:
-        orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderType(orderType)
-            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
-        break;
-      default:
-        orderList = new ArrayList<>();
+  private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {
+    if (orderFilter.getUserId() == null) {
+      return OrderSpecification.byOrderType(orderFilter.getOrderType())
+        .and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
     }
-
-    if (orderList.isEmpty()) {
-      throw new NoActiveOrdersFoundException();
+    if (orderFilter.getOrderStatus() == null) {
+      return OrderSpecification.byOrderType(orderFilter.getOrderType())
+        .and(OrderSpecification.byUser(orderFilter.getUserId()));
     }
-    return orderMapper.toRestDto(orderList);
-  }
-
-  @Transactional
-  public List<OrderDetailsRestDto> getAllOrders(OrderType orderType, Long id) throws NoActiveOrdersFoundException {
-    List<OrderDetailsEntity> orderList;
-    switch (orderType) {
-      case SELL:
-        orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderType(orderType)
-            .and(OrderSpecification.byUser(id))
-            .and(OrderSpecification.orderByCryptocurrencyAmount(true)));
-        break;
-      case BUY:
-        orderList = orderDetailsRepository.findAll(
-          OrderSpecification.byOrderType(orderType)
-            .and(OrderSpecification.byUser(id))
-            .and(OrderSpecification.orderByCryptocurrencyAmount(false)));
-        break;
-      default:
-        orderList = new ArrayList<>();
-    }
-
-    if (orderList.isEmpty()) {
-      throw new NoActiveOrdersFoundException();
-    }
-    return orderMapper.toRestDto(orderList);
+    return OrderSpecification.byOrderType(orderFilter.getOrderType())
+      .and(OrderSpecification.byUser(orderFilter.getUserId()))
+      .and(OrderSpecification.byOrderStatus(orderFilter.getOrderStatus()));
   }
 }

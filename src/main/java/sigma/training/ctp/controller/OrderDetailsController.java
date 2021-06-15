@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
+import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
@@ -37,7 +36,6 @@ import sigma.training.ctp.view.OrderDetailsViewModel;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 
 @RestController
@@ -142,25 +140,9 @@ public class OrderDetailsController {
   @ResponseStatus(HttpStatus.OK)
   @GetMapping
   public @ResponseBody
-  List<OrderDetailsRestDto> getAllOrders(
-    @RequestParam(name = "order_type") @Parameter(in = ParameterIn.QUERY,
-      description = "type of the order",
-      schema = @Schema(allowableValues = {"buy", "sell"})) String orderType,
-    @RequestParam(name = "order_status", required = false) @Parameter(in = ParameterIn.QUERY,
-      description = "status of the order",
-      schema = @Schema(allowableValues = {"buy", "sell"})) Optional<String> orderStatus,
-    @RequestParam(name = "user_id", required = false) @Parameter(in = ParameterIn.QUERY,
-      description = "id of the user") Optional<Long> id) throws NoActiveOrdersFoundException {
-    if (orderStatus.isPresent() && id.isPresent()) {
-      return orderDetailsService.getAllOrders(
-        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)),
-        OrderStatus.valueOf(orderStatus.get().toUpperCase(Locale.ROOT)), id.get());
-    }
-    if (id.isPresent()) {
-      return orderDetailsService.getAllOrders(
-        OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)), id.get());
-    }
-    return orderDetailsService.getAllOrders(
-      OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
+  List<OrderDetailsRestDto> getAllOrders(@Parameter(in = ParameterIn.QUERY,
+    description = "order filter",
+    schema = @Schema(implementation = OrderFilterDto.class)) OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
+   return orderDetailsService.getAllOrders(orderFilterDto);
   }
 }

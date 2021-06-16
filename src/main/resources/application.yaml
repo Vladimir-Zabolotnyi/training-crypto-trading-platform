@@ -42,3 +42,9 @@ bankcurrency:
 cryptocurrency:
   name: "MarsCoin"
   sign: "♂"
+
+
+schedule:
+  init_delay: "60000"
+  fixed_delay: "90000"
+  ttl: "600000000"

@@ -115,7 +115,7 @@ public class OrderDetailsService {
   public List<OrderDetailsRestDto> getAllOrders(OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
     OrderFilter orderFilter = orderFilterMapper.toEntity(orderFilterDto);
     List<OrderDetailsEntity> orderList;
-    if(orderFilter.getOrderStatus()==null){
+    if(orderFilter.getOrderType()==null){
        orderList = orderDetailsRepository.findAll(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
     return orderMapper.toRestDto(orderList);
     }

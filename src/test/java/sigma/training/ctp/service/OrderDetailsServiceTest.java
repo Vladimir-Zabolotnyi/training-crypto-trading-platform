@@ -184,7 +184,7 @@ class OrderDetailsServiceTest {
   @Mock
   OrderFilterMapper orderFilterMapper;
   @Mock
-  AuditTrailRepository auditTrailRepository;
+  AuditTrailService auditTrailService;
   @Mock
   UserService userService;
 
@@ -233,7 +233,6 @@ class OrderDetailsServiceTest {
     when(orderDetailsRepository.findById(ID_2)).thenReturn(Optional.of(ORDER_BY_ID_BUY));
     when(orderMapper.toRestDto(ORDER_BY_ID_SELL)).thenReturn(ORDER_DTO_BY_ID_SELL);
     when(orderMapper.toRestDto(ORDER_BY_ID_BUY)).thenReturn(ORDER_DTO_BY_ID_BUY);
-    when(auditTrailRepository.save(AUDIT_TRAIL)).thenReturn(AUDIT_TRAIL);
     OrderDetailsRestDto actualFulfilledOrderSell = orderDetailsService.fulfillOrder(ID, USER_TO_BUY);
     OrderDetailsRestDto actualFulfilledOrderBuy = orderDetailsService.fulfillOrder(ID_2, USER);
     ORDER_BY_ID_BUY.setOrderStatus(OrderStatus.FULFILLED);
@@ -282,8 +281,6 @@ class OrderDetailsServiceTest {
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(orderList);
     when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
     when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
-    when(userService.getCurrentUser()).thenReturn(AUDIT_TRAIL_USER);
-    when(auditTrailRepository.save(AUDIT_TRAIL)).thenReturn(AUDIT_TRAIL);
     assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
   }
 

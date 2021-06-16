@@ -25,17 +25,19 @@ class AuditTrailServiceTest {
   private static final List<AuditTrailDto> AUDIT_TRAIL_LIST_DTO = new ArrayList<>();
   private static final UserEntity USER = new UserEntity();
   private static final Long ID = 1L;
-  private static final AuditTrail AUDIT_TRAIL_1 = new AuditTrail(1L, Instant.now(),USER, "ok1");
-  private static final AuditTrail AUDIT_TRAIL_2 = new AuditTrail(2L, Instant.now(),USER, "ok2");
-  private static final AuditTrailDto AUDIT_TRAIL_DTO_1 = new AuditTrailDto(1L, AUDIT_TRAIL_1.getDate(),ID, "ok1");
-  private static final AuditTrailDto AUDIT_TRAIL_DTO_2 = new AuditTrailDto(2L, AUDIT_TRAIL_2.getDate(),ID, "ok2");
+  private static final AuditTrail AUDIT_TRAIL_1 = new AuditTrail(1L, Instant.now(), USER, "ok1");
+  private static final AuditTrail AUDIT_TRAIL_2 = new AuditTrail(2L, Instant.now(), USER, "ok2");
+  private static final AuditTrail AUDIT_TRAIL_3 = new AuditTrail(null, null, USER, "ok3");
+  private static final AuditTrailDto AUDIT_TRAIL_DTO_1 = new AuditTrailDto(1L, AUDIT_TRAIL_1.getDate(), ID, "ok1");
+  private static final AuditTrailDto AUDIT_TRAIL_DTO_2 = new AuditTrailDto(2L, AUDIT_TRAIL_2.getDate(), ID, "ok2");
 
 
   @Mock
   AuditTrailRepository auditTrailRepository;
   @Mock
   AuditTrailMapper auditTrailMapper;
-
+  @Mock
+  UserService userService;
   @InjectMocks
   AuditTrailService auditTrailService;
 
@@ -48,6 +50,13 @@ class AuditTrailServiceTest {
     AUDIT_TRAIL_LIST_DTO.add(AUDIT_TRAIL_DTO_2);
     when(auditTrailRepository.findAll()).thenReturn(AUDIT_TRAIL_LIST);
     when(auditTrailMapper.toRestDto(AUDIT_TRAIL_LIST)).thenReturn(AUDIT_TRAIL_LIST_DTO);
-    assertEquals(AUDIT_TRAIL_LIST_DTO,auditTrailService.getAllAuditTrails());
+    assertEquals(AUDIT_TRAIL_LIST_DTO, auditTrailService.getAllAuditTrails());
+  }
+
+  @Test
+  void postAuditTrail() {
+    when(userService.getCurrentUser()).thenReturn(USER);
+    when(auditTrailRepository.save(AUDIT_TRAIL_3)).thenReturn(AUDIT_TRAIL_3);
+    assertEquals(AUDIT_TRAIL_3, auditTrailService.postAuditTrail("ok3"));
   }
 }

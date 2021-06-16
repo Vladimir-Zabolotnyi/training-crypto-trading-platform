@@ -63,7 +63,7 @@ public class WalletServiceTest {
   private WalletService service;
 
   @Mock
-  AuditTrailRepository auditTrailRepository;
+  AuditTrailService auditTrailService;
 
   @Mock
   UserService userService;
@@ -72,7 +72,6 @@ public class WalletServiceTest {
   public void testGetWalletByUserIdCheckBalances() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
     when(walletMapper.toRestDto(WALLET)).thenReturn(WALLET_DTO);
-
     WalletRestDto actualWallet = service.getWalletByUserId(ID);
     assertEquals(MONEY_BALANCE_DTO, actualWallet.getMoneyBalance());
     assertEquals(CRYPTOCURRENCY_BALANCE_DTO, actualWallet.getCryptocurrencyBalance());

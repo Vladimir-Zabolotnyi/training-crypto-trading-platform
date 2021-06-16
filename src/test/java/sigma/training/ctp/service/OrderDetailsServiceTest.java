@@ -20,10 +20,12 @@ import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.mapper.OrderFilterMapper;
 import sigma.training.ctp.mapper.OrderMapper;
 import sigma.training.ctp.persistence.OrderFilter;
+import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.entity.WalletEntity;
+import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
 import java.math.BigDecimal;
@@ -67,8 +69,8 @@ class OrderDetailsServiceTest {
   private static final OrderStatus FULFILLED_STATUS = OrderStatus.FULFILLED;
   private static final OrderStatus CANCELLED_STATUS = OrderStatus.CANCELLED;
 
-  private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS,ORDER_TYPE_SELL,USER.getId());
-  private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString().toLowerCase(Locale.ROOT),ORDER_TYPE_SELL.toString().toLowerCase(Locale.ROOT),USER.getId());
+  private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS, ORDER_TYPE_SELL, USER.getId());
+  private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString().toLowerCase(Locale.ROOT), ORDER_TYPE_SELL.toString().toLowerCase(Locale.ROOT), USER.getId());
 
   private static final OrderDetailsRestDto ORDER_FROM_BODY_SELL = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_SELL, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
   private static final OrderDetailsRestDto ORDER_FROM_BODY_BUY = new OrderDetailsRestDto(null, null, null, null, ORDER_TYPE_BUY, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
@@ -168,6 +170,8 @@ class OrderDetailsServiceTest {
 
   private static final List<OrderDetailsEntity> orderList = new ArrayList<>();
   private static final List<OrderDetailsRestDto> orderDtoList = new ArrayList<>();
+  private static final AuditTrail AUDIT_TRAIL = new AuditTrail();
+  private static final UserEntity AUDIT_TRAIL_USER = new UserEntity();
 
   @Mock
   WalletService walletService;
@@ -179,6 +183,10 @@ class OrderDetailsServiceTest {
   OrderMapper orderMapper;
   @Mock
   OrderFilterMapper orderFilterMapper;
+  @Mock
+  AuditTrailService auditTrailService;
+  @Mock
+  UserService userService;
 
   @InjectMocks
   OrderDetailsService orderDetailsService;
@@ -186,16 +194,19 @@ class OrderDetailsServiceTest {
 
   @Test
   void postOrder() throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
-    Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT,CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
+    Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_SELL)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_BUY)).thenReturn(ORDER_DETAILS_BUY);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS_SELL)).thenReturn(ORDER_DTO_SELL);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS_BUY)).thenReturn(ORDER_DTO_BUY);
     Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY_SELL, USER)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY_BUY, USER)).thenReturn(ORDER_DETAILS_BUY);
+
     OrderDetailsRestDto orderDtoActualSell = orderDetailsService.postOrder(ORDER_FROM_BODY_SELL, USER);
     OrderDetailsRestDto orderDtoActualBuy = orderDetailsService.postOrder(ORDER_FROM_BODY_BUY, USER);
     orderDtoActualSell.setUserId(ID);
+
+
     orderDtoActualSell.setCreationDate(CREATION_DATE);
     orderDtoActualSell.setOrderStatus(ORDER_STATUS);
     orderDtoActualBuy.setUserId(ID);
@@ -215,6 +226,9 @@ class OrderDetailsServiceTest {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
     USER_TO_SELL.setId(ID_2);
+    AUDIT_TRAIL_USER.setId(2L);
+    AUDIT_TRAIL.setUser(AUDIT_TRAIL_USER);
+    AUDIT_TRAIL.setDescription("Order with id= 1 was fulfilled");
     when(orderDetailsRepository.findById(ID)).thenReturn(Optional.of(ORDER_BY_ID_SELL));
     when(orderDetailsRepository.findById(ID_2)).thenReturn(Optional.of(ORDER_BY_ID_BUY));
     when(orderMapper.toRestDto(ORDER_BY_ID_SELL)).thenReturn(ORDER_DTO_BY_ID_SELL);
@@ -256,14 +270,17 @@ class OrderDetailsServiceTest {
   @Test
   void getAllOrders() throws NoActiveOrdersFoundException {
     USER.setId(ID_2);
+    AUDIT_TRAIL_USER.setId(ID);
     orderList.add(ORDER_SELL);
     orderList.add(ORDER_BY_ID_SELL);
     orderDtoList.add(ORDER_DTO_SELL);
     orderDtoList.add(ORDER_DTO_BY_ID_SELL);
-
+    AUDIT_TRAIL_USER.setId(1L);
+    AUDIT_TRAIL.setUser(AUDIT_TRAIL_USER);
+    AUDIT_TRAIL.setDescription("All Orders were got");
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(orderList);
     when(orderMapper.toRestDto(orderList)).thenReturn(orderDtoList);
-  when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
+    when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
     assertEquals(orderDtoList, orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
   }
 
@@ -271,7 +288,7 @@ class OrderDetailsServiceTest {
   void exceptionNoActiveOrdersFound() {
     when(orderFilterMapper.toEntity(ORDER_FILTER_DTO)).thenReturn(ORDER_FILTER);
     when(orderDetailsRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
-    assertThrows(NoActiveOrdersFoundException.class, () ->  orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
+    assertThrows(NoActiveOrdersFoundException.class, () -> orderDetailsService.getAllOrders(ORDER_FILTER_DTO));
   }
 
   @Test

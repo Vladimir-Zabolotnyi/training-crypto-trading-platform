@@ -31,9 +31,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
       .csrf().disable()
-      .httpBasic()
-      .and()
+      .httpBasic().and()
       .authorizeRequests()
+      .antMatchers("/audit-trails").hasAuthority("ADMIN")
       .anyRequest().authenticated();
 
   }

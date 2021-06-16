@@ -40,6 +40,13 @@ public class OrderDetailsService {
   @Autowired
   OrderFilterMapper orderFilterMapper;
 
+  @Autowired
+  UserService userService;
+
+  @Autowired
+  AuditTrailService auditTrailService;
+
+
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
@@ -51,7 +58,9 @@ public class OrderDetailsService {
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         break;
     }
-    return orderMapper.toRestDto(orderDetailsRepository.save(order));
+    OrderDetailsRestDto orderDetailsRestDto = orderMapper.toRestDto(orderDetailsRepository.save(order));
+    auditTrailService.postAuditTrail("User created the order (id: " + orderDetailsRestDto.getId() + ")");
+    return orderDetailsRestDto;
   }
 
   @Transactional
@@ -79,6 +88,7 @@ public class OrderDetailsService {
         break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
+    auditTrailService.postAuditTrail("User fulfilled the order(id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -108,6 +118,7 @@ public class OrderDetailsService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     orderDetailsRepository.save(order);
 
+    auditTrailService.postAuditTrail("User cancelled the order (id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -133,6 +144,8 @@ public class OrderDetailsService {
     if (orderList.isEmpty()) {
       throw new NoActiveOrdersFoundException();
     }
+
+    auditTrailService.postAuditTrail("User read list of the orders");
     return orderMapper.toRestDto(orderList);
   }
 
@@ -140,10 +153,10 @@ public class OrderDetailsService {
     Specification<OrderDetailsEntity> specification = OrderSpecification.byOrderType(orderFilter.getOrderType());
 
     if (orderFilter.getUserId() == null) {
-        specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
+      specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
     }
     if (orderFilter.getOrderStatus() == null) {
-     specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
+      specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
     }
     return specification
       .and(OrderSpecification.byUser(orderFilter.getUserId()))

@@ -14,7 +14,7 @@ class AuditTrailMapperTest {
   private static final UserEntity USER = new UserEntity();
   private static final Long ID = 1L;
   private static final AuditTrail AUDIT_TRAIL = new AuditTrail(1L, Instant.now(), USER, "ok");
-  private static final AuditTrailDto AUDIT_TRAIL_DTO = new AuditTrailDto(1L, Instant.now(), ID, "ok");
+  private static final AuditTrailDto AUDIT_TRAIL_DTO = new AuditTrailDto(1L, AUDIT_TRAIL.getDate(), ID, "ok");
 
   AuditTrailMapper auditTrailMapper;
 

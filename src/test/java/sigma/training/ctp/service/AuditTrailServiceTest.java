@@ -27,8 +27,8 @@ class AuditTrailServiceTest {
   private static final Long ID = 1L;
   private static final AuditTrail AUDIT_TRAIL_1 = new AuditTrail(1L, Instant.now(),USER, "ok1");
   private static final AuditTrail AUDIT_TRAIL_2 = new AuditTrail(2L, Instant.now(),USER, "ok2");
-  private static final AuditTrailDto AUDIT_TRAIL_DTO_1 = new AuditTrailDto(1L, Instant.now(),ID, "ok1");
-  private static final AuditTrailDto AUDIT_TRAIL_DTO_2 = new AuditTrailDto(2L, Instant.now(),ID, "ok2");
+  private static final AuditTrailDto AUDIT_TRAIL_DTO_1 = new AuditTrailDto(1L, AUDIT_TRAIL_1.getDate(),ID, "ok1");
+  private static final AuditTrailDto AUDIT_TRAIL_DTO_2 = new AuditTrailDto(2L, AUDIT_TRAIL_2.getDate(),ID, "ok2");
 
 
   @Mock

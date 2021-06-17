@@ -3,6 +3,7 @@ TRUNCATE order_details;
 TRUNCATE wallet;
 TRUNCATE role;
 TRUNCATE user;
+TRUNCATE audit_trail;
 SET FOREIGN_KEY_CHECKS = 1;
 
 
@@ -48,3 +49,17 @@ VALUES (11, '2021-06-12 15:28:39',2,'CREATED','BUY',220,24);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (12, '2021-06-13 02:28:39',2,'CREATED','BUY',456,12);
 
+
+
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (1, '2021-06-04 13:28:39', '1', 'User created the order (id: 1)');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (2, '2021-06-04 13:28:39', '1', 'User created the order (id: 2)');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (3, '2021-06-04 13:28:39', '1', 'User created the order (id: 3)');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (4, '2021-06-04 13:33:39', '2', 'User created the order (id: 4)');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (5, '2021-06-04 14:23:39', '1', 'User fulfilled the order (id: 4)');
+INSERT INTO audit_trail(id,date,user_id,description)
+VALUES (6, '2021-06-04 15:28:39', '1', 'User cancelled the order (id: 3)');

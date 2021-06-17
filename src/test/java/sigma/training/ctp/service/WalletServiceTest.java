@@ -11,6 +11,7 @@ import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.WalletEntity;
+import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
@@ -61,11 +62,16 @@ public class WalletServiceTest {
   @InjectMocks
   private WalletService service;
 
+  @Mock
+  AuditTrailService auditTrailService;
+
+  @Mock
+  UserService userService;
+
   @Test
   public void testGetWalletByUserIdCheckBalances() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET);
     when(walletMapper.toRestDto(WALLET)).thenReturn(WALLET_DTO);
-
     WalletRestDto actualWallet = service.getWalletByUserId(ID);
     assertEquals(MONEY_BALANCE_DTO, actualWallet.getMoneyBalance());
     assertEquals(CRYPTOCURRENCY_BALANCE_DTO, actualWallet.getCryptocurrencyBalance());

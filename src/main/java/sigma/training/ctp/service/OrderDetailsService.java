@@ -126,6 +126,10 @@ public class OrderDetailsService {
   public List<OrderDetailsRestDto> getAllOrders(OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
     OrderFilter orderFilter = orderFilterMapper.toEntity(orderFilterDto);
     List<OrderDetailsEntity> orderList;
+    if (orderFilter.getOrderType() == null) {
+      orderList = orderDetailsRepository.findAll(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
+      return orderMapper.toRestDto(orderList);
+    }
     switch (orderFilter.getOrderType()) {
       case SELL:
         orderList = orderDetailsRepository.findAll(
@@ -151,12 +155,11 @@ public class OrderDetailsService {
 
   private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {
     Specification<OrderDetailsEntity> specification = OrderSpecification.byOrderType(orderFilter.getOrderType());
-
     if (orderFilter.getUserId() == null) {
-      specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
+      return specification.and(OrderSpecification.byOrderStatus(OrderStatus.CREATED));
     }
     if (orderFilter.getOrderStatus() == null) {
-      specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
+      return specification.and(OrderSpecification.byUser(orderFilter.getUserId()));
     }
     return specification
       .and(OrderSpecification.byUser(orderFilter.getUserId()))

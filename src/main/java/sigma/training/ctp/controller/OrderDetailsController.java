@@ -30,6 +30,7 @@ import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.service.AuditTrailService;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
@@ -47,6 +48,9 @@ public class OrderDetailsController {
   UserService userService;
   @Autowired
   OrderDetailsService orderDetailsService;
+
+  @Autowired
+  AuditTrailService auditTrailService;
 
   @Operation(summary = "Create Order", description = "Allows to create order")
   @ApiResponses(value = {
@@ -66,8 +70,11 @@ public class OrderDetailsController {
                                   schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
-    return orderDetailsService.postOrder(order, userService.getCurrentUser());
+    OrderDetailsRestDto orderDto = orderDetailsService.postOrder(order, userService.getCurrentUser());
+    auditTrailService.postAuditTrail("User created the order (id: " + orderDto.getId() + ")");
+    return orderDto;
   }
+
 
   @Operation(summary = "Fulfill Order", description = "Allows to fulfill order")
   @ApiResponses(value = {
@@ -91,7 +98,10 @@ public class OrderDetailsController {
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
     throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
 
-    return orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
+
+    OrderDetailsRestDto orderDto = orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
+    auditTrailService.postAuditTrail("User fulfilled the order(id: " + orderDto.getId() + ")");
+    return orderDto;
   }
 
   @Operation(summary = "Allows to cancel the order",
@@ -126,7 +136,10 @@ public class OrderDetailsController {
       content = @Content(schema = @Schema(implementation = Long.class))
     ) Long orderId
   ) throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
-    return orderDetailsService.cancelOrder(orderId);
+
+    OrderDetailsRestDto orderDto = orderDetailsService.cancelOrder(orderId);
+    auditTrailService.postAuditTrail("User cancelled the order (id: " + orderDto.getId() + ")");
+    return orderDto;
   }
 
   @Operation(summary = "Get all orders", description = "Allows to obtain information about all sell//buy  orders")
@@ -143,6 +156,8 @@ public class OrderDetailsController {
   List<OrderDetailsRestDto> getAllOrders(@Parameter(in = ParameterIn.QUERY,
     description = "order filter",
     schema = @Schema(implementation = OrderFilterDto.class)) OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
-   return orderDetailsService.getAllOrders(orderFilterDto);
+    List<OrderDetailsRestDto> orderDtoList = orderDetailsService.getAllOrders(orderFilterDto);
+    auditTrailService.postAuditTrail("User read list of the orders");
+    return orderDtoList;
   }
 }

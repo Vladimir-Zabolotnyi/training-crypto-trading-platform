@@ -32,9 +32,9 @@ VALUES (3, '2021-06-04 14:23:39',1,'FULFILLED','SELL',32,5);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (4, '2021-06-04 15:28:39',1,'CANCELLED','SELL',56,9);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (5, '2021-06-05 22:28:39',2,'CREATED','SELL',66,2);
+VALUES (5, '2021-06-13 22:28:39',2,'CREATED','SELL',66,2);
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (6, '2021-06-06 09:28:39',2,'CREATED','SELL',29,8);
+VALUES (6, '2021-06-16 09:28:39',2,'CREATED','SELL',29,8);
 
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (7, '2021-06-08 15:28:39',1,'CREATED','BUY',110,4);

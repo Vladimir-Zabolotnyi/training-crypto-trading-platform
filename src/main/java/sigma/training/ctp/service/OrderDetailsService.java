@@ -1,7 +1,6 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
@@ -23,8 +22,7 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.text.Bidi;
+import java.time.Instant;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -48,24 +46,18 @@ public class OrderDetailsService {
   @Autowired
   private FeeService feeService;
 
-  @Autowired
-  AuditTrailService auditTrailService;
-
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
-        BigDecimal fee = feeService.getOrderFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
-        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount().add(fee));
+        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
         break;
       case BUY:
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         break;
     }
-    OrderDetailsRestDto orderDetailsRestDto = orderMapper.toRestDto(orderDetailsRepository.save(order));
-    auditTrailService.postAuditTrail("User created the order (id: " + orderDetailsRestDto.getId() + ")");
-    return orderDetailsRestDto;
+    return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
 
   @Transactional
@@ -93,7 +85,6 @@ public class OrderDetailsService {
         break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
-    auditTrailService.postAuditTrail("User fulfilled the order(id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -123,7 +114,6 @@ public class OrderDetailsService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     orderDetailsRepository.save(order);
 
-    auditTrailService.postAuditTrail("User cancelled the order (id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -154,8 +144,15 @@ public class OrderDetailsService {
       throw new NoActiveOrdersFoundException();
     }
 
-    auditTrailService.postAuditTrail("User read list of the orders");
     return orderMapper.toRestDto(orderList);
+  }
+  @Transactional
+  public List<OrderDetailsRestDto> cancelOutdatedOrders(Instant toDate) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException {
+    List<OrderDetailsEntity> orderToCancelList = orderDetailsRepository.findAllByOrderStatusAndCreationDateLessThan(OrderStatus.CREATED, toDate);
+    for (OrderDetailsEntity order:orderToCancelList) {
+      cancelOrder(order.getId());
+    }
+    return orderMapper.toRestDto(orderToCancelList);
   }
 
   private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {

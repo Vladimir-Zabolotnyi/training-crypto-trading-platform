@@ -183,10 +183,8 @@ class OrderDetailsServiceTest {
   OrderMapper orderMapper;
   @Mock
   OrderFilterMapper orderFilterMapper;
-  @Mock
-  AuditTrailService auditTrailService;
-  @Mock
-  UserService userService;
+
+
 
   @InjectMocks
   OrderDetailsService orderDetailsService;

@@ -30,7 +30,7 @@ public class FeeServiceTest {
     BigDecimal cryptocurrencyPrice = new BigDecimal("10");
     BigDecimal cryptocurrencyAmount = new BigDecimal("10");
 
-    BigDecimal result = service.calculateFee(cryptocurrencyPrice.multiply(cryptocurrencyAmount));
+    BigDecimal result = service.getOrderFee(cryptocurrencyPrice.multiply(cryptocurrencyAmount));
 
     assertEquals(minimal, result);
   }
@@ -41,7 +41,7 @@ public class FeeServiceTest {
     BigDecimal cryptocurrencyAmount = new BigDecimal("10");
 
     BigDecimal expected = new BigDecimal("50");
-    BigDecimal result = service.calculateFee(cryptocurrencyPrice.multiply(cryptocurrencyAmount));
+    BigDecimal result = service.getOrderFee(cryptocurrencyPrice.multiply(cryptocurrencyAmount));
 
     assertEquals(expected.doubleValue(), result.doubleValue(), 2);
   }

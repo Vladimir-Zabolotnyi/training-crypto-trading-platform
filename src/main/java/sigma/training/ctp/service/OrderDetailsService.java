@@ -22,6 +22,7 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class OrderDetailsService {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
-        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        BigDecimal fee = feeService.getOrderFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
+        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount().add(fee));
         break;
       case BUY:
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());

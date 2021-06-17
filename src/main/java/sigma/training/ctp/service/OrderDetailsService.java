@@ -118,7 +118,7 @@ public class OrderDetailsService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     orderDetailsRepository.save(order);
 
-    auditTrailService.postAuditTrail("User cancelled the order (id: " + order.getId() + ")");
+//    auditTrailService.postAuditTrail("User cancelled the order (id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -149,7 +149,7 @@ public class OrderDetailsService {
       throw new NoActiveOrdersFoundException();
     }
 
-    auditTrailService.postAuditTrail("User read list of the orders");
+//    auditTrailService.postAuditTrail("User read list of the orders");
     return orderMapper.toRestDto(orderList);
   }
 

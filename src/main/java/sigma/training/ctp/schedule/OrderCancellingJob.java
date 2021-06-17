@@ -12,37 +12,33 @@ import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.service.OrderDetailsService;
 
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
-public class OrderSchedule {
+public class OrderCancellingJob {
   @Autowired
   OrderDetailsService orderDetailsService;
 
-  @Value("${schedule.ttl}")
+  @Value("${order.time_to_live}")
   private String ttl;
 
-  @Scheduled(fixedDelayString = "${schedule.fixed_delay}",initialDelayString = "${schedule.init_delay}")
-  public void scheduleOrderTtl() throws NoActiveOrdersFoundException {
+  @Scheduled(cron = "${order_cancelling_job.scheduled_cron_expression}")
+  public void expiredOrderCancelling() throws NoActiveOrdersFoundException {
     OrderFilterDto orderFilterDto = new OrderFilterDto();
     orderDetailsService.getAllOrders(orderFilterDto).stream().peek(orderDetailsRestDto -> {
-      if (Instant.now().compareTo(orderDetailsRestDto.getCreationDate().plusMillis(Long.parseLong(ttl))) > 0) {
-        try {
-          orderDetailsService.cancelOrder(orderDetailsRestDto.getId());
-        } catch (OrderNotFoundException | OrderAlreadyCancelledException | OrderAlreadyFulfilledException e) {
-          e.printStackTrace();
+
+        if (Instant.now().compareTo(
+          orderDetailsRestDto.getCreationDate()
+            .plusMillis(TimeUnit.DAYS.toMillis(Long.parseLong(ttl)))) > 0) {
+          try {
+            orderDetailsService.cancelOrder(orderDetailsRestDto.getId());
+          } catch (OrderNotFoundException | OrderAlreadyCancelledException | OrderAlreadyFulfilledException e) {
+            e.printStackTrace();
+          }
         }
-      }
       }
     ).collect(Collectors.toList());
 
   }
-
-//  public static void main(String[] args) {
-//
-//    System.out.println(Instant.now());
-//    System.out.println(Instant.ofEpochMilli(1623000000000L));
-//    System.out.println(Instant.ofEpochMilli(1623000000000L).plusMillis(600000000L));
-//
-//  }
 }

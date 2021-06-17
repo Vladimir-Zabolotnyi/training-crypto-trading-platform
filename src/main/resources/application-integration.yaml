@@ -50,4 +50,4 @@ order:
   time-to-live: "5"
 
 order-cancelling-job:
-  scheduled-cron-expression: "0 0/1 * * * ?"
+  scheduled-cron-expression: "0 0 * * * ?"

@@ -22,7 +22,7 @@ public class OrderCancellingJob {
   OrderDetailsService orderDetailsService;
 
 
-  @Value("${order.time-to-live}")
+  @Value("${order.time-to-live-days}")
   private String ttl;
 
   @Scheduled(cron = "${order-cancelling-job.scheduled-cron-expression}")

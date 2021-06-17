@@ -44,7 +44,7 @@ cryptocurrency:
   sign: "♂"
 
 order:
-  time-to-live: "5"
+  time-to-live-days: "5"
 
 order-cancelling-job:
   scheduled-cron-expression: "0 0/1 * * * ?"

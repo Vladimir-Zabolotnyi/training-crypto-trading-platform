@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Collection;
@@ -32,7 +34,7 @@ public class UserEntity implements UserDetails {
   @Column(name = "password")
   private String password;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "role_id", referencedColumnName = "id")
   private RoleEntity role;
 

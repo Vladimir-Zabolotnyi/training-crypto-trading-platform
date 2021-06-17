@@ -43,6 +43,8 @@ public class OrderDetailsService {
 
   @Autowired
   UserService userService;
+  @Autowired
+  private FeeService feeService;
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {

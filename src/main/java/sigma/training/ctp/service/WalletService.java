@@ -1,6 +1,7 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
@@ -41,6 +42,7 @@ public class WalletService {
     if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {
       throw new InsufficientAmountCryptoException();
     }
+
     wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));
     return repository.save(wallet);
   }

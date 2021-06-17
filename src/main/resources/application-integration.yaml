@@ -46,6 +46,10 @@ cryptocurrency:
   name: "MarsCoin"
   sign: "♂"
 
+fee:
+  rate: "0.05"
+  minimal-value: "10"
+
 order:
   time-to-live-days: "5"
 

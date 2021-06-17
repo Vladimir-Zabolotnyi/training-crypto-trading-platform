@@ -204,7 +204,6 @@ class OrderDetailsServiceTest {
     OrderDetailsRestDto orderDtoActualBuy = orderDetailsService.postOrder(ORDER_FROM_BODY_BUY, USER);
     orderDtoActualSell.setUserId(ID);
 
-
     orderDtoActualSell.setCreationDate(CREATION_DATE);
     orderDtoActualSell.setOrderStatus(ORDER_STATUS);
     orderDtoActualBuy.setUserId(ID);

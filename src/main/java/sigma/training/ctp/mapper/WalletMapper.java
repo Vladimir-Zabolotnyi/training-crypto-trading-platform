@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 public class WalletMapper {
   public static final String SPACE = " ";
 
-
   @Value("${bankcurrency.name}")
   private String bankCurrencyName;
   @Value("${cryptocurrency.name}")

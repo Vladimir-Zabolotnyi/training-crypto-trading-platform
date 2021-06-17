@@ -42,3 +42,7 @@ bankcurrency:
 cryptocurrency:
   name: "MarsCoin"
   sign: "♂"
+
+fee:
+  rate: 0.05;
+  minimal: 100;

@@ -53,6 +53,8 @@ class OrderDetailsServiceTest {
   private static final OrderStatus ORDER_STATUS = OrderStatus.CREATED;
   private static final OrderStatus ORDER_STATUS_AFTER_PURCHASE = OrderStatus.CREATED;
 
+  private static final BigDecimal FEE = new BigDecimal("400");
+
   private static final UserEntity USER = new UserEntity();
 
   private static final UserEntity USER_TO_BUY = new UserEntity();
@@ -184,7 +186,8 @@ class OrderDetailsServiceTest {
   @Mock
   OrderFilterMapper orderFilterMapper;
 
-
+  @Mock
+  FeeService feeService;
 
   @InjectMocks
   OrderDetailsService orderDetailsService;
@@ -199,6 +202,8 @@ class OrderDetailsServiceTest {
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS_BUY)).thenReturn(ORDER_DTO_BUY);
     Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY_SELL, USER)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderMapper.toEntity(ORDER_FROM_BODY_BUY, USER)).thenReturn(ORDER_DETAILS_BUY);
+
+    Mockito.when(feeService.getOrderFee(CRYPTOCURRENCY_PRICE.multiply(CRYPTOCURRENCY_AMOUNT))).thenReturn(FEE);
 
     OrderDetailsRestDto orderDtoActualSell = orderDetailsService.postOrder(ORDER_FROM_BODY_SELL, USER);
     OrderDetailsRestDto orderDtoActualBuy = orderDetailsService.postOrder(ORDER_FROM_BODY_BUY, USER);

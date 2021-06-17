@@ -44,10 +44,6 @@ public class OrderDetailsService {
   @Autowired
   UserService userService;
 
-  @Autowired
-  AuditTrailService auditTrailService;
-
-
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
@@ -59,9 +55,7 @@ public class OrderDetailsService {
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());
         break;
     }
-    OrderDetailsRestDto orderDetailsRestDto = orderMapper.toRestDto(orderDetailsRepository.save(order));
-    auditTrailService.postAuditTrail("User created the order (id: " + orderDetailsRestDto.getId() + ")");
-    return orderDetailsRestDto;
+    return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
 
   @Transactional
@@ -89,7 +83,6 @@ public class OrderDetailsService {
         break;
     }
     order.setOrderStatus(OrderStatus.FULFILLED);
-    auditTrailService.postAuditTrail("User fulfilled the order(id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 

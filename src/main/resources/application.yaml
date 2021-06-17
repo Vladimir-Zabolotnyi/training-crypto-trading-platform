@@ -44,5 +44,5 @@ cryptocurrency:
   sign: "♂"
 
 fee:
-  rate: 0.05;
-  minimal: 100;
+  rate: "0.05"
+  minimal: "10"

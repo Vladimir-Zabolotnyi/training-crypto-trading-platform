@@ -1,6 +1,7 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
@@ -22,6 +23,8 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.text.Bidi;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -42,17 +45,19 @@ public class OrderDetailsService {
 
   @Autowired
   UserService userService;
+  @Autowired
+  private FeeService feeService;
 
   @Autowired
   AuditTrailService auditTrailService;
-
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
-        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount());
+        BigDecimal fee = feeService.calculateFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
+        walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount().add(fee));
         break;
       case BUY:
         walletService.subtractWalletMoneyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount(), order.getCryptocurrencyPrice());

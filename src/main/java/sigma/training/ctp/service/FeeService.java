@@ -9,20 +9,18 @@ import java.math.BigDecimal;
 public class FeeService {
 
   private final BigDecimal rate;
-  private final BigDecimal minimal;
+  private final BigDecimal minimalValue;
 
   public FeeService(
     @Value(value = "${fee.rate}") String rate,
-    @Value(value = "${fee.minimal}") String minimal) {
+    @Value(value = "${fee.minimal-value}") String minimalValue) {
     this.rate = new BigDecimal(rate);
-    this.minimal = new BigDecimal(minimal);
+    this.minimalValue = new BigDecimal(minimalValue);
   }
 
-  public BigDecimal calculateFee(BigDecimal total) {
-    BigDecimal percentage = total.multiply(rate);
-
-    return (percentage.compareTo(minimal) > 0)
-      ? percentage
-      : minimal;
+  public BigDecimal getOrderFee(BigDecimal orderTotal) {
+    return (orderTotal.multiply(rate).compareTo(minimalValue) > 0)
+      ? orderTotal.multiply(rate)
+      : minimalValue;
   }
 }

@@ -45,4 +45,4 @@ cryptocurrency:
 
 fee:
   rate: "0.05"
-  minimal: "10"
+  minimal-value: "10"

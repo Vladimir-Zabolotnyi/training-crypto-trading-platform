@@ -56,7 +56,7 @@ public class OrderDetailsService {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
-        BigDecimal fee = feeService.calculateFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
+        BigDecimal fee = feeService.getOrderFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
         walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount().add(fee));
         break;
       case BUY:

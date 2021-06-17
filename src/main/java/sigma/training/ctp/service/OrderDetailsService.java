@@ -43,10 +43,6 @@ public class OrderDetailsService {
   @Autowired
   UserService userService;
 
-  @Autowired
-  AuditTrailService auditTrailService;
-
-
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);

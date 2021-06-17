@@ -22,6 +22,7 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -118,7 +119,6 @@ public class OrderDetailsService {
     order.setOrderStatus(OrderStatus.CANCELLED);
     orderDetailsRepository.save(order);
 
-    auditTrailService.postAuditTrail("User cancelled the order (id: " + order.getId() + ")");
     return orderMapper.toRestDto(order);
   }
 
@@ -149,8 +149,15 @@ public class OrderDetailsService {
       throw new NoActiveOrdersFoundException();
     }
 
-    auditTrailService.postAuditTrail("User read list of the orders");
     return orderMapper.toRestDto(orderList);
+  }
+  @Transactional
+  public List<OrderDetailsRestDto> cancelOutdatedOrders(Instant toDate) throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException {
+    List<OrderDetailsEntity> orderToCancelList = orderDetailsRepository.findAllByOrderStatusAndCreationDateLessThan(OrderStatus.CREATED, toDate);
+    for (OrderDetailsEntity order:orderToCancelList) {
+      cancelOrder(order.getId());
+    }
+    return orderMapper.toRestDto(orderToCancelList);
   }
 
   private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {

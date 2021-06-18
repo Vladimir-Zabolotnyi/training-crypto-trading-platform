@@ -25,11 +25,9 @@ public class WalletService {
   UserService userService;
 
 
-  public List<WalletRestDto> getAllWalletsByUserId(Long id,Long) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
+  public List<WalletRestDto> getAllWalletsByUserId(Long id) {
 
-
-    return walletMapper.toRestDto(wallet);
+    return walletMapper.toRestDto(repository.findAllByUserId(id));
   }
 
   public WalletEntity subtractWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {

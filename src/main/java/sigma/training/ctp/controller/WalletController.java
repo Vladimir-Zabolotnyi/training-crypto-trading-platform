@@ -40,6 +40,7 @@ public class WalletController {
   )
   @GetMapping(path = "/my-wallet")
   public WalletRestDto getUserWallet() {
+    auditTrailService.postAuditTrail("User got the wallet (id: " + wallet.getId() + ")");
     return walletService.getWalletByUserId(userService.getCurrentUser().getId());
   }
 }

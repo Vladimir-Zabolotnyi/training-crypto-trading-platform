@@ -1,18 +1,16 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
 import sigma.training.ctp.exception.InsufficientAmountCryptoException;
 import sigma.training.ctp.mapper.WalletMapper;
-import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.WalletEntity;
-import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class WalletService {
@@ -26,13 +24,11 @@ public class WalletService {
   @Autowired
   UserService userService;
 
-  @Autowired
-  AuditTrailService auditTrailService;
 
-  public WalletRestDto getWalletByUserId(Long id) {
+  public List<WalletRestDto> getAllWalletsByUserId(Long id,Long) {
     WalletEntity wallet = repository.findWalletEntityByUserId(id);
 
-    auditTrailService.postAuditTrail("User got the wallet (id: " + wallet.getId() + ")");
+
     return walletMapper.toRestDto(wallet);
   }
 

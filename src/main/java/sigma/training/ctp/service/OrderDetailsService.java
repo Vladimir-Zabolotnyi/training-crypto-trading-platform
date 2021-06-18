@@ -51,6 +51,7 @@ public class OrderDetailsService {
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
     UserEntity rootUser = userService.getRootUser();
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
+
     switch (order.getOrderType()) {
       case SELL:
         BigDecimal fee = feeService.getOrderFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));

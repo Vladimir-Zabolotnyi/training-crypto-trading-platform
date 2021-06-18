@@ -25,7 +25,7 @@ import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
@@ -67,7 +67,7 @@ public class OrderDetailsController {
                                   content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
                                 @PathVariable("orderType") @Parameter(
                                   description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+                                  schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws InsufficientCurrencyAmountException, InsufficientAmountBankCurrencyException {
 
     order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     OrderDetailsRestDto orderDto = orderDetailsService.postOrder(order, userService.getCurrentUser());
@@ -96,7 +96,7 @@ public class OrderDetailsController {
     @PathVariable("id") @Parameter(
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
-    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientCurrencyAmountException, InsufficientAmountBankCurrencyException {
 
 
     OrderDetailsRestDto orderDto = orderDetailsService.fulfillOrder(id, userService.getCurrentUser());

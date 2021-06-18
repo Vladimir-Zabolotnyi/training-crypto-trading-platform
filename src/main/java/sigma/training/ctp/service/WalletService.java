@@ -3,8 +3,7 @@ package sigma.training.ctp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
-import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.persistence.repository.WalletRepository;
@@ -25,43 +24,32 @@ public class WalletService {
   UserService userService;
 
 
-  public List<WalletRestDto> getAllWalletsByUserId(Long id) {
+  public List<WalletRestDto> getAllWalletsByUserId(Long userId) {
 
-    return walletMapper.toRestDto(repository.findAllByUserId(id));
+    return walletMapper.toRestDto(repository.findAllByUserId(userId));
   }
 
-  public WalletEntity subtractWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
-    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {
-      throw new InsufficientAmountCryptoException();
+  public WalletRestDto getWalletByUserIdAndCurrencyName(Long userId,String currencyName) {
+
+    return walletMapper.toRestDto(repository.findWalletEntityByUserIdAndCurrencyName(userId,currencyName));
+  }
+
+
+  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long id, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException {
+    WalletEntity wallet = repository.findWalletEntityById(id);
+    BigDecimal walletCurrencyAmount = wallet.getAmount();
+    if (walletCurrencyAmount.compareTo(currencyAmountToSubtract) < 0) {
+      throw new InsufficientCurrencyAmountException();
     }
-
-    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));
+    wallet.setAmount(walletCurrencyAmount.subtract(currencyAmountToSubtract));
     return repository.save(wallet);
   }
 
-  public WalletEntity subtractWalletMoneyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) throws InsufficientAmountBankCurrencyException {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal moneyBalance = wallet.getMoneyBalance();
-    if (moneyBalance.compareTo(cryptocurrencyAmount.multiply(cryptocurrencyPrice)) < 0) {
-      throw new InsufficientAmountBankCurrencyException();
-    }
-    wallet.setMoneyBalance(moneyBalance.subtract(cryptocurrencyAmount.multiply(cryptocurrencyPrice)));
-    return repository.save(wallet);
-  }
 
-  public WalletEntity addWalletMoneyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal moneyBalance = wallet.getMoneyBalance();
-    wallet.setMoneyBalance(moneyBalance.add(cryptocurrencyAmount.multiply(cryptocurrencyPrice)));
-    return repository.save(wallet);
-  }
-
-  public WalletEntity addWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
-    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.add(cryptocurrencyAmount));
+  public WalletEntity addWalletCurrencyAmountByWalletId(Long id, BigDecimal currencyAmountToAdd) {
+    WalletEntity wallet = repository.findWalletEntityById(id);
+    BigDecimal walletCurrencyAmount = wallet.getAmount();
+    wallet.setAmount(walletCurrencyAmount.add(currencyAmountToAdd));
     return repository.save(wallet);
   }
 }

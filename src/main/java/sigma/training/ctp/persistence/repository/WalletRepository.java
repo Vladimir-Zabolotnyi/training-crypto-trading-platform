@@ -14,6 +14,8 @@ import java.util.List;
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
   List<WalletEntity> findAllByUserId(Long id);
 
-  WalletEntity findWalletEntityByUserIdAndCurrencyId(Long id,Long currencyId);
+  WalletEntity findWalletEntityByUserIdAndCurrencyName(Long id,String name);
+
+  WalletEntity findWalletEntityById(Long id);
 
 }

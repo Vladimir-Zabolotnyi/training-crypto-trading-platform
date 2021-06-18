@@ -7,11 +7,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.mapper.WalletMapper;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.persistence.entity.WalletEntity;
-import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
@@ -78,7 +77,7 @@ public class WalletServiceTest {
   }
 
   @Test
-  void reduceWalletCryptocurrencyBalanceByUserId() throws InsufficientAmountCryptoException {
+  void reduceWalletCryptocurrencyBalanceByUserId() throws InsufficientCurrencyAmountException {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_BEFORE_UPDATE);
     when(repository.save(WALLET_AFTER_UPDATE)).thenReturn(WALLET_AFTER_UPDATE);
     WalletEntity expected = new WalletEntity(
@@ -92,7 +91,7 @@ public class WalletServiceTest {
   @Test
   void exceptionReduceWalletCryptocurrencyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_FOR_EXCEPTION);
-    assertThrows(InsufficientAmountCryptoException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
+    assertThrows(InsufficientCurrencyAmountException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
   }
 
   @Test
@@ -122,6 +121,6 @@ public class WalletServiceTest {
   @Test
   void exceptionSubtractWalletMoneyBalanceByUserId() {
     when(repository.findWalletEntityByUserId(ID)).thenReturn(WALLET_FOR_EXCEPTION);
-    assertThrows(InsufficientAmountCryptoException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
+    assertThrows(InsufficientCurrencyAmountException.class, () -> service.subtractWalletCryptocurrencyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT_FOR_EXCEPTION));
   }
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
@@ -18,8 +18,8 @@ import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 @ControllerAdvice
 public class ExceptionsHandler {
 
-  @ExceptionHandler(value = {InsufficientAmountCryptoException.class})
-  public ResponseEntity<Object> handleInvalidInputException(InsufficientAmountCryptoException ex) {
+  @ExceptionHandler(value = {InsufficientCurrencyAmountException.class})
+  public ResponseEntity<Object> handleInvalidInputException(InsufficientCurrencyAmountException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 

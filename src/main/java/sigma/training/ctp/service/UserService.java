@@ -15,6 +15,8 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
+  private static final String SYSTEM_ROOT_LOGIN = ".root";
+
   @Autowired
   UserRepository userRepository;
 
@@ -22,6 +24,11 @@ public class UserService implements UserDetailsService {
     return (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
+  }
+
+  public UserEntity getRootUser() {
+    return userRepository.findUserByLogin(SYSTEM_ROOT_LOGIN)
+      .orElseThrow(() -> new UsernameNotFoundException("The root user can not be found"));
   }
 
   @Override

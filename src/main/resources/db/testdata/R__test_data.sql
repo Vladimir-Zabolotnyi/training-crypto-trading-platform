@@ -20,8 +20,11 @@ INSERT INTO user(id, name, login, password,role_id)
 VALUES (3, 'Vlad', 'Vladlog', '$2a$10$BBP0NZDJG45hqP6z2xsHVu1TMRNTDvNFbpBUdIP.qN2N0XGsxWFFC',2);
 
 INSERT INTO wallet VALUES
-(1, 1, 228.13, 37),
-(2, 2, 0.33, 0.0);
+(1, 1, 1, 100),
+(2,1,2,50),
+(3,1,3,200),
+(4,2,1,300),
+(5,2,2,15);
 
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (1, '2021-06-04 13:28:39',1,'CREATED','SELL',100,5);

@@ -49,10 +49,13 @@ public class OrderDetailsService {
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+    UserEntity rootUser = userService.getRootUser();
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     switch (order.getOrderType()) {
       case SELL:
         BigDecimal fee = feeService.getOrderFee(order.getCryptocurrencyPrice().multiply(order.getCryptocurrencyAmount()));
+
+        walletService.addWalletCryptocurrencyBalanceByUserId(rootUser.getId(), fee);
         walletService.subtractWalletCryptocurrencyBalanceByUserId(order.getUser().getId(), order.getCryptocurrencyAmount().add(fee));
         break;
       case BUY:

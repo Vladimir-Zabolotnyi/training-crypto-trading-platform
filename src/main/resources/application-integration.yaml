@@ -49,9 +49,11 @@ cryptocurrency:
 fee:
   rate: "0.05"
   minimal-value: "10"
+  root-user:
+    name: ".root"
 
 order:
   time-to-live-days: "5"
 
 order-cancelling-job:
-  scheduled-cron-expression: "0 0 * * * ?"
+  scheduled-cron-expression: "0 0 1 1 * ?"

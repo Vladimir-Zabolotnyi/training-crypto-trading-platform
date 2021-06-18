@@ -63,3 +63,16 @@ INSERT INTO audit_trail(id,date,user_id,description)
 VALUES (5, '2021-06-04 14:23:39', '1', 'User fulfilled the order (id: 4)');
 INSERT INTO audit_trail(id,date,user_id,description)
 VALUES (6, '2021-06-04 15:28:39', '1', 'User cancelled the order (id: 3)');
+
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (1,true,true,'USA_dollar','USD');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (2,false,true,'UA_hryvnia','UAH');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (3,false,false,'Bitcoin','BTC');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (4,false,false,'Ethereum','ETH');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (5,false,false,'Tron','TRX');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (6,false,false,'Ripple','XRP');

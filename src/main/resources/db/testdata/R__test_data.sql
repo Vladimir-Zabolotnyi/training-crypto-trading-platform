@@ -19,6 +19,20 @@ VALUES (2, 'Vova', 'Vovalog', '$2a$10$tPmrzgBhgpm6KZq3EvOn5ud/oXc4x0y1h9jxIDhwc.
 INSERT INTO user(id, name, login, password,role_id)
 VALUES (3, 'Vlad', 'Vladlog', '$2a$10$BBP0NZDJG45hqP6z2xsHVu1TMRNTDvNFbpBUdIP.qN2N0XGsxWFFC',2);
 
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (1,true,true,'USA_dollar','USD');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (2,false,true,'UA_hryvnia','UAH');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (3,false,false,'Bitcoin','BTC');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (4,false,false,'Ethereum','ETH');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (5,false,false,'Tron','TRX');
+INSERT INTO currency(id,basic,bank_currency,name,acronym)
+VALUES (6,false,false,'Ripple','XRP');
+
+
 INSERT INTO wallet VALUES
 (1, 1, 1, 100),
 (2,1,2,50),
@@ -66,3 +80,4 @@ INSERT INTO audit_trail(id,date,user_id,description)
 VALUES (5, '2021-06-04 14:23:39', '1', 'User fulfilled the order (id: 4)');
 INSERT INTO audit_trail(id,date,user_id,description)
 VALUES (6, '2021-06-04 15:28:39', '1', 'User cancelled the order (id: 3)');
+

@@ -17,7 +17,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
   @Value(value = "${fee.root-user.name}")
-  private String SYSTEM_ROOT_NAME;
+  private String rootUserName;
 
   @Autowired
   UserRepository userRepository;
@@ -29,7 +29,7 @@ public class UserService implements UserDetailsService {
   }
 
   public UserEntity getRootUser() {
-    return userRepository.findUserByName(SYSTEM_ROOT_NAME)
+    return userRepository.findUserByName(rootUserName)
       .orElseThrow(() -> new UsernameNotFoundException("The root user can not be found"));
   }
 

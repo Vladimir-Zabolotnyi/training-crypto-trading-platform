@@ -16,7 +16,6 @@ import javax.persistence.Table;
 @Table(name = "currency")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class CurrencyEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

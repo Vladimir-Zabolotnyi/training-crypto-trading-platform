@@ -17,7 +17,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
   @Value(value = "${fee.root-user.name}")
-  private static String SYSTEM_ROOT_NAME;
+  private String SYSTEM_ROOT_NAME;
 
   @Autowired
   UserRepository userRepository;

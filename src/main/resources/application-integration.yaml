@@ -49,6 +49,8 @@ cryptocurrency:
 fee:
   rate: "0.05"
   minimal-value: "10"
+  root-user:
+    name: ".root"
 
 order:
   time-to-live-days: "5"

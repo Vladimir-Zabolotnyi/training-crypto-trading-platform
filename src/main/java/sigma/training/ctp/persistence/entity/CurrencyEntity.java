@@ -1,5 +1,6 @@
 package sigma.training.ctp.persistence.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 @Table(name = "currency")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CurrencyEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

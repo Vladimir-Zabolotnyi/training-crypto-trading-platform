@@ -62,7 +62,6 @@ class OrderDetailsServiceTest {
   private static final OrderType ORDER_TYPE_SELL = OrderType.SELL;
   private static final OrderType ORDER_TYPE_BUY = OrderType.BUY;
 
-  private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
   private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null, null, null, null, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
 
@@ -194,7 +193,6 @@ class OrderDetailsServiceTest {
 
   @Test
   void postOrder() throws InsufficientCurrencyAmountException, InsufficientAmountBankCurrencyException {
-    Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_SELL)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_BUY)).thenReturn(ORDER_DETAILS_BUY);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS_SELL)).thenReturn(ORDER_DTO_SELL);

@@ -1,5 +1,6 @@
 package sigma.training.ctp.persistence.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -22,7 +23,7 @@ import java.math.BigDecimal;
 @Table(name = "wallet")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WalletEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,7 +40,7 @@ public class WalletEntity {
   @NonNull
   private CurrencyEntity currency;
 
-  @Column(name = "cryptocurrency_balance")
+  @Column(name = "amount")
   @NonNull
   @DecimalMin(value = "0.00")
   private BigDecimal amount;

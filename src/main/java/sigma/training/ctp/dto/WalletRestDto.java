@@ -15,6 +15,13 @@ import java.math.BigDecimal;
 public class WalletRestDto {
 
   @Schema(
+    name = "id of the wallet ",
+    example = "1"
+  )
+  @NonNull
+  private Long id;
+
+  @Schema(
     name = "Currency name",
     example = "Bitcoin"
   )

@@ -14,6 +14,7 @@ import sigma.training.ctp.exception.OrderNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.exception.WalletNotFoundException;
 
 @ControllerAdvice
 public class ExceptionsHandler {
@@ -40,6 +41,11 @@ public class ExceptionsHandler {
 
   @ExceptionHandler(value = {OrderNotFoundException.class})
   public ResponseEntity<Object> handleInvalidInputException(OrderNotFoundException ex) {
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(value = {WalletNotFoundException.class})
+  public ResponseEntity<Object> handleInvalidInputException(WalletNotFoundException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
   }
 

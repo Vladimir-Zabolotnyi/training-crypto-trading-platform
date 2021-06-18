@@ -18,7 +18,7 @@ public class WalletMapper implements Mapper<WalletEntity, WalletRestDto> {
 
   @Override
   public WalletRestDto toRestDto(WalletEntity wallet) {
-    return new WalletRestDto(wallet.getCurrency().getName(), wallet.getCurrency().getAcronym(), wallet.getAmount());
+    return new WalletRestDto(wallet.getId(), wallet.getCurrency().getName(), wallet.getCurrency().getAcronym(), wallet.getAmount());
   }
 
   public List<WalletRestDto> toRestDto(List<WalletEntity> walletList) {
@@ -32,7 +32,7 @@ public class WalletMapper implements Mapper<WalletEntity, WalletRestDto> {
     CurrencyEntity currency = new CurrencyEntity();
     currency.setAcronym(walletDto.getCurrencyAcronym());
     currency.setName(walletDto.getCurrencyName());
-    return new WalletEntity(user, currency, walletDto.getAmount());
+    return new WalletEntity(walletDto.getId(), user, currency, walletDto.getAmount());
   }
 
 }

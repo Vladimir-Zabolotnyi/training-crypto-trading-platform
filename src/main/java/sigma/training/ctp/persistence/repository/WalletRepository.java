@@ -9,13 +9,14 @@ import sigma.training.ctp.persistence.entity.WalletEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
   List<WalletEntity> findAllByUserId(Long id);
 
-  WalletEntity findWalletEntityByUserIdAndCurrencyName(Long id,String name);
+  Optional<WalletEntity> findWalletEntityByUserIdAndCurrencyName(Long id, String name);
 
-  WalletEntity findWalletEntityById(Long id);
+  Optional<WalletEntity> findWalletEntityById(Long id);
 
 }

@@ -11,6 +11,8 @@ INSERT INTO role(id,name)
 VALUES (1, 'USER');
 INSERT INTO role(id,name)
 VALUES (2,'ADMIN');
+INSERT INTO role(id,name)
+VALUES (3,'SYSTEM');
 
 INSERT INTO user(id, name, login, password,role_id)
 VALUES (1, 'Jack', 'Jacklog', '$2a$10$cc9PZ/P.BJre5fGkZ1K/ROhc7HNskwrNB2yymrXTmombBlui5Q012',1);

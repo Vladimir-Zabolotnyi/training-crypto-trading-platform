@@ -81,14 +81,13 @@ class OrderDetailsServiceTest {
   OrderFilterMapper orderFilterMapper;
 
   @Mock
-  FeeService feeService;
-
-  @Mock
   CurrencyRepository currencyRepository;
 
   @InjectMocks
   OrderDetailsService orderDetailsService;
 
+  @Mock
+  FeeService feeService;
 
   @Test
   void postOrder() throws WalletNotFoundException, InsufficientCurrencyAmountException {
@@ -96,6 +95,7 @@ class OrderDetailsServiceTest {
     when(orderMapper.toEntity(ORDER_DTO, USER)).thenReturn(ORDER);
     when(orderMapper.toRestDto(ORDER)).thenReturn(ORDER_DTO);
     when(orderDetailsRepository.save(ORDER)).thenReturn(ORDER);
+    when(feeService.getOrderFee(SELL_CURRENCY_AMOUNT)).thenReturn(SELL_CURRENCY_AMOUNT);
     when(currencyRepository.findByName(SELL_CURRENCY_NAME)).thenReturn(Optional.of(SELL_CURRENCY));
     when(currencyRepository.findByName(BUY_CURRENCY_NAME)).thenReturn(Optional.of(BUY_CURRENCY));
     assertEquals(ORDER_DTO, orderDetailsService.postOrder(ORDER_DTO, USER));

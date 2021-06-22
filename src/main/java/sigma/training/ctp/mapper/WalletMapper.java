@@ -23,7 +23,7 @@ public class WalletMapper implements Mapper<WalletEntity, WalletRestDto> {
 
   public List<WalletRestDto> toRestDto(List<WalletEntity> walletList) {
     return walletList.stream().map(
-      walletEntity -> toRestDto(walletEntity)).collect(Collectors.toList());
+      this::toRestDto).collect(Collectors.toList());
   }
 
   @Override

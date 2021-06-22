@@ -1,5 +1,6 @@
 package sigma.training.ctp.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,19 +10,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Schema(description = "A model for the currency displaying")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CryptocurrencyRestDto {
 
+  @Schema(description = "An identifier for the cryptocurrency", example = "1")
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   private Long id;
 
+  @Schema(description = "The cryptocurrency name", example = "Bitcoin")
   @Column(name = "name")
   private String name;
 
+  @Schema(description = "A cryptocurrency's acronym or short name", example = "BIT")
   @Column(name = "acronym")
   private String acronym;
 }

@@ -30,13 +30,14 @@ public class WalletService {
   }
 
 
-  public WalletRestDto getWalletByUserIdAndCurrencyName(Long userId,String currencyName) throws WalletNotFoundException {
-    return walletMapper.toRestDto(repository.findWalletEntityByUserIdAndCurrencyName(userId,currencyName).orElseThrow(()->new WalletNotFoundException(currencyName)));
+  public WalletEntity getWalletByUserIdAndCurrencyName(Long userId,String currencyName) throws WalletNotFoundException {
+    return repository.findWalletEntityByUserIdAndCurrencyName(userId,currencyName).orElseThrow(()->new WalletNotFoundException(currencyName));
   }
 
 
-  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long id, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException, WalletNotFoundException {
-    WalletEntity wallet = repository.findWalletEntityById(id).orElseThrow(()->new WalletNotFoundException(id));
+  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long user_id,String currencyName, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException, WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(user_id, currencyName);
+
     BigDecimal walletCurrencyAmount = wallet.getAmount();
     if (walletCurrencyAmount.compareTo(currencyAmountToSubtract) < 0) {
       throw new InsufficientCurrencyAmountException();
@@ -46,8 +47,8 @@ public class WalletService {
   }
 
 
-  public WalletEntity addWalletCurrencyAmountByWalletId(Long id, BigDecimal currencyAmountToAdd) throws WalletNotFoundException {
-    WalletEntity wallet = repository.findWalletEntityById(id).orElseThrow(()->new WalletNotFoundException(id));
+  public WalletEntity addWalletCurrencyAmountByWalletId(Long user_id,String currencyName, BigDecimal currencyAmountToAdd) throws WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(user_id, currencyName);
     BigDecimal walletCurrencyAmount = wallet.getAmount();
     wallet.setAmount(walletCurrencyAmount.add(currencyAmountToAdd));
     return repository.save(wallet);

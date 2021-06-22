@@ -4,6 +4,7 @@ TRUNCATE wallet;
 TRUNCATE role;
 TRUNCATE user;
 TRUNCATE audit_trail;
+TRUNCATE currency;
 SET FOREIGN_KEY_CHECKS = 1;
 
 
@@ -42,33 +43,29 @@ VALUES (3,1,3,200);
 INSERT INTO wallet (id, user_id,currency_id,amount)
 VALUES (4,2,1,300);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (5,2,2,15);
+VALUES (5,2,3,15);
 
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (1, '2021-06-04 13:28:39',1,'CREATED','SELL',100,5);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (2, '2021-06-04 13:28:39',1,'CREATED','SELL',25,12);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (3, '2021-06-04 14:23:39',1,'FULFILLED','SELL',32,5);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (4, '2021-06-04 15:28:39',1,'CANCELLED','SELL',56,9);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (5, '2021-06-13 22:28:39',2,'CREATED','SELL',66,2);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (6, '2021-06-16 09:28:39',2,'CREATED','SELL',29,8);
-
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (7, '2021-06-08 15:28:39',1,'CREATED','BUY',110,4);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (8, '2021-06-08 15:28:39',1,'CREATED','BUY',145,77);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (9, '2021-06-10 02:28:39',1,'FULFILLED','BUY',123,7);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (10, '2021-06-10 21:28:39',1,'CANCELLED','BUY',75,10);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (11, '2021-06-12 15:28:39',2,'CREATED','BUY',220,24);
-INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
-VALUES (12, '2021-06-13 02:28:39',2,'CREATED','BUY',456,12);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (1, '2021-06-04 13:28:39',1,'CREATED',1,2,5,10);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (2, '2021-06-04 13:38:39',1,'CREATED',1,3,1100,4);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (3, '2021-06-04 13:38:39',1,'CANCELLED',3,6,20,400);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (4, '2021-06-04 13:38:39',1,'FULFILLED',1,4,34,400);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (5, '2021-06-04 13:28:39',2,'CREATED',1,3,2000,0.2);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (6, '2021-06-04 13:28:39',2,'CREATED',1,4,40,17);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (7, '2021-06-04 13:38:39',1,'CREATED',1,5,20,400);
 
 
 

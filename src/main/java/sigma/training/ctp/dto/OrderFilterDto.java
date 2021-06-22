@@ -15,9 +15,6 @@ public class OrderFilterDto {
   @Schema(description = "status of the order", enumAsRef = true, example = "created")
   private String orderStatus;
 
-  @Schema(description = "type of the order", enumAsRef = true,example = "sell")
-  private String orderType;
-
   @Schema(description = "id of the user", example = "1")
   private Long userId;
 }

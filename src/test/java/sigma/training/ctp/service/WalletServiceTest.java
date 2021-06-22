@@ -36,7 +36,7 @@ public class WalletServiceTest {
   private static final UserEntity USER = new UserEntity();
   private static final CurrencyEntity CURRENCY = new CurrencyEntity(ID,false,false,NAME,ACRONYM);
 
-  private static final WalletEntity WALLET_BEFORE_SUBRACT = new WalletEntity(ID,USER,CURRENCY,AMOUNT);
+  private static final WalletEntity WALLET_BEFORE_SUBTRACT = new WalletEntity(ID,USER,CURRENCY,AMOUNT);
   private static final WalletEntity WALLET_BEFORE_ADD = new WalletEntity(ID,USER,CURRENCY,AMOUNT);
   private static final WalletEntity WALLET_AFTER_SUBTRACT = new WalletEntity(ID,USER,CURRENCY,AMOUNT.subtract(AMOUNT_TO_SUBTRACT));
   private static final WalletEntity WALLET_AFTER_ADD = new WalletEntity(ID,USER,CURRENCY,AMOUNT.add(AMOUNT_TO_ADD));
@@ -56,19 +56,19 @@ public class WalletServiceTest {
 
 
   @Test
-  void exceptionSubtractWalletMoneyBalanceByUserId() {
-    when(repository.findWalletEntityById(ID)).thenReturn(Optional.of(WALLET_BEFORE_SUBRACT));
-    assertThrows(InsufficientCurrencyAmountException.class, () -> service.subtractWalletCurrencyAmountByWalletId(ID, AMOUNT_TO_SUBTRACT_EXCEPTION));
+  void exceptionSubtractWalletMoneyBalanceByUserId()  {
+    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,NAME)).thenReturn(Optional.of(WALLET_BEFORE_SUBTRACT));
+    assertThrows(InsufficientCurrencyAmountException.class, () -> service.subtractWalletCurrencyAmountByWalletId(ID,NAME, AMOUNT_TO_SUBTRACT_EXCEPTION));
   }
   @Test
   void exceptionGetWalletByUserId() {
-    when(repository.findWalletEntityById(ID)).thenReturn(Optional.empty());
-    assertThrows(WalletNotFoundException.class, () -> service.subtractWalletCurrencyAmountByWalletId(ID, AMOUNT_TO_SUBTRACT));
+    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,NAME)).thenReturn(Optional.empty());
+    assertThrows(WalletNotFoundException.class, () -> service.subtractWalletCurrencyAmountByWalletId(ID,NAME, AMOUNT_TO_SUBTRACT));
   }
 
   @Test
   void getAllWalletsByUserId() {
-    WALLET_LIST.add(WALLET_BEFORE_SUBRACT);
+    WALLET_LIST.add(WALLET_BEFORE_SUBTRACT);
     WALLET_DTO_LIST.add(WALLET_DTO);
     when(repository.findAllByUserId(ID)).thenReturn(WALLET_LIST);
     when(walletMapper.toRestDto(WALLET_LIST)).thenReturn(WALLET_DTO_LIST);
@@ -77,22 +77,21 @@ public class WalletServiceTest {
 
   @Test
   void getWalletByUserIdAndCurrencyName() throws WalletNotFoundException {
-    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,CURRENCY.getName())).thenReturn(Optional.of(WALLET_BEFORE_SUBRACT));
-    when(walletMapper.toRestDto(WALLET_BEFORE_SUBRACT)).thenReturn(WALLET_DTO);
-    assertEquals(WALLET_DTO,service.getWalletByUserIdAndCurrencyName(ID,CURRENCY.getName()));
+    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,CURRENCY.getName())).thenReturn(Optional.of(WALLET_BEFORE_SUBTRACT));
+    assertEquals(WALLET_BEFORE_SUBTRACT,service.getWalletByUserIdAndCurrencyName(ID,CURRENCY.getName()));
   }
 
   @Test
   void subtractWalletCurrencyAmountByWalletId() throws InsufficientCurrencyAmountException, WalletNotFoundException {
-    when(repository.findWalletEntityById(ID)).thenReturn(Optional.of(WALLET_BEFORE_SUBRACT));
+    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,NAME)).thenReturn(Optional.of(WALLET_BEFORE_SUBTRACT));
     when(repository.save(WALLET_AFTER_SUBTRACT)).thenReturn(WALLET_AFTER_SUBTRACT);
-    assertEquals(WALLET_AFTER_SUBTRACT,service.subtractWalletCurrencyAmountByWalletId(ID,AMOUNT_TO_SUBTRACT));
+    assertEquals(WALLET_AFTER_SUBTRACT,service.subtractWalletCurrencyAmountByWalletId(ID,NAME,AMOUNT_TO_SUBTRACT));
   }
 
   @Test
   void addWalletCurrencyAmountByWalletId() throws WalletNotFoundException {
-    when(repository.findWalletEntityById(ID)).thenReturn(Optional.of(WALLET_BEFORE_ADD));
+    when(repository.findWalletEntityByUserIdAndCurrencyName(ID,NAME)).thenReturn(Optional.of(WALLET_BEFORE_ADD));
     when(repository.save(WALLET_AFTER_ADD)).thenReturn(WALLET_AFTER_ADD);
-    assertEquals(WALLET_AFTER_ADD,service.addWalletCurrencyAmountByWalletId(ID, AMOUNT_TO_ADD));
+    assertEquals(WALLET_AFTER_ADD,service.addWalletCurrencyAmountByWalletId(ID,NAME, AMOUNT_TO_ADD));
   }
 }

@@ -23,6 +23,7 @@ import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 import sigma.training.ctp.persistence.repository.specification.OrderSpecification;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -47,13 +48,16 @@ public class OrderDetailsService {
   @Autowired
   CurrencyRepository currencyRepository;
 
+  @Autowired
+  FeeService feeService;
 
   @Transactional
   public OrderDetailsRestDto postOrder(OrderDetailsRestDto orderDto, UserEntity user) throws InsufficientCurrencyAmountException, WalletNotFoundException {
     OrderDetailsEntity order = orderMapper.toEntity(orderDto, user);
     order.setSellCurrency(currencyRepository.findByName(orderDto.getSellCurrencyName()).get());
     order.setBuyCurrency(currencyRepository.findByName(orderDto.getBuyCurrencyName()).get());
-    walletService.subtractWalletCurrencyAmountByWalletId(order.getUser().getId(), orderDto.getSellCurrencyName(), order.getSellCurrencyAmount());
+    BigDecimal fee = feeService.getOrderFee(orderDto.getSellCurrencyAmount());
+    walletService.subtractWalletCurrencyAmountByWalletId(order.getUser().getId(), orderDto.getSellCurrencyName(), order.getSellCurrencyAmount().add(fee));
     return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
 

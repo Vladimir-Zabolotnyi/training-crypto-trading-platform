@@ -37,12 +37,6 @@ application:
   description: "cryptocurrency market"
   version: "1.0.0"
 
-bankcurrency:
-  name: "USDT"
-cryptocurrency:
-  name: "MarsCoin"
-  sign: "♂"
-
 fee:
   rate: "0.05"
   minimal-value: "10"
@@ -51,4 +45,4 @@ order:
   time-to-live-days: "5"
 
 order-cancelling-job:
-  scheduled-cron-expression: "0 0/1 * * * ?"
+  scheduled-cron-expression: "0 0 * * * ?"

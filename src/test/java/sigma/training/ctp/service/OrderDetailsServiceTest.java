@@ -12,7 +12,7 @@ import sigma.training.ctp.dictionary.OrderStatus;
 import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
@@ -25,7 +25,6 @@ import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 import sigma.training.ctp.persistence.entity.UserEntity;
 import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.entity.WalletEntity;
-import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.OrderDetailsRepository;
 
 import java.math.BigDecimal;
@@ -63,7 +62,6 @@ class OrderDetailsServiceTest {
   private static final OrderType ORDER_TYPE_SELL = OrderType.SELL;
   private static final OrderType ORDER_TYPE_BUY = OrderType.BUY;
 
-  private static final WalletEntity WALLET_AFTER_UPDATE = new WalletEntity(USER, new BigDecimal("228.13"), new BigDecimal("17"));
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);
   private static final OrderDetailsRestDto ORDER_FROM_BODY = new OrderDetailsRestDto(null, null, null, null, null, CRYPTOCURRENCY_PRICE, CRYPTOCURRENCY_AMOUNT);
 
@@ -194,8 +192,7 @@ class OrderDetailsServiceTest {
 
 
   @Test
-  void postOrder() throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
-    Mockito.when(walletService.subtractWalletMoneyBalanceByUserId(ID, CRYPTOCURRENCY_AMOUNT, CRYPTOCURRENCY_PRICE)).thenReturn(WALLET_AFTER_UPDATE);
+  void postOrder() throws InsufficientCurrencyAmountException, InsufficientAmountBankCurrencyException {
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_SELL)).thenReturn(ORDER_DETAILS_SELL);
     Mockito.when(orderDetailsRepository.save(ORDER_DETAILS_BUY)).thenReturn(ORDER_DETAILS_BUY);
     Mockito.when(orderMapper.toRestDto(ORDER_DETAILS_SELL)).thenReturn(ORDER_DTO_SELL);
@@ -224,7 +221,7 @@ class OrderDetailsServiceTest {
   }
 
   @Test
-  void fulfillOrder() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+  void fulfillOrder() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientCurrencyAmountException, InsufficientAmountBankCurrencyException {
     USER.setId(ID);
     USER_TO_BUY.setId(ID_2);
     USER_TO_SELL.setId(ID_2);

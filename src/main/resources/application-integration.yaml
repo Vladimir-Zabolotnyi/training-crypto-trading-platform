@@ -40,12 +40,6 @@ application:
   description: "cryptocurrency market"
   version: "1.0.0"
 
-bankcurrency:
-  name: "USDT"
-cryptocurrency:
-  name: "MarsCoin"
-  sign: "♂"
-
 fee:
   rate: "0.05"
   minimal-value: "10"

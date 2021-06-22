@@ -33,9 +33,16 @@ INSERT INTO currency(id,basic,bank_currency,name,acronym)
 VALUES (6,false,false,'Ripple','XRP');
 
 
-INSERT INTO wallet VALUES
-(1, 1, 228.13, 37),
-(2, 2, 0.33, 0.0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (1, 1, 1, 100);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (2,1,2,50);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (3,1,3,200);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (4,2,1,300);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (5,2,2,15);
 
 INSERT INTO order_details(id,creation_date,user_id,order_status,order_type,cryptocurrency_price,cryptocurrency_amount)
 VALUES (1, '2021-06-04 13:28:39',1,'CREATED','SELL',100,5);

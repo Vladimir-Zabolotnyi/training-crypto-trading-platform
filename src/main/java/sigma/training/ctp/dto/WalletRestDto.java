@@ -6,28 +6,39 @@ import lombok.NonNull;
 
 import java.math.BigDecimal;
 
+
 @Schema(
-  name = "The wallet balance model",
-  description = "A model for displaying the balance state of the user"
+  name = "The wallet balance model of the defined currency",
+  description = "A model for displaying the balance state of the user of the defined currency"
 )
 @Data
 public class WalletRestDto {
 
   @Schema(
-    name = "Money balance",
-    description = "The amount of the real money",
-    example = "13.37; 228.00; 17.0; 441",
-    anyOf = String.class
+    name = "id of the wallet ",
+    example = "1"
   )
   @NonNull
-  private String moneyBalance;
+  private Long id;
 
   @Schema(
-    name = "Cryptocurrency balance",
-    description = "The cryptocurrency balance",
-    example = "76.46; 78.00; 77.0; 79",
-    anyOf = String.class
+    name = "Currency name",
+    example = "Bitcoin"
   )
   @NonNull
-  private String cryptocurrencyBalance;
+  private String currencyName;
+
+  @Schema(
+    name = "Currency acronym",
+    example = "BTC"
+  )
+  @NonNull
+  private String currencyAcronym;
+
+  @Schema(
+    name = "Currency amount",
+    example = "100"
+  )
+  @NonNull
+  private BigDecimal amount;
 }

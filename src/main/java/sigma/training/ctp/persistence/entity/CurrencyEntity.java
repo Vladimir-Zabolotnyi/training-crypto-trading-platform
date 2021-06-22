@@ -36,5 +36,33 @@ public class CurrencyEntity {
   @Column(name = "acronym")
   private String acronym;
 
+  public void setId(Long id) {
+    if (id == null) {
+      throw new NullPointerException("The id value hasn't been initialized");
+    }
 
+    this.id = id;
+  }
+
+  public void setName(String name) {
+    if (name == null) {
+      throw new NullPointerException("The currency name value has no reference to an object typed as String");
+    }
+    if (name.isEmpty()) {
+      throw new IllegalArgumentException("The currency name is empty");
+    }
+
+    this.name = name;
+  }
+
+  public void setAcronym(String acronym) {
+    if (acronym == null) {
+      throw new NullPointerException("The acronym value has no reference to an object typed as String");
+    }
+    if (acronym.isEmpty()) {
+      throw new IllegalArgumentException("The acronym value is empty");
+    }
+
+    this.acronym = acronym;
+  }
 }

@@ -35,8 +35,8 @@ public class WalletService {
   }
 
 
-  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long user_id,String currencyName, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException, WalletNotFoundException {
-    WalletEntity wallet = getWalletByUserIdAndCurrencyName(user_id, currencyName);
+  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long userId,String currencyName, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException, WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(userId, currencyName);
 
     BigDecimal walletCurrencyAmount = wallet.getAmount();
     if (walletCurrencyAmount.compareTo(currencyAmountToSubtract) < 0) {
@@ -47,8 +47,8 @@ public class WalletService {
   }
 
 
-  public WalletEntity addWalletCurrencyAmountByWalletId(Long user_id,String currencyName, BigDecimal currencyAmountToAdd) throws WalletNotFoundException {
-    WalletEntity wallet = getWalletByUserIdAndCurrencyName(user_id, currencyName);
+  public WalletEntity addWalletCurrencyAmountByWalletId(Long userId,String currencyName, BigDecimal currencyAmountToAdd) throws WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(userId, currencyName);
     BigDecimal walletCurrencyAmount = wallet.getAmount();
     wallet.setAmount(walletCurrencyAmount.add(currencyAmountToAdd));
     return repository.save(wallet);

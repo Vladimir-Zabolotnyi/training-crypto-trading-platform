@@ -1,6 +1,7 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,9 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
+  @Value(value = "${fee.root-user.name}")
+  private String rootUserName;
+
   @Autowired
   UserRepository userRepository;
 
@@ -22,6 +26,11 @@ public class UserService implements UserDetailsService {
     return (UserEntity) SecurityContextHolder.getContext()
       .getAuthentication()
       .getPrincipal();
+  }
+
+  public UserEntity getRootUser() {
+    return userRepository.findUserByName(rootUserName)
+      .orElseThrow(() -> new UsernameNotFoundException("The root user can not be found"));
   }
 
   @Override

@@ -58,7 +58,7 @@ public class OrderDetailsService {
     order.setSellCurrency(currencyRepository.findByName(orderDto.getSellCurrencyName()).get());
     order.setBuyCurrency(currencyRepository.findByName(orderDto.getBuyCurrencyName()).get());
     BigDecimal fee = feeService.getOrderFee(orderDto.getSellCurrencyAmount());
-    walletService.addWalletCurrencyAmountByWalletId(rootUser.getId(),fee);
+    walletService.addWalletCurrencyAmountByWalletId(rootUser.getId(),orderDto.getSellCurrencyName(),fee);
     walletService.subtractWalletCurrencyAmountByWalletId(order.getUser().getId(), orderDto.getSellCurrencyName(), order.getSellCurrencyAmount().add(fee));
     return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }

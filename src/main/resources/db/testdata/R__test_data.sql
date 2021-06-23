@@ -48,6 +48,18 @@ INSERT INTO wallet (id, user_id,currency_id,amount)
 VALUES (4,2,1,300);
 INSERT INTO wallet (id, user_id,currency_id,amount)
 VALUES (5,2,3,15);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (6,666,1,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (7,666,2,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (8,666,3,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (9,666,4,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (10,666,5,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (11,666,6,0);
 
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)

@@ -10,6 +10,7 @@ import sigma.training.ctp.mapper.CurrencyMapper;
 import sigma.training.ctp.persistence.entity.CurrencyEntity;
 import sigma.training.ctp.persistence.repository.CurrencyRepository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,61 +30,16 @@ public class CurrencyServiceTest {
   private CurrencyService service;
 
   private static final CurrencyEntity CURRENCY_ONE = new CurrencyEntity(1L, true, true, "USA_dollar", "USD");
-  private static final CurrencyEntity CURRENCY_TWO = new CurrencyEntity(2L, false, true, "UA_hryvnia", "UAH");
-  private static final CurrencyEntity CURRENCY_THREE = new CurrencyEntity(3L, false, false, "Bitcoin", "BTC");
-  private static final CurrencyEntity CURRENCY_FOUR = new CurrencyEntity(4L, false, false, "Ethereum", "ETH");
-  private static final CurrencyEntity CURRENCY_FIVE = new CurrencyEntity(5L, false, false, "Tron", "TRX");
-  private static final CurrencyEntity CURRENCY_SIX = new CurrencyEntity(6L, false, false, "Ripple", "XRP");
+  private static final CurrencyRestDto CURRENCY_OBE_REST_DTO = new CurrencyRestDto(CURRENCY_ONE.getId(), CURRENCY_ONE.getName(), CURRENCY_ONE.getAcronym());
 
-  private static final List<CurrencyEntity> CURRENCIES = Stream.of(
-    CURRENCY_ONE, CURRENCY_TWO, CURRENCY_THREE, CURRENCY_FOUR, CURRENCY_FIVE, CURRENCY_SIX
-  ).collect(Collectors.toList());
-
-  private static final List<CurrencyRestDto> CURRENCIES_REST_DTO = CURRENCIES.stream()
-    .map(m -> new CurrencyRestDto(m.getId(), m.getName(), m.getAcronym()))
-    .collect(Collectors.toList());
+  private static final List<CurrencyEntity> CURRENCIES = Arrays.asList(CURRENCY_ONE);
+  private static final List<CurrencyRestDto> CURRENCIES_REST_DTO = Arrays.asList(CURRENCY_OBE_REST_DTO);
 
   @Test
   public void testFindAllCurrencies() {
-    when(mapper.toRestDto(CURRENCY_ONE)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_ONE.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(0))
-    );
-    when(mapper.toRestDto(CURRENCY_TWO)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_TWO.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(1))
-    );
-    when(mapper.toRestDto(CURRENCY_THREE)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_THREE.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(2))
-    );
-    when(mapper.toRestDto(CURRENCY_FOUR)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_FOUR.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(3))
-    );
-    when(mapper.toRestDto(CURRENCY_FIVE)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_FIVE.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(4))
-    );
-    when(mapper.toRestDto(CURRENCY_SIX)).thenReturn(
-      CURRENCIES_REST_DTO.stream()
-        .filter(f -> f.getId().equals(CURRENCY_SIX.getId()))
-        .findFirst()
-        .orElse(CURRENCIES_REST_DTO.get(5))
-    );
-
+    when(mapper.toRestDto(CURRENCY_ONE)).thenReturn(CURRENCY_OBE_REST_DTO);
     when(repository.findAll()).thenReturn(CURRENCIES);
 
-    assertEquals(service.findAllCurrencies(), CURRENCIES_REST_DTO);
+    assertEquals(service.getAllCurrencies(), CURRENCIES_REST_DTO);
   }
 }

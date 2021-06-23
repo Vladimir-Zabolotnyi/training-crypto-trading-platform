@@ -18,7 +18,7 @@ public class CurrencyService {
   @Autowired
   private CurrencyMapper currencyMapper;
 
-  public List<CurrencyRestDto> findAllCurrencies() {
+  public List<CurrencyRestDto> getAllCurrencies() {
     return currencyRepository.findAll().stream()
       .map(m -> currencyMapper.toRestDto(m))
       .collect(Collectors.toList());

@@ -45,7 +45,7 @@ public class CurrencyController {
   )
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(path = "/currencies")
-  public List<CurrencyRestDto> findAllCurrencies() {
-    return currencyService.findAllCurrencies();
+  public List<CurrencyRestDto> getAllCurrencies() {
+    return currencyService.getAllCurrencies();
   }
 }

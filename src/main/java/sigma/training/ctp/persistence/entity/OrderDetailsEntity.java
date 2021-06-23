@@ -58,12 +58,12 @@ public class OrderDetailsEntity {
 
   @Column(name = "sell_currency_amount")
   @NonNull
-  @DecimalMin(value = "0.00")
+  @DecimalMin(value = "0.00",inclusive = false)
   private BigDecimal sellCurrencyAmount;
 
   @Column(name = "buy_currency_amount")
   @NonNull
-  @DecimalMin(value = "0.00")
+  @DecimalMin(value = "0.00",inclusive = false)
   private BigDecimal buyCurrencyAmount;
 
 }

@@ -50,9 +50,9 @@ class OrderDetailsServiceTest {
   private static final String BUY_CURRENCY_NAME = "Bitcoin";
   private static final BigDecimal SELL_CURRENCY_AMOUNT = new BigDecimal("20");
   private static final BigDecimal BUY_CURRENCY_AMOUNT = new BigDecimal("400");
-  private static final CurrencyEntity SELL_CURRENCY = new CurrencyEntity(null, false, false, SELL_CURRENCY_NAME, null);
+  private static final CurrencyEntity SELL_CURRENCY = new CurrencyEntity(null, false, SELL_CURRENCY_NAME, null);
 
-  private static final CurrencyEntity BUY_CURRENCY = new CurrencyEntity(null, false, false, BUY_CURRENCY_NAME, null);
+  private static final CurrencyEntity BUY_CURRENCY = new CurrencyEntity(null, false, BUY_CURRENCY_NAME, null);
 
   private static final OrderDetailsRestDto ORDER_DTO = new OrderDetailsRestDto(
     ID, Instant.now(), ID, ORDER_STATUS, SELL_CURRENCY_NAME, BUY_CURRENCY_NAME, SELL_CURRENCY_AMOUNT, BUY_CURRENCY_AMOUNT);

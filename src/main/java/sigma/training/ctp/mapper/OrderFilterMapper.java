@@ -16,7 +16,7 @@ public class OrderFilterMapper implements Mapper<OrderFilter, OrderFilterDto> {
   public OrderFilterDto toRestDto(OrderFilter orderFilter) {
    return new OrderFilterDto(
       orderFilter.getOrderStatus().toString().toLowerCase(Locale.ROOT),
-      orderFilter.getUserId());
+      orderFilter.getUserId(),orderFilter.getSellCurrencyName(),orderFilter.getBuyCurrencyName());
   }
 
   @Override
@@ -27,6 +27,12 @@ public class OrderFilterMapper implements Mapper<OrderFilter, OrderFilterDto> {
     }
     if(orderFilterDto.getUserId()!=null){
       orderFilter.setUserId(orderFilterDto.getUserId());
+    }
+    if(orderFilterDto.getSellCurrencyName()!=null){
+      orderFilter.setSellCurrencyName(orderFilterDto.getSellCurrencyName());
+    }
+    if(orderFilterDto.getBuyCurrencyName()!=null){
+      orderFilter.setBuyCurrencyName(orderFilterDto.getBuyCurrencyName());
     }
     return orderFilter;
   }

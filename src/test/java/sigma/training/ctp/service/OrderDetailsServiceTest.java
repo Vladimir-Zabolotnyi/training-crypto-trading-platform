@@ -65,8 +65,8 @@ class OrderDetailsServiceTest {
     ID, Instant.now(), USER, ORDER_STATUS, SELL_CURRENCY, BUY_CURRENCY, SELL_CURRENCY_AMOUNT, BUY_CURRENCY_AMOUNT);
   private static final List<OrderDetailsEntity> ORDER_LIST = new ArrayList<>();
   private static final List<OrderDetailsRestDto> ORDER_DTO_LIST = new ArrayList<>();
-  private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString(), ID);
-  private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS, ID);
+  private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString(), ID,SELL_CURRENCY_NAME,BUY_CURRENCY_NAME);
+  private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS, ID,SELL_CURRENCY_NAME,BUY_CURRENCY_NAME);
   private static final UserEntity ROOT_USER = new UserEntity() ;
 
 

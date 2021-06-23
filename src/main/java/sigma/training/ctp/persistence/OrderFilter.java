@@ -17,4 +17,7 @@ public class OrderFilter {
 
   private Long userId;
 
+  private String sellCurrencyName;
+
+  private String buyCurrencyName;
 }

@@ -11,11 +11,17 @@ public interface OrderSpecification {
   static Specification<OrderDetailsEntity> byOrderStatus(OrderStatus orderStatus) {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("orderStatus"), criteriaBuilder.literal(orderStatus));
   }
-//todo
-  static Specification<OrderDetailsEntity> byCurrencyName(String currencyName){
+
+  static Specification<OrderDetailsEntity> bySellCurrencyName(String sellCurrencyName){
     return (root, query, criteriaBuilder) ->
       criteriaBuilder.equal(
-        root.join("currency",JoinType.INNER).get("c.name"),criteriaBuilder.literal(currencyName));
+        root.join("sellCurrency",JoinType.INNER).get("name"),criteriaBuilder.literal(sellCurrencyName));
+  }
+
+  static Specification<OrderDetailsEntity> byBuyCurrencyName(String buyCurrencyName){
+    return (root, query, criteriaBuilder) ->
+      criteriaBuilder.equal(
+        root.join("buyCurrency",JoinType.INNER).get("name"),criteriaBuilder.literal(buyCurrencyName));
   }
 
 

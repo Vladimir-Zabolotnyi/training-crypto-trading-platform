@@ -22,8 +22,8 @@ class OrderMapperTest {
   private static final String BUY_CURRENCY_NAME = "Bitcoin";
   private static final BigDecimal SELL_CURRENCY_AMOUNT = new BigDecimal("20");
   private static final BigDecimal BUY_CURRENCY_AMOUNT = new BigDecimal("400");
-  private static final CurrencyEntity SELL_CURRENCY = new CurrencyEntity(null ,false,false,SELL_CURRENCY_NAME,null);
-  private static final CurrencyEntity BUY_CURRENCY = new CurrencyEntity(null,false,false,BUY_CURRENCY_NAME,null);
+  private static final CurrencyEntity SELL_CURRENCY = new CurrencyEntity(null ,false,SELL_CURRENCY_NAME,null);
+  private static final CurrencyEntity BUY_CURRENCY = new CurrencyEntity(null,false,BUY_CURRENCY_NAME,null);
   private static final OrderStatus ORDER_STATUS = OrderStatus.CREATED;
   private static final UserEntity USER = new UserEntity();
   private static final Instant CREATION_DATE = Instant.ofEpochMilli(1000);

@@ -34,7 +34,7 @@ public class WalletServiceTest {
   private static final BigDecimal AMOUNT_TO_ADD = new BigDecimal("50");
   private static final BigDecimal AMOUNT_TO_SUBTRACT_EXCEPTION = new BigDecimal("1000");
   private static final UserEntity USER = new UserEntity();
-  private static final CurrencyEntity CURRENCY = new CurrencyEntity(ID,false,false,NAME,ACRONYM);
+  private static final CurrencyEntity CURRENCY = new CurrencyEntity(ID,false,NAME,ACRONYM);
 
   private static final WalletEntity WALLET_BEFORE_SUBTRACT = new WalletEntity(ID,USER,CURRENCY,AMOUNT);
   private static final WalletEntity WALLET_BEFORE_ADD = new WalletEntity(ID,USER,CURRENCY,AMOUNT);

@@ -10,28 +10,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import sigma.training.ctp.dto.CryptocurrencyRestDto;
-import sigma.training.ctp.service.CryptocurrencyService;
+import sigma.training.ctp.dto.CurrencyRestDto;
+import sigma.training.ctp.service.CurrencyService;
 
 import java.util.List;
 
 @Tag(
-  name = "Cryptocurrency Controller",
-  description = "Allows to obtain the data about all available cryptocurrencies on the trade"
+  name = "Currency Controller",
+  description = "Allows to obtain the data about all available currencies on the trade"
 )
 @RestController
-public class CryptocurrencyController {
+public class CurrencyController {
 
   @Autowired
-  private CryptocurrencyService cryptocurrencyService;
+  private CurrencyService currencyService;
 
   @Operation(
-    summary = "Returns the list of all user's cryptocurrencies",
+    summary = "Returns the full list of the cryptocurrencies",
     responses = {
       @ApiResponse(
         responseCode = "200",
         description = "The information about the currency id, name and acronym",
-        content = @Content(schema = @Schema(implementation = CryptocurrencyRestDto.class))
+        content = @Content(schema = @Schema(implementation = CurrencyRestDto.class))
       ),
       @ApiResponse(
         responseCode = "401",
@@ -45,7 +45,7 @@ public class CryptocurrencyController {
   )
   @ResponseStatus(HttpStatus.OK)
   @GetMapping(path = "/currencies")
-  public List<CryptocurrencyRestDto> getAllCryptocurrencies() {
-    return cryptocurrencyService.findCurrencyEntitiesByBankCurrencyEquals(false);
+  public List<CurrencyRestDto> findAllCurrencies() {
+    return currencyService.findAllCurrencies();
   }
 }

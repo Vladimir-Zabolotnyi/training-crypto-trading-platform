@@ -1,15 +1,15 @@
 package sigma.training.ctp.mapper;
 
 import org.springframework.stereotype.Component;
-import sigma.training.ctp.dto.CryptocurrencyRestDto;
+import sigma.training.ctp.dto.CurrencyRestDto;
 import sigma.training.ctp.persistence.entity.CurrencyEntity;
 
 @Component
-public class CryptocurrencyMapper implements Mapper<CurrencyEntity, CryptocurrencyRestDto> {
+public class CurrencyMapper implements Mapper<CurrencyEntity, CurrencyRestDto> {
 
   @Override
-  public CryptocurrencyRestDto toRestDto(CurrencyEntity entity) {
-    return new CryptocurrencyRestDto(
+  public CurrencyRestDto toRestDto(CurrencyEntity entity) {
+    return new CurrencyRestDto(
       entity.getId(),
       entity.getName(),
       entity.getAcronym()
@@ -17,7 +17,7 @@ public class CryptocurrencyMapper implements Mapper<CurrencyEntity, Cryptocurren
   }
 
   @Override
-  public CurrencyEntity toEntity(CryptocurrencyRestDto restDto) {
+  public CurrencyEntity toEntity(CurrencyRestDto restDto) {
     CurrencyEntity currencyEntity = new CurrencyEntity();
 
     if (restDto == null) {

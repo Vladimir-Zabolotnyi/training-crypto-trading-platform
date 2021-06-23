@@ -14,19 +14,19 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CryptocurrencyRestDto {
+public class CurrencyRestDto {
 
-  @Schema(description = "An identifier for the cryptocurrency", example = "1")
+  @Schema(description = "An identifier for the currency", example = "1")
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id")
   private Long id;
 
-  @Schema(description = "The cryptocurrency name", example = "Bitcoin")
+  @Schema(description = "The currency name", example = "Bitcoin")
   @Column(name = "name")
   private String name;
 
-  @Schema(description = "A cryptocurrency's acronym or short name", example = "BIT")
+  @Schema(description = "A currency's acronym or short name", example = "BIT")
   @Column(name = "acronym")
   private String acronym;
 }

@@ -67,6 +67,7 @@ class OrderDetailsServiceTest {
   private static final List<OrderDetailsRestDto> ORDER_DTO_LIST = new ArrayList<>();
   private static final OrderFilterDto ORDER_FILTER_DTO = new OrderFilterDto(ORDER_STATUS.toString(), ID);
   private static final OrderFilter ORDER_FILTER = new OrderFilter(ORDER_STATUS, ID);
+  private static final UserEntity ROOT_USER = new UserEntity() ;
 
 
   @Mock
@@ -89,11 +90,15 @@ class OrderDetailsServiceTest {
   @Mock
   FeeService feeService;
 
+  @Mock
+  UserService userService;
+
   @Test
   void postOrder() throws WalletNotFoundException, InsufficientCurrencyAmountException {
     USER.setId(ID);
     when(orderMapper.toEntity(ORDER_DTO, USER)).thenReturn(ORDER);
     when(orderMapper.toRestDto(ORDER)).thenReturn(ORDER_DTO);
+    when(userService.getRootUser()).thenReturn(ROOT_USER);
     when(orderDetailsRepository.save(ORDER)).thenReturn(ORDER);
     when(feeService.getOrderFee(SELL_CURRENCY_AMOUNT)).thenReturn(SELL_CURRENCY_AMOUNT);
     when(currencyRepository.findByName(SELL_CURRENCY_NAME)).thenReturn(Optional.of(SELL_CURRENCY));

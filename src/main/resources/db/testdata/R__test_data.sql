@@ -45,43 +45,60 @@ VALUES (2,1,2,50);
 INSERT INTO wallet (id, user_id,currency_id,amount)
 VALUES (3,1,3,200);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (4,2,1,300);
+VALUES (4,1,4,20);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (5,2,3,15);
+VALUES (5,1,5,47);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (6,666,1,0);
+VALUES (6,1,6,89);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (7,666,2,0);
+VALUES (7,2,1,300);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (8,666,3,0);
+VALUES (8,2,2,700);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (9,666,4,0);
+VALUES (9,2,3,15);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (10,666,5,0);
+VALUES (10,2,4,10);
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (11,666,6,0);
+VALUES (11,2,5,67);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (12,2,6,39);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (13,666,1,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (14,666,2,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (15,666,3,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (16,666,4,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (17,666,5,0);
+INSERT INTO wallet (id, user_id,currency_id,amount)
+VALUES (18,666,6,0);
 
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (1, '2021-06-04 13:28:39',1,'CREATED',1,2,5,10);
+VALUES (1, '2021-06-04 13:08:39',1,'CREATED',1,2,5,10);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (2, '2021-06-04 13:38:39',1,'CREATED',1,3,1100,4);
+VALUES (2, '2021-06-04 13:18:39',1,'CREATED',1,3,1100,4);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (3, '2021-06-04 13:38:39',1,'CANCELLED',3,6,20,400);
+VALUES (3, '2021-06-04 13:28:39',1,'CANCELLED',3,6,20,400);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (4, '2021-06-04 13:38:39',1,'FULFILLED',1,4,34,400);
+VALUES (4, '2021-06-04 16:38:39',1,'FULFILLED',1,4,34,400);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (5, '2021-06-04 13:28:39',2,'CREATED',1,3,2000,0.2);
+VALUES (5, '2021-06-04 19:28:39',2,'CREATED',1,3,2000,0.2);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (6, '2021-06-04 13:28:39',2,'CREATED',1,4,40,17);
+VALUES (6, '2021-06-05 13:28:39',2,'CREATED',1,4,40,17);
 INSERT INTO order_details(id, creation_date, user_id, order_status,
                           sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
-VALUES (7, '2021-06-04 13:38:39',1,'CREATED',1,5,20,400);
+VALUES (7, '2021-06-06 13:38:39',2,'CANCELLED',1,5,20,400);
+INSERT INTO order_details(id, creation_date, user_id, order_status,
+                          sell_currency_id, buy_currency_id, sell_currency_amount, buy_currency_amount)
+VALUES (8, '2021-06-07 13:38:39',2,'FULFILLED',1,6,20,10);
 
 
 

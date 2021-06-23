@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dictionary.OrderStatus;
 
 import javax.persistence.Column;
@@ -49,26 +48,22 @@ public class OrderDetailsEntity {
   @Generated(GenerationTime.INSERT)
   private OrderStatus orderStatus;
 
-  @Column(name = "order_type")
-  @Enumerated(EnumType.STRING)
-  private OrderType orderType;
+  @ManyToOne
+  @JoinColumn(name = "sell_currency_id", referencedColumnName = "id")
+  private CurrencyEntity sellCurrency;
 
-  @Column(name = "cryptocurrency_price")
+  @ManyToOne
+  @JoinColumn(name = "buy_currency_id", referencedColumnName = "id")
+  private CurrencyEntity buyCurrency;
+
+  @Column(name = "sell_currency_amount")
   @NonNull
   @DecimalMin(value = "0.00")
-  private BigDecimal cryptocurrencyPrice;
+  private BigDecimal sellCurrencyAmount;
 
-  @Column(name = "cryptocurrency_amount")
+  @Column(name = "buy_currency_amount")
   @NonNull
   @DecimalMin(value = "0.00")
-  private BigDecimal cryptocurrencyAmount;
+  private BigDecimal buyCurrencyAmount;
 
-
-  public OrderDetailsEntity(UserEntity user, OrderType orderType,
-                            @NonNull BigDecimal cryptocurrencyPrice, @NonNull BigDecimal cryptocurrencyAmount) {
-    this.user = user;
-    this.orderType = orderType;
-    this.cryptocurrencyPrice = cryptocurrencyPrice;
-    this.cryptocurrencyAmount = cryptocurrencyAmount;
-  }
 }

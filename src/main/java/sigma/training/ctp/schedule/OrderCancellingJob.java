@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
+import sigma.training.ctp.exception.WalletNotFoundException;
 import sigma.training.ctp.service.OrderDetailsService;
 
 import java.time.Instant;
@@ -22,7 +23,7 @@ public class OrderCancellingJob {
   private String ttl;
 
   @Scheduled(cron = "${order-cancelling-job.scheduled-cron-expression}")
-  public void cancelExpiredOrders() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException {
+  public void cancelExpiredOrders() throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, WalletNotFoundException {
     orderDetailsService.cancelOutdatedOrders(Instant.now().minusMillis(TimeUnit.DAYS.toMillis(Long.parseLong(ttl))));
 
   }

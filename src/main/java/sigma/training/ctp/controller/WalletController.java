@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import sigma.training.ctp.dto.WalletRestDto;
 import sigma.training.ctp.exception.WalletNotFoundException;
+import sigma.training.ctp.mapper.WalletMapper;
+import sigma.training.ctp.persistence.entity.WalletEntity;
 import sigma.training.ctp.service.AuditTrailService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.service.WalletService;
@@ -35,6 +37,8 @@ public class WalletController {
   private WalletService walletService;
   @Autowired
   private AuditTrailService auditTrailService;
+  @Autowired
+  WalletMapper walletMapper;
 
   @Operation(
     summary = "Returns the user's wallet with a defined currency",
@@ -53,9 +57,9 @@ public class WalletController {
   public @ResponseBody WalletRestDto getUserWallet(
     @RequestParam(name = "currencyName")
     @Parameter(in = ParameterIn.QUERY, description = "name of the currency", example = "Bitcoin") String currencyName) throws WalletNotFoundException {
-    WalletRestDto wallet = walletService.getWalletByUserIdAndCurrencyName(userService.getCurrentUser().getId(), currencyName);
+    WalletEntity wallet = walletService.getWalletByUserIdAndCurrencyName(userService.getCurrentUser().getId(), currencyName);
     auditTrailService.postAuditTrail("User read the wallet (id: " + wallet.getId() + ")");
-    return wallet;
+    return walletMapper.toRestDto(wallet);
   }
 
   @Operation(

@@ -24,9 +24,6 @@ public class CurrencyEntity {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "basic")
-  private boolean basic;
-
   @Column(name = "bankCurrency")
   private boolean bankCurrency;
 

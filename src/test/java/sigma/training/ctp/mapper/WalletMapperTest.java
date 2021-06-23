@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class WalletMapperTest {
 
   private static final BigDecimal AMOUNT = new BigDecimal("200");
-  private static final CurrencyEntity CURRENCY= new CurrencyEntity(1L,false,false,"Bitcoin","BTC");
-  private static final CurrencyEntity CURRENCY_WITHOUT_ID= new CurrencyEntity(null,false,false,"Bitcoin","BTC");
+  private static final CurrencyEntity CURRENCY= new CurrencyEntity(1L,false,"Bitcoin","BTC");
+  private static final CurrencyEntity CURRENCY_WITHOUT_ID= new CurrencyEntity(null,false,"Bitcoin","BTC");
   private static final WalletEntity WALLET = new WalletEntity(1L,new UserEntity(),CURRENCY,AMOUNT);
   private static final WalletEntity WALLET_WITHOUT_USER = new WalletEntity(1L,new UserEntity(),CURRENCY_WITHOUT_ID,AMOUNT);
 

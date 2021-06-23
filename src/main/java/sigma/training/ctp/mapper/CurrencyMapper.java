@@ -9,6 +9,11 @@ public class CurrencyMapper implements Mapper<CurrencyEntity, CurrencyRestDto> {
 
   @Override
   public CurrencyRestDto toRestDto(CurrencyEntity entity) {
+
+    if (entity == null) {
+      throw new NullPointerException("The proposed entity object has no reference to an object");
+    }
+
     return new CurrencyRestDto(
       entity.getId(),
       entity.getName(),

@@ -29,15 +29,15 @@ public class CurrencyServiceTest {
   @InjectMocks
   private CurrencyService service;
 
-  private static final CurrencyEntity CURRENCY_ONE = new CurrencyEntity(1L, true, true, "USA_dollar", "USD");
-  private static final CurrencyRestDto CURRENCY_OBE_REST_DTO = new CurrencyRestDto(CURRENCY_ONE.getId(), CURRENCY_ONE.getName(), CURRENCY_ONE.getAcronym());
+  private static final CurrencyEntity CURRENCY_ONE = new CurrencyEntity(1L, true, "USA_dollar", "USD");
+  private static final CurrencyRestDto CURRENCY_ONE_REST_DTO = new CurrencyRestDto(CURRENCY_ONE.getId(), CURRENCY_ONE.getName(), CURRENCY_ONE.getAcronym());
 
   private static final List<CurrencyEntity> CURRENCIES = Arrays.asList(CURRENCY_ONE);
-  private static final List<CurrencyRestDto> CURRENCIES_REST_DTO = Arrays.asList(CURRENCY_OBE_REST_DTO);
+  private static final List<CurrencyRestDto> CURRENCIES_REST_DTO = Arrays.asList(CURRENCY_ONE_REST_DTO);
 
   @Test
   public void testFindAllCurrencies() {
-    when(mapper.toRestDto(CURRENCY_ONE)).thenReturn(CURRENCY_OBE_REST_DTO);
+    when(mapper.toRestDto(CURRENCY_ONE)).thenReturn(CURRENCY_ONE_REST_DTO);
     when(repository.findAll()).thenReturn(CURRENCIES);
 
     assertEquals(service.getAllCurrencies(), CURRENCIES_REST_DTO);

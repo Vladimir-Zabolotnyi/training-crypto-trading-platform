@@ -20,7 +20,7 @@ public class CurrencyService {
 
   public List<CurrencyRestDto> getAllCurrencies() {
     return currencyRepository.findAll().stream()
-      .map(m -> currencyMapper.toRestDto(m))
+      .map(currencyMapper::toRestDto)
       .collect(Collectors.toList());
   }
 }

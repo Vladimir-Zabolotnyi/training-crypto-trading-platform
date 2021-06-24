@@ -26,7 +26,7 @@ public class CurrencyController {
   private CurrencyService currencyService;
 
   @Operation(
-    summary = "Returns the full list of the cryptocurrencies",
+    summary = "Returns the full list of the currencies",
     responses = {
       @ApiResponse(
         responseCode = "200",

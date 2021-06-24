@@ -151,7 +151,6 @@ public class OrderDetailsController {
   List<OrderDetailsRestDto> getAllOrders(@Parameter(in = ParameterIn.QUERY,
     description = "order filter",
     schema = @Schema(implementation = OrderFilterDto.class)) OrderFilterDto orderFilterDto) throws NoActiveOrdersFoundException {
-    System.out.println(orderFilterDto.toString());
     List<OrderDetailsRestDto> orderDtoList = orderDetailsService.getAllOrders(orderFilterDto);
     auditTrailService.postAuditTrail("User read list of the orders");
     return orderDtoList;

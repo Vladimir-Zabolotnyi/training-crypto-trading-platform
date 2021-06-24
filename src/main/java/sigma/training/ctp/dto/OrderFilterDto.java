@@ -17,4 +17,11 @@ public class OrderFilterDto {
 
   @Schema(description = "id of the user", example = "1")
   private Long userId;
+
+  @Schema(description = "name of the currency to sell", example = "USA_dollar")
+  private String sellCurrencyName;
+
+  @Schema(description = "name of the currency to buy", example = "Bitcoin")
+  private String buyCurrencyName;
+
 }

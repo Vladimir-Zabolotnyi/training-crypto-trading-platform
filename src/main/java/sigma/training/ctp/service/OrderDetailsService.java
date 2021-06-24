@@ -58,7 +58,7 @@ public class OrderDetailsService {
     order.setSellCurrency(currencyRepository.findByName(orderDto.getSellCurrencyName()).get());
     order.setBuyCurrency(currencyRepository.findByName(orderDto.getBuyCurrencyName()).get());
     BigDecimal fee = feeService.getOrderFee(orderDto.getSellCurrencyAmount());
-    walletService.addWalletCurrencyAmountByWalletId(rootUser.getId(),orderDto.getSellCurrencyName(),fee);
+    walletService.addWalletCurrencyAmountByWalletId(rootUser.getId(), orderDto.getSellCurrencyName(), fee);
     walletService.subtractWalletCurrencyAmountByWalletId(order.getUser().getId(), orderDto.getSellCurrencyName(), order.getSellCurrencyAmount().add(fee));
     return orderMapper.toRestDto(orderDetailsRepository.save(order));
   }
@@ -128,15 +128,23 @@ public class OrderDetailsService {
 
 
   private Specification<OrderDetailsEntity> orderFilterToCriteria(OrderFilter orderFilter) {
+    Specification<OrderDetailsEntity> specification = OrderSpecification.byUser(orderFilter.getUserId())
+      .and(OrderSpecification.byOrderStatus(orderFilter.getOrderStatus()));
 
 
     if (orderFilter.getUserId() == null) {
-      return OrderSpecification.byOrderStatus(OrderStatus.CREATED);
+      specification = OrderSpecification.byOrderStatus(OrderStatus.CREATED);
     }
-    if (orderFilter.getOrderStatus() == null) {
-      return OrderSpecification.byUser(orderFilter.getUserId());
+    if (orderFilter.getOrderStatus() == null && orderFilter.getUserId()!=null) {
+      specification = OrderSpecification.byUser(orderFilter.getUserId());
     }
-    return OrderSpecification.byUser(orderFilter.getUserId())
-      .and(OrderSpecification.byOrderStatus(orderFilter.getOrderStatus()));
+    if(orderFilter.getSellCurrencyName()!=null){
+      specification=specification.and(OrderSpecification.bySellCurrencyName(orderFilter.getSellCurrencyName()));
+    }
+    if(orderFilter.getBuyCurrencyName()!=null){
+      specification=specification.and(OrderSpecification.byBuyCurrencyName(orderFilter.getBuyCurrencyName()));
+    }
+
+    return specification;
   }
 }

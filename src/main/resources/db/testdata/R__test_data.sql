@@ -39,7 +39,7 @@ VALUES (6,false,'Ripple','XRP');
 
 
 INSERT INTO wallet (id, user_id,currency_id,amount)
-VALUES (1, 1, 1, 100);
+VALUES (1, 1, 1, 1000);
 INSERT INTO wallet (id, user_id,currency_id,amount)
 VALUES (2,1,2,50);
 INSERT INTO wallet (id, user_id,currency_id,amount)

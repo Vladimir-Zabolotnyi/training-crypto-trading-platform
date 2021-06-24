@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import lombok.NoArgsConstructor;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dictionary.OrderStatus;
 
 import javax.validation.constraints.DecimalMin;
@@ -31,14 +30,17 @@ public class OrderDetailsRestDto {
   @Schema(description = "status of the order", enumAsRef = true, example = "created")
   private OrderStatus orderStatus;
 
-  @Schema(description = "type of the order", enumAsRef = true,example = "sell")
-  private OrderType orderType;
+  @Schema(description = "name of the currency to sell", example = "USA_dollar")
+  private String sellCurrencyName;
 
-  @Schema(description = "price of the cryptocurrency", example = "400.00")
-  @DecimalMin(value = "0.00")
-  private BigDecimal cryptocurrencyPrice;
+  @Schema(description = "name of the currency to buy", example = "Bitcoin")
+  private String buyCurrencyName;
 
-  @Schema(description = "amount of the cryptocurrency", example = "20.00")
+  @Schema(description = "amount of the currency to sell", example = "100.00")
   @DecimalMin(value = "0.00")
-  private BigDecimal cryptocurrencyAmount;
+  private BigDecimal sellCurrencyAmount;
+
+  @Schema(description = "amount of the currency to buy", example = "20.00")
+  @DecimalMin(value = "0.00")
+  private BigDecimal buyCurrencyAmount;
 }

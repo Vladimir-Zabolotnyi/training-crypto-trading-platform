@@ -8,9 +8,15 @@ import org.springframework.stereotype.Repository;
 import sigma.training.ctp.persistence.entity.WalletEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WalletRepository extends JpaRepository<WalletEntity, Long> {
-  WalletEntity findWalletEntityByUserId(Long id);
+  List<WalletEntity> findAllByUserId(Long id);
+
+  Optional<WalletEntity> findWalletEntityByUserIdAndCurrencyName(Long id, String name);
+
+  Optional<WalletEntity> findWalletEntityById(Long id);
 
 }

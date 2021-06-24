@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
 import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
@@ -14,12 +14,13 @@ import sigma.training.ctp.exception.OrderNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.exception.WalletNotFoundException;
 
 @ControllerAdvice
 public class ExceptionsHandler {
 
-  @ExceptionHandler(value = {InsufficientAmountCryptoException.class})
-  public ResponseEntity<Object> handleInvalidInputException(InsufficientAmountCryptoException ex) {
+  @ExceptionHandler(value = {InsufficientCurrencyAmountException.class})
+  public ResponseEntity<Object> handleInvalidInputException(InsufficientCurrencyAmountException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
@@ -40,6 +41,11 @@ public class ExceptionsHandler {
 
   @ExceptionHandler(value = {OrderNotFoundException.class})
   public ResponseEntity<Object> handleInvalidInputException(OrderNotFoundException ex) {
+    return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(value = {WalletNotFoundException.class})
+  public ResponseEntity<Object> handleInvalidInputException(WalletNotFoundException ex) {
     return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.NOT_FOUND);
   }
 

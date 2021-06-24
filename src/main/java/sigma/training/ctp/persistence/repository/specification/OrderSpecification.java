@@ -1,9 +1,7 @@
 package sigma.training.ctp.persistence.repository.specification;
 
-import org.hibernate.query.criteria.internal.OrderImpl;
 import org.springframework.data.jpa.domain.Specification;
 import sigma.training.ctp.dictionary.OrderStatus;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.persistence.entity.OrderDetailsEntity;
 
 import javax.persistence.criteria.JoinType;
@@ -14,16 +12,18 @@ public interface OrderSpecification {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("orderStatus"), criteriaBuilder.literal(orderStatus));
   }
 
-  static Specification<OrderDetailsEntity> byOrderType(OrderType orderType) {
+  static Specification<OrderDetailsEntity> bySellCurrencyName(String sellCurrencyName){
     return (root, query, criteriaBuilder) ->
-      criteriaBuilder.equal(root.get("orderType"), criteriaBuilder.literal(orderType));
+      criteriaBuilder.equal(
+        root.join("sellCurrency",JoinType.INNER).get("name"),criteriaBuilder.literal(sellCurrencyName));
   }
 
-  static Specification<OrderDetailsEntity> byUserNot(Long id) {
+  static Specification<OrderDetailsEntity> byBuyCurrencyName(String buyCurrencyName){
     return (root, query, criteriaBuilder) ->
-      criteriaBuilder.notEqual(
-        root.join("user", JoinType.INNER).get("id"), criteriaBuilder.literal(id));
+      criteriaBuilder.equal(
+        root.join("buyCurrency",JoinType.INNER).get("name"),criteriaBuilder.literal(buyCurrencyName));
   }
+
 
   static Specification<OrderDetailsEntity> byUser(Long id) {
     return (root, query, criteriaBuilder) ->
@@ -31,10 +31,4 @@ public interface OrderSpecification {
         root.join("user", JoinType.INNER).get("id"), criteriaBuilder.literal(id));
   }
 
-  static Specification<OrderDetailsEntity> orderByCryptocurrencyAmount(boolean asc) {
-    return (root, query, criteriaBuilder) -> {
-      query.orderBy(new OrderImpl(root.get("cryptocurrencyPrice"), asc));
-      return criteriaBuilder.and();
-    };
-  }
 }

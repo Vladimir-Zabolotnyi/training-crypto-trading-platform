@@ -20,23 +20,21 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-import sigma.training.ctp.dictionary.OrderType;
 import sigma.training.ctp.dto.OrderDetailsRestDto;
 import sigma.training.ctp.dto.OrderFilterDto;
 import sigma.training.ctp.exception.CannotFulfillOwnOrderException;
-import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
 import sigma.training.ctp.exception.OrderAlreadyCancelledException;
 import sigma.training.ctp.exception.OrderAlreadyFulfilledException;
 import sigma.training.ctp.exception.OrderNotFoundException;
 import sigma.training.ctp.exception.NoActiveOrdersFoundException;
+import sigma.training.ctp.exception.WalletNotFoundException;
 import sigma.training.ctp.service.AuditTrailService;
 import sigma.training.ctp.service.OrderDetailsService;
 import sigma.training.ctp.service.UserService;
 import sigma.training.ctp.view.OrderDetailsViewModel;
 
 import java.util.List;
-import java.util.Locale;
 
 
 @RestController
@@ -56,20 +54,17 @@ public class OrderDetailsController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "order created",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
-    @ApiResponse(responseCode = "400", description = "Insufficient amount of cryptocurrency/money in the wallet",
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of currency in the wallet",
       content = @Content(mediaType = "text/plain"))
   })
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping(path = "/{orderType}")
+  @PostMapping
   public @ResponseBody
   OrderDetailsRestDto postOrder(@RequestBody
-                                @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "cryptocurrency amount and price",
-                                  content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class))) OrderDetailsRestDto order,
-                                @PathVariable("orderType") @Parameter(
-                                  description = "type of the order",
-                                  schema = @Schema(allowableValues = {"buy", "sell"})) String orderType) throws InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+                                @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "currency amount and name",
+                                  content = @Content(schema = @Schema(implementation = OrderDetailsViewModel.class)))
+                                  OrderDetailsRestDto order) throws InsufficientCurrencyAmountException, WalletNotFoundException{
 
-    order.setOrderType(OrderType.valueOf(orderType.toUpperCase(Locale.ROOT)));
     OrderDetailsRestDto orderDto = orderDetailsService.postOrder(order, userService.getCurrentUser());
     auditTrailService.postAuditTrail("User created the order (id: " + orderDto.getId() + ")");
     return orderDto;
@@ -80,7 +75,7 @@ public class OrderDetailsController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Order fulfilled",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderDetailsRestDto.class))),
-    @ApiResponse(responseCode = "400", description = "Insufficient amount of bank currency/cryptocurrency in the wallet",
+    @ApiResponse(responseCode = "400", description = "Insufficient amount of  currency in the wallet",
       content = @Content(mediaType = "text/plain")),
     @ApiResponse(responseCode = "403", description = "Order already fulfilled or cancelled",
       content = @Content(mediaType = "text/plain")),
@@ -96,7 +91,8 @@ public class OrderDetailsController {
     @PathVariable("id") @Parameter(
       description = "id of the order",
       content = @Content(schema = @Schema(implementation = Long.class))) Long id)
-    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException, CannotFulfillOwnOrderException, InsufficientAmountCryptoException, InsufficientAmountBankCurrencyException {
+    throws OrderNotFoundException, OrderAlreadyCancelledException, OrderAlreadyFulfilledException,
+    CannotFulfillOwnOrderException, InsufficientCurrencyAmountException, WalletNotFoundException {
 
 
     OrderDetailsRestDto orderDto = orderDetailsService.fulfillOrder(id, userService.getCurrentUser());
@@ -133,9 +129,8 @@ public class OrderDetailsController {
     @PathVariable("id")
     @Parameter(
       description = "the id of the order",
-      content = @Content(schema = @Schema(implementation = Long.class))
-    ) Long orderId
-  ) throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException {
+      content = @Content(schema = @Schema(implementation = Long.class))) Long orderId)
+    throws OrderNotFoundException, OrderAlreadyFulfilledException, OrderAlreadyCancelledException, WalletNotFoundException {
 
     OrderDetailsRestDto orderDto = orderDetailsService.cancelOrder(orderId);
     auditTrailService.postAuditTrail("User cancelled the order (id: " + orderDto.getId() + ")");

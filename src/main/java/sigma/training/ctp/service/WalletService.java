@@ -1,18 +1,16 @@
 package sigma.training.ctp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sigma.training.ctp.dto.WalletRestDto;
-import sigma.training.ctp.exception.InsufficientAmountBankCurrencyException;
-import sigma.training.ctp.exception.InsufficientAmountCryptoException;
+import sigma.training.ctp.exception.InsufficientCurrencyAmountException;
+import sigma.training.ctp.exception.WalletNotFoundException;
 import sigma.training.ctp.mapper.WalletMapper;
-import sigma.training.ctp.persistence.entity.AuditTrail;
 import sigma.training.ctp.persistence.entity.WalletEntity;
-import sigma.training.ctp.persistence.repository.AuditTrailRepository;
 import sigma.training.ctp.persistence.repository.WalletRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class WalletService {
@@ -26,48 +24,33 @@ public class WalletService {
   @Autowired
   UserService userService;
 
-  @Autowired
-  AuditTrailService auditTrailService;
 
-  public WalletRestDto getWalletByUserId(Long id) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-
-    auditTrailService.postAuditTrail("User got the wallet (id: " + wallet.getId() + ")");
-    return walletMapper.toRestDto(wallet);
+  public List<WalletRestDto> getAllWalletsByUserId(Long userId) {
+    return walletMapper.toRestDto(repository.findAllByUserId(userId));
   }
 
-  public WalletEntity subtractWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) throws InsufficientAmountCryptoException {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
-    if (cryptocurrencyBalance.compareTo(cryptocurrencyAmount) < 0) {
-      throw new InsufficientAmountCryptoException();
+
+  public WalletEntity getWalletByUserIdAndCurrencyName(Long userId,String currencyName) throws WalletNotFoundException {
+    return repository.findWalletEntityByUserIdAndCurrencyName(userId,currencyName).orElseThrow(()->new WalletNotFoundException(currencyName));
+  }
+
+
+  public WalletEntity subtractWalletCurrencyAmountByWalletId(Long userId,String currencyName, BigDecimal currencyAmountToSubtract) throws InsufficientCurrencyAmountException, WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(userId, currencyName);
+
+    BigDecimal walletCurrencyAmount = wallet.getAmount();
+    if (walletCurrencyAmount.compareTo(currencyAmountToSubtract) < 0) {
+      throw new InsufficientCurrencyAmountException();
     }
-
-    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.subtract(cryptocurrencyAmount));
+    wallet.setAmount(walletCurrencyAmount.subtract(currencyAmountToSubtract));
     return repository.save(wallet);
   }
 
-  public WalletEntity subtractWalletMoneyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) throws InsufficientAmountBankCurrencyException {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal moneyBalance = wallet.getMoneyBalance();
-    if (moneyBalance.compareTo(cryptocurrencyAmount.multiply(cryptocurrencyPrice)) < 0) {
-      throw new InsufficientAmountBankCurrencyException();
-    }
-    wallet.setMoneyBalance(moneyBalance.subtract(cryptocurrencyAmount.multiply(cryptocurrencyPrice)));
-    return repository.save(wallet);
-  }
 
-  public WalletEntity addWalletMoneyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount, BigDecimal cryptocurrencyPrice) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal moneyBalance = wallet.getMoneyBalance();
-    wallet.setMoneyBalance(moneyBalance.add(cryptocurrencyAmount.multiply(cryptocurrencyPrice)));
-    return repository.save(wallet);
-  }
-
-  public WalletEntity addWalletCryptocurrencyBalanceByUserId(Long id, BigDecimal cryptocurrencyAmount) {
-    WalletEntity wallet = repository.findWalletEntityByUserId(id);
-    BigDecimal cryptocurrencyBalance = wallet.getCryptocurrencyBalance();
-    wallet.setCryptocurrencyBalance(cryptocurrencyBalance.add(cryptocurrencyAmount));
+  public WalletEntity addWalletCurrencyAmountByWalletId(Long userId,String currencyName, BigDecimal currencyAmountToAdd) throws WalletNotFoundException {
+    WalletEntity wallet = getWalletByUserIdAndCurrencyName(userId, currencyName);
+    BigDecimal walletCurrencyAmount = wallet.getAmount();
+    wallet.setAmount(walletCurrencyAmount.add(currencyAmountToAdd));
     return repository.save(wallet);
   }
 }
